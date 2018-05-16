@@ -1,9 +1,6 @@
 <template>
 <GPage bg title="用户管理（Admin）">
-
-    userManage
-
-    <!-- <TableBar @onRefresh="onRefresh" @onClickPrimaryBtn="onClickPrimaryBtn">
+    <TableBar @onRefresh="onRefresh" @onClickPrimaryBtn="onClickPrimaryBtn">
         <Row slot="searchs" :gutter="10">
             <Col span="3">
                 <Select v-model="queryParams.status" @on-change="statusChange">
@@ -36,7 +33,7 @@
         <div v-show="initPwd" class="init-pwd">
             <Icon type="locked"></Icon> 初始化密码：{{initPwd}}
         </div>
-    </Modal> -->
+    </Modal>
 </GPage>
 </template>
 <script>

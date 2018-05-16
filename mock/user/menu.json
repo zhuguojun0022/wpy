@@ -1,0 +1,46 @@
+{
+    "code": "2000",
+    "msg": "操作成功",
+    "result": [
+        {
+            "menuId": "systemmanagemenuid",
+            "menuCode": "MENU_SYS_MANAGE",
+            "menuName": "系统管理",
+            "menuPid": "0",
+            "menuUrl": "",
+            "menuIcon": "icon-systemManage",
+            "leaf": false,
+            "remove": false,
+            "status": true,
+            "orderNum": 12,
+            "subMenu": [
+                {
+                    "menuId": "usermanageruid",
+                    "menuCode": "SYS_USER_MANAGE",
+                    "menuName": "用户管理",
+                    "menuPid": "systemmanagemenuid",
+                    "menuUrl": "userManage",
+                    "menuIcon": "",
+                    "leaf": true,
+                    "remove": false,
+                    "status": true,
+                    "orderNum": 3,
+                    "subMenu": null
+                },
+                {
+                    "menuId": "rolemanageruid",
+                    "menuCode": "MENU_ROLE_MANAGE",
+                    "menuName": "角色管理",
+                    "menuPid": "systemmanagemenuid",
+                    "menuUrl": "roleManage",
+                    "menuIcon": "",
+                    "leaf": true,
+                    "remove": false,
+                    "status": true,
+                    "orderNum": 5,
+                    "subMenu": null
+                }
+            ]
+        }
+    ]
+}
