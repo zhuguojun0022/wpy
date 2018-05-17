@@ -41,44 +41,13 @@
 </GPage>
 </template>
 <script>
-import {TableHeader, TableFooter} from '../../../components/table'
+import {TableHeader, TableFooter, TableSwitch} from '../../../components/table'
 import {systemApi} from '../../../apis/'
 import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
 
-const colorMap = function (code) {
-    if (code === 'Sys_Admin') {
-        return 'red'
-    } else if (code.startsWith('Ptr_')) {
-        return 'blue'
-    } else if (code.startsWith('Agency_')) {
-        return 'yellow'
-    } else {
-        return 'default'
-    }
-}
-// function roleRender (h, data) {
-//     const vnodes = []
-//     data.row.roles.forEach(role => {
-//         vnodes.push(h(
-//             'Tag', {props: {
-//                 color: colorMap(role.code),
-//                 checkable: false
-//             }}, role.desc
-//         ))
-//     })
-//     return h('div', vnodes)
-// }
-function statusRender (h, data) {
-    const status = data.row.status
-    return h('Tag', {
-        props: {
-            color: status === 1 ? 'green' : (status === 4 ? 'default' : 'red')
-        }
-    }, userStatus[status].name)
-}
 export default {
-    components: {TableHeader, TableFooter},
+    components: {TableHeader, TableFooter, TableSwitch},
     data () {
         return {
             filterName: '',
@@ -93,8 +62,52 @@ export default {
                 {title: '邮箱', key: 'email'},
                 {title: '角色', key: 'roles'},
                 {title: '创建时间', key: 'createDate'},
-                {title: '状态', key: 'status', render: statusRender},
-                {title: '操作', render: statusRender}
+                {
+                    title: '状态',
+                    key: 'status',
+                    render: (h, {row}) => {
+                        return h('iSwitch', {
+                            props: {
+                                value: row.status,
+                                size: 'large'
+                            },
+                            on: {
+                                'on-change': (val) => {
+                                    this.onStatusChange(row.id, val)
+                                }
+                            }
+                        }, [
+                            h('span', {
+                                slot: 'open'
+                            }, '开启'),
+                            h('span', {
+                                slot: 'close'
+                            }, '停用')
+                        ])
+                    }
+                },
+                {
+                    title: '操作',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            label: '编辑',
+                            type: 'primary',
+                            on: {
+                                click: () => {
+                                    this.editClick(row.id)
+                                }
+                            }
+                        }, {
+                            label: '重置密码',
+                            type: 'primary',
+                            on: {
+                                click: () => {
+                                    this.resetPasswordClick(row.id)
+                                }
+                            }
+                        }])
+                    }
+                }
             ],
             tableData: [],
             totalNum: 0,
@@ -125,7 +138,6 @@ export default {
     },
     created () {
         systemApi.searchUserList().then(({data: {result, code, msg}}) => {
-            console.log('>>>>', result)
             this.tableData = result.userList
             this.totalNum = result.totalNum
         })
@@ -134,7 +146,8 @@ export default {
         ...mapMutations(['resetBreadcrumb']),
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
-        handleCurrentChange (v) {}
+        handleCurrentChange (v) {},
+        onStatusChange (id, val) {}
     }
 }
 </script>
