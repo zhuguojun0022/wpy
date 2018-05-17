@@ -1,33 +1,44 @@
 <template>
-<div class="table-footer clearfix">
-    <Page :total="total" transfer :current="current"
-        :page-size="pageSize" @on-change="onChange"></Page>
-</div>
+    <footer class="table-footer">
+        <Page
+            class="text-center"
+            :total="totalNum"
+            :current="currentPage"
+            :page-size="pageSize"
+            placeholder="top"
+            show-total
+            @on-change="handleCurrentChange"
+        ></Page>
+    </footer>
 </template>
 <script>
 export default {
+    name: 'table-footer',
     props: {
-        total: 0,
+        totalNum: {
+            type: Number,
+            default: 0,
+            required: true
+        },
         pageSize: {
             type: Number,
             default: 20
         },
-        current: {
+        currentPage: {
             type: Number,
-            default: 1
+            default: 1,
+            required: true
         }
     },
     methods: {
-        onChange (v) {
-            this.$emit('pageChange', v)
+        handleCurrentChange (v) {
+            this.$emit('on-change', v)
         }
     }
 }
 </script>
 <style lang="less">
 .table-footer {
-    position: relative;
-    padding: 10px 0px;
-    text-align: center;
+    padding: 15px 15px 0;
 }
 </style>

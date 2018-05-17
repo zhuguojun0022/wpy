@@ -87,7 +87,7 @@
 
 * vue文件内的css 尽量使用class名， 减少使用如 ` p、span ` 等原Html的标签
 * 注意class的层级嵌套
-* 单个组件，若不使用 ` scope `  , 请在css的最外层加上单文件组件的根级class
+* 单个组件，若不使用 ` scoped `  , 请在css的最外层加上单文件组件的根级class
 
 
 

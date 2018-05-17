@@ -1,10 +1,9 @@
-import TableBar from './TableBar'
+import TableHeader from './TableHeader'
 import TableFooter from './TableFooter'
-import BaseTable from './BaseTable'
 
 import Vue from 'vue'
 import {TablePlugins} from './iviewTableRender'
 
-export {TableBar, TableFooter, BaseTable}
+export {TableHeader, TableFooter}
 
 Vue.use(TablePlugins)

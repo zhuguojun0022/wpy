@@ -2,7 +2,7 @@ import Vue from 'vue'
 import './components/confirm'
 import {Button, Icon, Input, FormItem, Form, Dropdown, DropdownMenu, DropdownItem, Switch,
     Message, Table, Tooltip, Page, Select, Option, Row, Col, Modal, Card, Tag, RadioGroup, Radio,
-    Cascader, Menu, MenuItem, MenuGroup, Submenu, Layout, Sider} from 'iview'
+    Cascader, Layout, Sider} from 'iview'
 Vue.component('Button', Button)
 Vue.component('Icon', Icon)
 Vue.component('Input', Input)
@@ -25,10 +25,6 @@ Vue.component('Cascader', Cascader)
 Vue.component('RadioGroup', RadioGroup)
 Vue.component('Radio', Radio)
 Vue.component('iSwitch', Switch)
-Vue.component('Menu', Menu)
-Vue.component('MenuItem', MenuItem)
-Vue.component('MenuGroup', MenuGroup)
-Vue.component('Submenu', Submenu)
 Vue.component('Layout', Layout)
 Vue.component('Sider', Sider)
 

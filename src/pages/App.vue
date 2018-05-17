@@ -20,7 +20,8 @@
                         </Dropdown>
                     </div>
                 </Header>
-                <Content :style="{margin: '20px', background: '#fff', minHeight: '260px'}">
+                <x-breadcrumb></x-breadcrumb>
+                <Content :style="{margin: '20px', background: '#fff'}">
                     <router-view></router-view>
                 </Content>
             </Layout>

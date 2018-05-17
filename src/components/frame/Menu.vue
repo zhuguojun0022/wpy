@@ -142,7 +142,7 @@ export default {
 
 <style lang="less">
 .menu-comp {
-    height: 100%;
+    height: calc(~"100% - 64px");
     color: rgba(226, 222, 222, 0.698);
     .normal-box {
         overflow-y: auto;

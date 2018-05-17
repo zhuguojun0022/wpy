@@ -7,6 +7,7 @@ import './iViewImport'
 import './assets/less/main.less'
 import './assets/less/utils.less'
 import './assets/less/iview.less'
+import './assets/iconfont/iconfont.css'
 import LoginUser from './common/loginUser'
 import store from './store'
 

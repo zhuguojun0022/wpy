@@ -46,11 +46,9 @@ export default {
 </script>
 <style lang="less">
 .breadcrumb {
-    position: absolute;
-    top: -32px;
-    left: 0px;
     height: 32px;
     line-height: 32px;
+    padding: 10px 20px;
     .ivu-icon {
         margin-right: 5px;
     }

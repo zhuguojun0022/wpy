@@ -1,4 +1,4 @@
-import userManage from '../pages/infra/systemManagement/AdminUserPage'
+import userManage from '../pages/system/user-manage/AdminUserPage'
 
 export default [{
     path: 'sys/user',
