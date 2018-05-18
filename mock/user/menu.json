@@ -39,6 +39,19 @@
                     "status": true,
                     "orderNum": 5,
                     "subMenu": null
+                },
+                {
+                    "menuId": "menumanageruid",
+                    "menuCode": "MENU_MENU_MANAGE",
+                    "menuName": "菜单管理",
+                    "menuPid": "systemmanagemenuid",
+                    "menuUrl": "menuManage",
+                    "menuIcon": "",
+                    "leaf": true,
+                    "remove": false,
+                    "status": true,
+                    "orderNum": 5,
+                    "subMenu": null
                 }
             ]
         }

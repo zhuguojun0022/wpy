@@ -1,13 +1,13 @@
 <template>
 <div class="login-page">
-    <div class="content">
-        <div class="header">
-            <div class="logo-box">
-            </div>
-            <h1>管理平台</h1>
+    <header>
+        <div class="logo-box">
+            logo 区域
         </div>
-
+    </header>
+    <main class="content">
         <div class="main">
+            <h1>管理平台</h1>
             <div class="login">
                 <Form :label-width="0" :model="form">
                     <FormItem>
@@ -33,14 +33,14 @@
                 </form>
             </div>
         </div>
-    </div>
-    <div class="footer">
+    </main>
+    <footer class="footer">
         <div class="links">
         </div>
         <div class="copyright">
             Copyright <i class="icon"></i> XXXXXXX公司
         </div>
-    </div>
+    </footer>
 </div>
 </template>
 <script>
@@ -90,38 +90,30 @@ export default {
     background-repeat: no-repeat;
     background-position: center 110px;
     background-size: 100%;
-    background-color: rgb(240, 242, 245);
+
     height: 100%;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-height: 100%;
 
-    .content {
-        padding: 60px 0px 24px;
+    header {
+        .logo-box {
+            width: 800px;
+            position: relative;
+            padding: 10px 20px;
+        }
+    }
 
-        .header {
+    main {
+        padding: 100px 0 24px;
+        flex: 1 1 0%;
+
+        h1 {
             text-align: center;
-            margin-bottom: 40px;
-
-            .logo-box {
-                display: inline-block;
-                width: 80px;
-                height: 80px;
-                border-radius: 16px;
-                border: 1px solid #eee;
-            }
-
-            h1 {
-                margin: 10px 0px;
-
-                span {
-                    color: inherit;
-                    font-size: inherit;
-                    margin-right: 5px;
-                }
-            }
-
-            span {
-                color: #777;
-                font-size: 14px;
-            }
+            padding: 20px;
         }
 
         .login {
@@ -186,11 +178,8 @@ export default {
     }
 
     .footer {
-        position: absolute;
-        bottom: 0px;
-        width: 100%;
-        margin-bottom: 24px;
-        margin-top: 48px;
+        padding: 30px 0 20px;
+        text-align: center;
         color: #777;
 
         .copyright {
