@@ -1,0 +1,16 @@
+{
+    "code": "2000",
+    "msg": "ok",
+    "result": {
+        "tatalNum": 1,
+        "currentPage": 1,
+        "userList": [{
+            "channelCode": "551513515654",
+            "channelName": "一账通",
+            "status": "1",
+            "id": "6161515asd65465",
+            "contact": "联系人123",
+            "contactMode": "21454445654"
+        }]
+    }
+}

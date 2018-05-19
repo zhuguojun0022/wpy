@@ -7,28 +7,26 @@
     </header>
     <main class="content">
         <div class="main">
-            <h1>管理平台</h1>
+            <h1><i class="iconfont icon-shebao"></i> 社保卡线上平台</h1>
             <div class="login">
+                <h2>登录</h2>
                 <Form :label-width="0" :model="form">
                     <FormItem>
-                        <i class="ivu-icon ivu-icon-person"></i>
-                        <Input size="large" placeholder="请输入用户名" v-model="form.username"></Input>
+                        <Input id="t" size="large" autocomplete="off" placeholder="请输入用户名" v-model="form.username"></Input>
+                        
                     </FormItem>
                     <FormItem>
-                        <i class="ivu-icon ivu-icon-locked"></i>
-                        <Input size="large" placeholder="请输入密码" type="password" v-model="form.passwd"></Input>
+                        <!-- <i class="iconfont icon-eye_none eye-icon"></i> -->
+                        <Input size="large" autocomplete="off" placeholder="请输入密码" type="password" v-model="form.passwd"></Input>
+                        
                     </FormItem>
                     <FormItem>
-                        <i class="ivu-icon ivu-icon-checkmark-circled"></i>
                         <Input class="vcode" size="large" placeholder="请输入验证码" v-model="form.vcode" @on-enter="handleSubmit()">
                             <img slot="append" :src="imgCode" @click="getImgVCode">
                         </Input>
                     </FormItem>
-                    <FormItem class="forget">
-                        <a class="pull-right">忘记密码？</a>
-                    </FormItem>
                     <FormItem>
-                        <Button size="large" class="f-w" type="primary" @click="handleSubmit()">登录</Button>
+                        <Button size="large" class="login-btn f-w" type="primary" @click="handleSubmit()">立即登录</Button>
                     </FormItem>
                 </form>
             </div>
@@ -86,9 +84,9 @@ export default {
 </script>
 <style lang="less">
 .login-page {
-    background-image: url('../../../../static/bg.svg');
+    background-image: url('../../../../static/loginbg.jpg');
     background-repeat: no-repeat;
-    background-position: center 110px;
+    // background-position: center;
     background-size: 100%;
 
     height: 100%;
@@ -98,6 +96,13 @@ export default {
     -ms-flex-direction: column;
     flex-direction: column;
     min-height: 100%;
+
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    }
+    input:-webkit-autofill {
+        transition: background-color 5000s ease-in-out 0s;
+    }
 
     header {
         .logo-box {
@@ -111,29 +116,75 @@ export default {
         padding: 100px 0 24px;
         flex: 1 1 0%;
 
+        .main {
+            width: 400px;
+            margin: 0 auto;
+        }
+
         h1 {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px 30px 80px;
+            color: white;
+            font-size: 30px;
+            position: relative;
+            
+            i {
+                position: absolute;
+                    left: 50px;
+                    top: 10px;
+                    font-size: 60px;
+            }
         }
 
         .login {
-            width: 320px;
+            width: 400px;
             margin: 0 auto;
+            background: #fff;
+            padding: 40px 60px;
+            border-radius: 4px;
+
+            h2 {
+                color: rgb(91, 10, 241);
+                font-size: 22px;
+                border-bottom: 3px solid rgb(91, 10, 241);
+                text-align: center;
+                width: 45px;
+                margin: 0 auto;
+                margin-bottom: 20px;
+            }
+
+            .ivu-form-item {
+                margin-bottom: 0;
+            }
 
             .ivu-form-item-content {
-                .ivu-icon {
+                .eye-icon {
                     position: absolute;
-                    left: 15px;
+                    right: 6px;
                     z-index: 10;
-                    top: 16px;
-                    color: #aaa;
+                    font-size: 12px;
+                    top: 7px;
+                    color: #b7b7b7;
+                }
+                .ivu-input-icon {
+                    color: #b7b7b7;
+                }
+                .ivu-input-icon-clear {
+                    display: block;
                 }
             }
 
+            .ivu-input {
+                border: none;
+                border-bottom: 2px solid #eeeeee;
+                border-radius: 0;
+                &:focus {
+                    box-shadow: none;
+                }
+            }
             .ivu-input.ivu-input-large {
                 height: 42px;
                 color: rgba(0, 0, 0, .65);
-                padding-left: 40px;
                 background-color: #fff;
             }
 
@@ -166,12 +217,13 @@ export default {
                 }
             }
 
-            .forget {
-                margin-bottom: 16px;
-                margin-top: -8px;
+            .login-btn {
+                margin-top: 40px;
+                background: #5b0af1;
+                letter-spacing: 10px;
 
-                .ivu-form-item-content {
-                    width: 100%;
+                &:hover {
+                    background: lighten(#5b0af1, 10%);
                 }
             }
         }
