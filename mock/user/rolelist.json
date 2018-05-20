@@ -1,0 +1,87 @@
+{
+    "code": "2000",
+    "msg": "ok",
+    "result": {
+        "roleList": [{
+            "roleName": "管理员角色",
+            "roleDescribe": "管理员角色",
+            "roleId": "x01",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "经办角色",
+            "roleDescribe": "经办角色",
+            "roleId": "x0002",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "游客",
+            "roleDescribe": "游客",
+            "roleId": "x0003",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": true,
+            "lock": false
+        }, {
+            "roleName": "机构管理员",
+            "roleDescribe": "机构管理员",
+            "roleId": "x0004",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "管理员角色",
+            "roleDescribe": "管理员角色",
+            "roleId": "x01",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "经办角色",
+            "roleDescribe": "经办角色",
+            "roleId": "x0002",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "游客",
+            "roleDescribe": "游客",
+            "roleId": "x0003",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": true,
+            "lock": false
+        }, {
+            "roleName": "管理员角色",
+            "roleDescribe": "管理员角色",
+            "roleId": "x01",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "经办角色",
+            "roleDescribe": "经办角色",
+            "roleId": "x0002",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": false,
+            "lock": false
+        }, {
+            "roleName": "游客",
+            "roleDescribe": "游客",
+            "roleId": "x0003",
+            "founder": "Lee",
+            "creationTime": "2018-05-15 12:12:12",
+            "status": true,
+            "lock": false
+        }]
+    }
+}
