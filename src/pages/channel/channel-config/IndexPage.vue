@@ -29,12 +29,6 @@
             <FormItem prop="contactMode" label="联系方式" required>
                 <Input v-model.trim="channelItems.contactMode" placeholder="请输入联系方式"></Input>
             </FormItem>
-            <FormItem prop="status" label="是否启用" required>
-                <iSwitch size="large" v-model="channelItems.status">
-                    <span slot="open">启用</span>
-                    <span slot="close">停用</span>
-                </iSwitch>
-            </FormItem>
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelBaseClick(formRefBaseInfo)">取消</Button>

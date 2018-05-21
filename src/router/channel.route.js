@@ -1,5 +1,6 @@
 import ChannelConfig from '../pages/channel/channel-config/IndexPage'
 import MerchantsConfig from '../pages/channel/merchants-config/IndexPage'
+import ContractConfig from '../pages/channel/contract-config/IndexPage'
 
 export default [{
     path: 'channel/config',
@@ -15,4 +16,11 @@ export default [{
         menuCode: 'CHANNEL_MERCHANTS_CONFIG'
     },
     component: MerchantsConfig
+}, {
+    path: 'channel/contract',
+    name: 'contractConfig',
+    meta: {
+        menuCode: 'CHANNEL_CONTRACT_CONFIG'
+    },
+    component: ContractConfig
 }]
