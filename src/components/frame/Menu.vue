@@ -110,7 +110,6 @@ export default {
                 }
             })
             this.menuList = menuList
-            console.log(menuList, 3333)
         },
         firstLevalClick (pItem) {
             if (pItem.leaf) {

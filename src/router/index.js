@@ -3,7 +3,8 @@ import Router from 'vue-router'
 import App from '../pages/App'
 import Login from '../pages/infra/login/Login'
 import AdminIndexPage from '../pages/dashboard/AdminIndexPage'
-import systemManagePage from './system.route'
+import SystemManagePage from './system.route'
+import ChannelManagePage from './channel.route'
 
 Vue.use(Router)
 
@@ -23,6 +24,7 @@ export default new Router({
             },
             component: AdminIndexPage
         },
-        ...systemManagePage]
+        ...SystemManagePage,
+        ...ChannelManagePage]
     }]
 })

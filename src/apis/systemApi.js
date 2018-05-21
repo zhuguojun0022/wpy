@@ -1,12 +1,13 @@
 import http from '../config/httpConfig'
 
-function searchUserList () {
-    return http.get('/user/userlist', {mock: true})
-}
-function searchRoleList () {
-    return http.get('/user/rolelist', {mock: true})
-}
+const searchUserList = () => http.get('/user/userlist', {mock: true})
+
+const searchRoleList = () => http.get('/user/rolelist', {mock: true})
+
+const searchMenuList = () => http.get('/user/menu', {mock: true})
+
 export default {
     searchUserList,
-    searchRoleList
+    searchRoleList,
+    searchMenuList
 }

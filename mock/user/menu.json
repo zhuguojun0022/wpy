@@ -8,7 +8,7 @@
             "menuName": "系统管理",
             "menuPid": "0",
             "menuUrl": "",
-            "menuIcon": "icon-systemManage",
+            "menuIcon": "icon-xitongguanli",
             "leaf": false,
             "remove": false,
             "status": true,
@@ -39,8 +39,57 @@
                     "status": true,
                     "orderNum": 5,
                     "subMenu": null
+                },
+                {
+                    "menuId": "menumanageruid",
+                    "menuCode": "MENU_MENU_MANAGE",
+                    "menuName": "菜单管理",
+                    "menuPid": "systemmanagemenuid",
+                    "menuUrl": "menuManage",
+                    "menuIcon": "",
+                    "leaf": true,
+                    "remove": false,
+                    "status": true,
+                    "orderNum": 5,
+                    "subMenu": null
                 }
             ]
+        }, {
+            "menuId": "channelmanagemenuid",
+            "menuCode": "MENU_CHANNEL_MANAGE",
+            "menuName": "渠道管理",
+            "menuPid": "0",
+            "menuUrl": "",
+            "menuIcon": "icon-qudaoguanli",
+            "leaf": false,
+            "remove": false,
+            "status": true,
+            "orderNum": 12,
+            "subMenu": [{
+                "menuId": "channelconfiguid",
+                "menuCode": "CHANNEL_CHANNEL_CONFIG",
+                "menuName": "渠道配置",
+                "menuPid": "channelmanagemenuid",
+                "menuUrl": "channelConfig",
+                "menuIcon": "",
+                "leaf": true,
+                "remove": false,
+                "status": true,
+                "orderNum": 3,
+                "subMenu": null
+            }, {
+                "menuId": "merchantsconfiguid",
+                "menuCode": "CHANNEL_MERCHANTS_CONFIG",
+                "menuName": "商户配置",
+                "menuPid": "channelmanagemenuid",
+                "menuUrl": "merchantsConfig",
+                "menuIcon": "",
+                "leaf": true,
+                "remove": false,
+                "status": true,
+                "orderNum": 3,
+                "subMenu": null
+            }]
         }
     ]
 }
