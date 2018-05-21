@@ -1,0 +1,15 @@
+{
+    "code": "2000",
+    "msg": "ok",
+    "result": {
+        "total": 1,
+        "currentPage": 1,
+        "constractList": [{
+            "businessCode": "551513515654",
+            "businessName": "一账通",
+            "configState": "1",
+            "contractID": "6161515asd65465",
+            "merchantsType": "21454445654"
+        }]
+    }
+}

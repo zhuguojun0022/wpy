@@ -1,0 +1,15 @@
+{
+    "code": "2000",
+    "msg": "ok",
+    "result": {
+        "tatalNum": 1,
+        "currentPage": 1,
+        "userList": [{
+            "merchantsCode": "551513515654",
+            "merchantsName": "一账通",
+            "status": "1",
+            "id": "6161515asd65465",
+            "merchantsType": "21454445654"
+        }]
+    }
+}

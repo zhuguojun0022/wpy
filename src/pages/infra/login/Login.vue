@@ -13,12 +13,10 @@
                 <Form :label-width="0" :model="form">
                     <FormItem>
                         <Input id="t" size="large" autocomplete="off" placeholder="请输入用户名" v-model="form.username"></Input>
-                        
                     </FormItem>
                     <FormItem>
                         <!-- <i class="iconfont icon-eye_none eye-icon"></i> -->
                         <Input size="large" autocomplete="off" placeholder="请输入密码" type="password" v-model="form.passwd"></Input>
-                        
                     </FormItem>
                     <FormItem>
                         <Input class="vcode" size="large" placeholder="请输入验证码" v-model="form.vcode" @on-enter="handleSubmit()">
@@ -127,7 +125,6 @@ export default {
             color: white;
             font-size: 30px;
             position: relative;
-            
             i {
                 position: absolute;
                     left: 50px;

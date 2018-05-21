@@ -89,6 +89,18 @@
                 "status": true,
                 "orderNum": 3,
                 "subMenu": null
+            }, {
+                "menuId": "contractsconfiguid",
+                "menuCode": "CHANNEL_CONTRACT_CONFIG",
+                "menuName": "签约配置",
+                "menuPid": "channelmanagemenuid",
+                "menuUrl": "contractConfig",
+                "menuIcon": "",
+                "leaf": true,
+                "remove": false,
+                "status": true,
+                "orderNum": 3,
+                "subMenu": null
             }]
         }
     ]
