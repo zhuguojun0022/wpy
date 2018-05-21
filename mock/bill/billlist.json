@@ -1,0 +1,33 @@
+{
+    "msg": "成功",
+    "resultCode": "20000000",
+    "result": {
+        "tatalNum": 1,
+        "currentPage": 1,
+        "list": [{
+                "billId": "2018080521",
+                "merchants": "西安市第三医院",
+                "payChannel": "支付宝",
+                "startTime": "2018-08-15 12:30:20",
+                "endTime": "2018-08-25 12:30:20",
+                "generateTime": "2018-08-45 12:30:20",
+                "businessAmount": "38973.80",
+                "totalAmount": "38973.80|195",
+                "fees": "233.45",
+                "progress": "已核对"
+            },
+            {
+                "billId": "2018080521",
+                "merchants": "西安市第三医院",
+                "payChannel": "支付宝",
+                "startTime": "2018-08-15 12:30:20",
+                "endTime": "2018-08-25 12:30:20",
+                "generateTime": "2018-08-45 12:30:20",
+                "businessAmount": "38973.80",
+                "totalAmount": "38973.80|195",
+                "fees": "233.45",
+                "progress": "有差异"
+            }
+        ]
+    }
+}

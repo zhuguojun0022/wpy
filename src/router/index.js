@@ -5,6 +5,7 @@ import Login from '../pages/infra/login/Login'
 import AdminIndexPage from '../pages/dashboard/AdminIndexPage'
 import SystemManagePage from './system.route'
 import ChannelManagePage from './channel.route'
+import BillManagePage from './bill.route'
 
 Vue.use(Router)
 
@@ -25,6 +26,7 @@ export default new Router({
             component: AdminIndexPage
         },
         ...SystemManagePage,
-        ...ChannelManagePage]
+        ...ChannelManagePage,
+        ...BillManagePage]
     }]
 })

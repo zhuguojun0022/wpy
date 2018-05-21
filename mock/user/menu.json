@@ -102,6 +102,32 @@
                 "orderNum": 3,
                 "subMenu": null
             }]
+        }, {
+            "menuId": "billmanagemenuid",
+            "menuCode": "MENU_BILL_MANAGE",
+            "menuName": "对账管理",
+            "menuPid": "0",
+            "menuUrl": "",
+            "menuIcon": "icon-duizhangguanli",
+            "leaf": false,
+            "remove": false,
+            "status": true,
+            "orderNum": 12,
+            "subMenu": [
+                {
+                    "menuId": "usermanageruid",
+                    "menuCode": "BILL_BILL_MANAGE",
+                    "menuName": "对账",
+                    "menuPid": "billmanagemenuid",
+                    "menuUrl": "billManage",
+                    "menuIcon": "",
+                    "leaf": true,
+                    "remove": false,
+                    "status": true,
+                    "orderNum": 3,
+                    "subMenu": null
+                }
+            ]
         }
     ]
 }
