@@ -2,7 +2,7 @@ import Vue from 'vue'
 import './components/confirm'
 import {Button, Icon, Input, FormItem, Form, Dropdown, DropdownMenu, DropdownItem, Switch,
     Message, Table, Tooltip, Page, Select, Option, Row, Col, Modal, Card, Tag, RadioGroup, Radio,
-    Cascader, Layout, Sider, Tree} from 'iview'
+    Cascader, Layout, Sider, Tree, CheckboxGroup, Checkbox} from 'iview'
 Vue.component('Button', Button)
 Vue.component('Icon', Icon)
 Vue.component('Input', Input)
@@ -28,6 +28,8 @@ Vue.component('iSwitch', Switch)
 Vue.component('Layout', Layout)
 Vue.component('Sider', Sider)
 Vue.component('Tree', Tree)
+Vue.component('CheckboxGroup', CheckboxGroup)
+Vue.component('Checkbox', Checkbox)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal
