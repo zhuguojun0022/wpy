@@ -2,14 +2,16 @@
 <GPage bg>
     <table-header>
         <div slot="left">
-            <Button type="primary">新增角色</Button>
+            <Button type="primary" @click="onCreateNewRole">新增角色</Button>
         </div>
     </table-header>
     <Row :gutter="16">
-        <Col span="18"><Table highlight-row :columns="columns" :data="tableData" @on-current-change="singleClick"></Table></Col>
+        <Col span="18">
+            <Table highlight-row :columns="columns" :data="tableData" @on-current-change="singleClick"></Table>
+        </Col>
         <Col span="6" class="authorize">
-            <span>授权功能</span>
-            <Button type="primary" v-if="clickRole">保存</Button>
+            <span class="authorize-title">授权功能</span>
+            <Button type="primary" v-if="clickRole" class="authorize-save">保存</Button>
             <Tree :data="treeData" show-checkbox v-if="clickRole"></Tree>
         </Col>
     </Row>
@@ -21,21 +23,40 @@
             <FormItem prop="roleDescription" label="角色描述">
                 <Input v-model.trim="newRole.roleDescription" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
+            <FormItem prop="status" label="状态">
+                <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
+                    <span slot="open">启用</span>
+                    <span slot="close">停用</span>
+                </iSwitch>
+            </FormItem>
+
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
             <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
         </div>
     </Modal>
+    <Modal v-model="authorizedUserShow" :title="authorizedUserTitle" ref="modal">
+        <table-header>
+            <div slot="left">
+                <Input icon="ios-search" placeholder="用户名/姓名" style="width: 200px" @on-change="filterName"></Input>
+                <Button type="primary" @click="onCreateNewUser">新建用户</Button>
+            </div>
+        </table-header>
+        <Table :columns="userColumns" :data="tableUserData"></Table>
+        <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
+    </Modal>
+    <Modal v-model="reNewRoleShow" ref="modal">
+
+    </Modal>
 </GPage>
 </template>
 <script>
-import { TableHeader } from '../../../components/table'
-import {userStatus} from '../../../common/consts'
+import { TableHeader, TableFooter } from '../../../components/table'
 import {mapMutations} from 'vuex'
 import {infraApi, systemApi} from '../../../apis'
 export default {
-    components: {TableHeader},
+    components: {TableHeader, TableFooter},
     data () {
         return {
             tableData: [],
@@ -77,7 +98,7 @@ export default {
                             type: 'primary',
                             on: {
                                 click: () => {
-                                    this.reviseClick(row.id)
+                                    this.reviseClick(row)
                                 }
                             }
                         }, {
@@ -85,7 +106,7 @@ export default {
                             type: 'primary',
                             on: {
                                 click: () => {
-                                    this.authorizedUserClick(row.id)
+                                    this.authorizedUserClick(row)
                                 }
                             }
                         }, {
@@ -93,7 +114,7 @@ export default {
                             type: 'error',
                             on: {
                                 click: () => {
-                                    this.deleteClick(row.id)
+                                    this.deleteClick(row)
                                 }
                             }
                         }])
@@ -104,6 +125,7 @@ export default {
             clickRole: false,
             newRoleShow: false,
             newRoleTitle: '新建角色',
+            reNewRoleShow: false,
             modal_loading: false,
             formRef: 'addrole',
             newRole: {},
@@ -113,7 +135,28 @@ export default {
                     {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/, message: '只能包含中文、字母、数字、_', trigger: 'blur'}
                 ]
             },
-            userStatus: userStatus
+            authorizedUserShow: false,
+            authorizedUserTitle: '授权用户',
+            currentPage: 1,
+            totalNum: 10,
+            tableUserData: [],
+            userColumns: [
+                {title: '已授权用户名(姓名)', key: 'authorizedUserName'},
+                {
+                    title: '操作',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            label: '删除',
+                            type: 'error',
+                            on: {
+                                click: () => {
+                                    this.deleteClick(row)
+                                }
+                            }
+                        }])
+                    }
+                }
+            ]
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -125,9 +168,8 @@ export default {
         })
     },
     created () {
-        systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.roleList
-        })
+        this.searchRoleList()
+        this.searchRoleList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -185,7 +227,7 @@ export default {
             row.status = val
             this.$Modal.confirm({
                 title: '状态信息修改确认',
-                content: `您将${row.status ? '启用' : '停用'}该用户，是否继续？`,
+                content: `您将${row.status ? '启用' : '停用'}该角色，是否继续？`,
                 closable: false,
                 onOk: () => {
                     this.$Modal.remove()
@@ -197,23 +239,92 @@ export default {
                     })
                 }
             })
+        },
+        reOnStatusChange (val) {
+            this.newRole.status = val
+            this.$Modal.confirm({
+                title: '状态信息修改确认',
+                content: `您将${val ? '启用' : '停用'}该角色，是否继续？`,
+                closable: false,
+                onOk: () => {
+                    this.$Modal.remove()
+                },
+                onCancel: () => {
+                    this.newRole.status = !val
+                }
+            })
+        },
+        onCreateNewRole () {
+            this.newRoleShow = true
+            this.newRoleTitle = '新建角色'
+            this.newRole = {}
+            this.newRole.status = true
+        },
+        onCancelClick (role) {
+            this.$refs[role].resetFields()
+            this.newRoleShow = false
+            this.newRoleTitle = '新建角色'
+        },
+        onSubmitClick (role) {
+            this.$refs[role].validate((valid) => {
+                if (valid) {
+                    this.$Message.success('Success!')
+                } else {
+                    this.$Message.error('Fail!')
+                }
+            })
+        },
+        reviseClick (row) {
+            this.newRole = {...row}
+            console.log(this.newRole)
+            this.newRoleTitle = '修改角色'
+            this.newRoleShow = true
+        },
+        deleteClick (row) {
+            this.$Modal.confirm({
+                title: '删除信息确认',
+                content: `您是否确认删除选中的此条数据？`,
+                closable: false,
+                onOk: () => {
+                    this.$Modal.remove()
+                    // TODO 刷新数据
+                },
+                onCancel: () => {
+                    this.selectedRows = []
+                }
+            })
+        },
+        authorizedUserClick (row) {
+            this.authorizedUserShow = true
+        },
+        searchRoleList () {
+            systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
+            this.tableData = result.roleList
+        })
+        },
+        authorizedUserList () {
+            systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
+            this.tableUserData = result.authorizedUserList
+            this.totalNum = result.authorizedUserList.totalNum
+        })
         }
     },
     mounted () {
         this.loadData()
-    }
+    },
+    computed: {}
 }
 </script>
 
 <style  lang="less" scoped>
 .authorize{
     border: 1px solid #dddee1;
-    span {
+    &-title {
         font-weight: bold;
         height: 40px;
         line-height: 40px;
     }
-    button {
+    &-save {
         float: right;
         margin-top: 6px;
     }

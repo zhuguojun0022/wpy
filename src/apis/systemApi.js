@@ -16,6 +16,8 @@ const searchRoleList = () => http.get('/user/rolelist', {mock: true})
 
 const searchMenuList = () => http.get('/user/menu', {mock: true})
 
+const authorizedUserList = () => http.get('/user/authorizedUserlist', {mock: true})
+
 export default {
     searchUserList,
     addUserInfo,
@@ -24,5 +26,6 @@ export default {
     updateUserState,
     resetUserPwd,
     searchRoleList,
-    searchMenuList
+    searchMenuList,
+    authorizedUserList
 }
