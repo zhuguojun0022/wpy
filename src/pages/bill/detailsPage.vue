@@ -210,15 +210,8 @@ export default {
         })
     },
     created () {
-        billApi.searchReconciliation().then(({data: {result, code, msg}}) => {
-            // this.tableData = result.list
-            let reconciliation = '平账'
-            this.tableDataClon = result.list
-            this.totalNum = result.totalNum
-            this.tableData = this.tableDataClon.filter(item => {
-                return reconciliation.includes(item.checkState)
-            })
-        })
+        this.searchReconciliation()
+        this.searchBilllDetails()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -240,13 +233,23 @@ export default {
             console.log(this.errorHandling)
             this.errorHandlTitle = '差错处理'
             this.errorHandlShow = true
-        }
-    },
-    mounted () {
-        billApi.searchBilllDetails().then(({data: {result, code, msg}}) => {
+        },
+        searchBilllDetails () {
+            billApi.searchBilllDetails().then(({data: {result, code, msg}}) => {
             this.detailsTableData = result.listty
         })
-        // alert(this.$route.params.id)
+        },
+        searchReconciliation () {
+            billApi.searchReconciliation().then(({data: {result, code, msg}}) => {
+            // this.tableData = result.list
+            let reconciliation = '平账'
+            this.tableDataClon = result.list
+            this.totalNum = result.totalNum
+            this.tableData = this.tableDataClon.filter(item => {
+                return reconciliation.includes(item.checkState)
+            })
+        })
+        }
     },
     computed: {},
     filters: {

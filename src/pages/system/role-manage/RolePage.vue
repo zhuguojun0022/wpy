@@ -168,14 +168,8 @@ export default {
         })
     },
     created () {
-        systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.roleList
-        })
-        systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
-            this.tableUserData = result.authorizedUserList
-            this.totalNum = result.authorizedUserList.totalNum
-            console.log(this.totalNum)
-        })
+        this.searchRoleList()
+        this.searchRoleList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -246,9 +240,6 @@ export default {
                 }
             })
         },
-        testDd () {
-            alert(123)
-        },
         reOnStatusChange (val) {
             this.newRole.status = val
             this.$Modal.confirm({
@@ -305,6 +296,17 @@ export default {
         },
         authorizedUserClick (row) {
             this.authorizedUserShow = true
+        },
+        searchRoleList () {
+            systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
+            this.tableData = result.roleList
+        })
+        },
+        authorizedUserList () {
+            systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
+            this.tableUserData = result.authorizedUserList
+            this.totalNum = result.authorizedUserList.totalNum
+        })
         }
     },
     mounted () {
