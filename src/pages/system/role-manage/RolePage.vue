@@ -23,8 +23,8 @@
             <FormItem prop="roleDescription" label="角色描述">
                 <Input v-model.trim="newRole.roleDescription" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
-            <FormItem prop="status" label="状态" @on-change="onStatusChange()">
-                <iSwitch size="large" v-model="newRole.status">
+            <FormItem prop="status" label="状态">
+                <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
                     <span slot="open">启用</span>
                     <span slot="close">停用</span>
                 </iSwitch>
@@ -46,11 +46,13 @@
         <Table :columns="userColumns" :data="tableUserData"></Table>
         <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
     </Modal>
+    <Modal v-model="reNewRoleShow" ref="modal">
+
+    </Modal>
 </GPage>
 </template>
 <script>
 import { TableHeader, TableFooter } from '../../../components/table'
-import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
 import {infraApi, systemApi} from '../../../apis'
 export default {
@@ -123,6 +125,7 @@ export default {
             clickRole: false,
             newRoleShow: false,
             newRoleTitle: '新建角色',
+            reNewRoleShow: false,
             modal_loading: false,
             formRef: 'addrole',
             newRole: {},
@@ -134,7 +137,6 @@ export default {
             },
             authorizedUserShow: false,
             authorizedUserTitle: '授权用户',
-            userStatus: userStatus,
             currentPage: 1,
             totalNum: 10,
             tableUserData: [],
@@ -231,7 +233,7 @@ export default {
             row.status = val
             this.$Modal.confirm({
                 title: '状态信息修改确认',
-                content: `您将${row.status ? '启用' : '停用'}该用户，是否继续？`,
+                content: `您将${row.status ? '启用' : '停用'}该角色，是否继续？`,
                 closable: false,
                 onOk: () => {
                     this.$Modal.remove()
@@ -241,6 +243,23 @@ export default {
                     this.$nextTick(() => {
                         row.status = !val
                     })
+                }
+            })
+        },
+        testDd () {
+            alert(123)
+        },
+        reOnStatusChange (val) {
+            this.newRole.status = val
+            this.$Modal.confirm({
+                title: '状态信息修改确认',
+                content: `您将${val ? '启用' : '停用'}该角色，是否继续？`,
+                closable: false,
+                onOk: () => {
+                    this.$Modal.remove()
+                },
+                onCancel: () => {
+                    this.newRole.status = !val
                 }
             })
         },

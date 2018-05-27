@@ -1,72 +1,69 @@
 <template>
-<GPage bg>
-    <!-- <table-header>
-        <div slot="left">
-            <span class="title">对账详情</span>
-        </div>
-    </table-header> -->
+<GPage bg class="bill-details-page">
     <template>
-        <h5>对账记录</h5>
-        <ul class="reconciliation clear-both fl-width" v-for="item in detailsTableData" :key="item">
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">收单商户</p>
-                <span class="reconciliation-span"> {{item.merchants}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">商户号</p>
-                <span class="reconciliation-span"> {{item.merchantsCode}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">对账日期</p>
-                <span class="reconciliation-span"> {{item.checkDate}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">对账进度</p>
-                <span class="reconciliation-span"> {{item.progress}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">支付渠道</p>
-                <span> {{item.payChannel}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">渠道账单生成时间</p>
-                <span class="reconciliation-span"> {{item.generateTime}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">对账开始时间</p>
-                <span class="reconciliation-span"> {{item.startTime}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">对账结束时间</p>
-                <span class="reconciliation-span"> {{item.endTime}} </span>
-            </li>
-        </ul>
-        <ul class="reconciliation clear-both" v-for="item in detailsTableData"  :key="item">
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">总收入金额</p>
-                <span class="reconciliation-span"> ￥{{item.totalAmount | filterMoney}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">总收入笔数</p>
-                <span class="reconciliation-span"> {{item.totalAmount | filterNum}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">总退款金额</p>
-                <span class="reconciliation-span"> ￥{{item.totalRefunds | filterMoney}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">总退款笔数</p>
-                <span class="reconciliation-span"> {{item.totalRefunds | filterNum}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">渠道手续费</p>
-                <span class="reconciliation-span"> ￥{{item.fees}} </span>
-            </li>
-            <li class="reconciliation-li">
-                <p class="reconciliation-p">净交易额</p>
-                <span class="reconciliation-span"> ￥{{item.businessAmount}} </span>
-            </li>
-        </ul>
+        <div class="clearfix">
+            <h5>对账记录</h5>
+            <ul class="reconciliation pull-left" v-for="item in detailsTableData" :key="item" style="width: 50%">
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">收单商户</p>
+                    <span class="reconciliation-span"> {{item.merchants}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">商户号</p>
+                    <span class="reconciliation-span"> {{item.merchantsCode}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">对账日期</p>
+                    <span class="reconciliation-span"> {{item.checkDate}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">对账进度</p>
+                    <span class="reconciliation-span"> {{item.progress}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">支付渠道</p>
+                    <span> {{item.payChannel}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">渠道账单生成时间</p>
+                    <span class="reconciliation-span"> {{item.generateTime}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">对账开始时间</p>
+                    <span class="reconciliation-span"> {{item.startTime}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">对账结束时间</p>
+                    <span class="reconciliation-span"> {{item.endTime}} </span>
+                </li>
+            </ul>
+            <ul class="reconciliation pull-left" v-for="item in detailsTableData"  :key="item">
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">总收入金额</p>
+                    <span class="reconciliation-span"> ￥{{item.totalAmount | filterMoney}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">总收入笔数</p>
+                    <span class="reconciliation-span"> {{item.totalAmount | filterNum}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">总退款金额</p>
+                    <span class="reconciliation-span"> ￥{{item.totalRefunds | filterMoney}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">总退款笔数</p>
+                    <span class="reconciliation-span"> {{item.totalRefunds | filterNum}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">渠道手续费</p>
+                    <span class="reconciliation-span"> ￥{{item.fees}} </span>
+                </li>
+                <li class="reconciliation-li">
+                    <p class="reconciliation-p">净交易额</p>
+                    <span class="reconciliation-span"> ￥{{item.businessAmount}} </span>
+                </li>
+            </ul>
+        </div>
     </template>
     <template>
         <h5>核对结果</h5>
@@ -215,10 +212,11 @@ export default {
     created () {
         billApi.searchReconciliation().then(({data: {result, code, msg}}) => {
             // this.tableData = result.list
+            let reconciliation = '平账'
             this.tableDataClon = result.list
             this.totalNum = result.totalNum
             this.tableData = this.tableDataClon.filter(item => {
-                return '平账'.includes(item.checkState)
+                return reconciliation.includes(item.checkState)
             })
         })
     },
@@ -226,11 +224,11 @@ export default {
         ...mapMutations(['resetBreadcrumb']),
         handleCurrentChange () {},
         changeTableColumns (checkAll) {
-            var tableDataClon = this.tableDataClon
+            let tableDataClon = this.tableDataClon
             if (checkAll.length === 0) {
                 this.tableData = tableDataClon
             } else {
-                var newtableData = tableDataClon.filter(item => {
+                let newtableData = tableDataClon.filter(item => {
                     return checkAll.includes(item.checkState)
                 })
                 this.tableData = newtableData
@@ -264,10 +262,7 @@ export default {
 }
 </script>
 <style lang="less">
-.title{
-    font-size: 14px;
-    font-weight: bold;
-}
+.bill-details-page{
 .reconciliation{
     &-li{
         list-style: none;
@@ -282,14 +277,12 @@ export default {
         padding: 10px 0;
     }
 }
-.fl-width{
-    width: 50%;
-    float: left;
-}
-.clear-both:after{
-    content: '';
-    display: block;
-    clear: both;
+.check-group{
+        margin: 10px 0;
+        &-title{
+            margin-right: 8px;
+        }
+    }
 }
 .bill-details{
     .ivu-input[disabled]{
@@ -322,10 +315,4 @@ export default {
         }
     }
 }
-.check-group{
-        margin: 10px 0;
-        &-title{
-            margin-right: 8px;
-        }
-    }
 </style>
