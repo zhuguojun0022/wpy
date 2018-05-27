@@ -2,7 +2,7 @@
 <div class="ivu-breadcrumb breadcrumb">
     <span v-for="data in breadcrumbData" :key="data.name">
         <a class="ivu-breadcrumb-item-link">
-            <Icon :type="data.icon"></Icon>{{data.name}}
+            <i class="iconfont" :class="data.icon"></i>{{data.name}}
         </a>
         <span class="ivu-breadcrumb-item-separator"></span>
     </span>
@@ -44,13 +44,14 @@ export default {
     }
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .breadcrumb {
     height: 32px;
     line-height: 32px;
     padding: 10px 20px;
-    .ivu-icon {
+    .iconfont {
         margin-right: 5px;
+        font-size: 12px;
     }
 }
 </style>

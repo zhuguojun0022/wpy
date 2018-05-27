@@ -151,7 +151,7 @@ export default {
         next(vm => {
             vm.resetBreadcrumb({
                 name: to.name,
-                icon: 'home'
+                icon: 'icon-xitongguanli'
             })
         })
     },
