@@ -150,10 +150,7 @@ export default {
         })
     },
     created () {
-        channelApi.searchContractList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.constractList
-            this.totalNum = result.total
-        })
+        this.searchContractList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -178,6 +175,12 @@ export default {
                 } else {
                     this.$Message.error('Fail!')
                 }
+            })
+        },
+        searchContractList () {
+            channelApi.searchContractList().then(({data: {result, code, msg}}) => {
+                this.tableData = result.constractList
+                this.totalNum = result.total
             })
         }
     }

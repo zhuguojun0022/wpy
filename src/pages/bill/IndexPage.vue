@@ -87,10 +87,7 @@ export default {
         })
     },
     created () {
-        billApi.searchBillList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.list
-            this.totalNum = result.totalNum
-        })
+        this.searchBillList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -109,6 +106,12 @@ export default {
                 params: {
                     id: id
                 }
+            })
+        },
+        searchBillList () {
+            billApi.searchBillList().then(({data: {result, code, msg}}) => {
+                this.tableData = result.list
+                this.totalNum = result.totalNum
             })
         }
     }

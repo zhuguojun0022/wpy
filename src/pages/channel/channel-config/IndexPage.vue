@@ -144,10 +144,7 @@ export default {
         })
     },
     created () {
-        channelApi.searchChannelList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.userList
-            this.totalNum = result.totalNum
-        })
+        this.searchChannelList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -192,6 +189,12 @@ export default {
                 } else {
                     this.$Message.error('Fail!')
                 }
+            })
+        },
+        searchChannelList () {
+            channelApi.searchChannelList().then(({data: {result, code, msg}}) => {
+                this.tableData = result.userList
+                this.totalNum = result.totalNum
             })
         }
     }

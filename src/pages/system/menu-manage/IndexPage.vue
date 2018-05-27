@@ -68,9 +68,7 @@ export default {
         })
     },
     created () {
-        systemApi.searchMenuList().then(({data: {result, code, msg}}) => {
-            this.menuList = this.dataFilter(result)
-        })
+        this.searchMenuList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -117,6 +115,11 @@ export default {
                 } else {
                     this.$Message.error('Fail!')
                 }
+            })
+        },
+        searchMenuList () {
+            systemApi.searchMenuList().then(({data: {result, code, msg}}) => {
+                this.menuList = this.dataFilter(result)
             })
         }
     }

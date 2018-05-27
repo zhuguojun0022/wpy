@@ -1,10 +1,10 @@
 <template>
 <div class="login-page">
-    <header>
+    <!-- <header>
         <div class="logo-box">
             logo 区域
         </div>
-    </header>
+    </header> -->
     <main class="content">
         <div class="main">
             <h1><i class="iconfont icon-shebao"></i> 社保卡线上平台</h1>
@@ -30,13 +30,13 @@
             </div>
         </div>
     </main>
-    <footer class="footer">
+    <!-- <footer class="footer">
         <div class="links">
         </div>
         <div class="copyright">
             Copyright <i class="icon"></i> XXXXXXX公司
         </div>
-    </footer>
+    </footer> -->
 </div>
 </template>
 <script>
@@ -82,12 +82,13 @@ export default {
 </script>
 <style lang="less">
 .login-page {
-    background-image: url('../../../../static/loginbg.jpg');
-    background-repeat: no-repeat;
-    // background-position: center;
-    background-size: 100%;
+    background:url(../../../../static/loginbg.jpg) no-repeat;
+    width:100%;
+    height:100%;
+    background-size:100% 100%;
+    position:absolute;
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../../../static/loginbg.jpg',sizingMethod='scale');
 
-    height: 100%;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;

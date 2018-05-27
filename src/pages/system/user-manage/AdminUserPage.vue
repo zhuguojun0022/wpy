@@ -156,10 +156,7 @@ export default {
         })
     },
     created () {
-        systemApi.searchUserList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.userList
-            this.totalNum = result.totalNum
-        })
+        this.searchUserList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -227,6 +224,17 @@ export default {
                 } else {
                     this.$Message.error('Fail!')
                 }
+            })
+        },
+        searchUserList () {
+            systemApi.searchUserList().then(({data: {result, code, msg}}) => {
+                this.tableData = result.userList
+                this.totalNum = result.totalNum
+            })
+        },
+        addUserInfo () {
+            systemApi.addUserInfo().then(({data: {result, code, msg}}) => {
+                // TODO
             })
         }
     }

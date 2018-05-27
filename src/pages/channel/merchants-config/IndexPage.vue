@@ -116,10 +116,7 @@ export default {
         })
     },
     created () {
-        channelApi.searchMerchantsList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.userList
-            this.totalNum = result.totalNum
-        })
+        this.searchMerchantsList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -147,6 +144,12 @@ export default {
                 } else {
                     this.$Message.error('Fail!')
                 }
+            })
+        },
+        searchMerchantsList () {
+            channelApi.searchMerchantsList().then(({data: {result, code, msg}}) => {
+                this.tableData = result.userList
+                this.totalNum = result.totalNum
             })
         }
     }
