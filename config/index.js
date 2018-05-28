@@ -11,10 +11,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/admin-api': {
+        '/admin': {
             target: `http://${host}`,
             pathRewrite: {
-                '^/admin-api' : ''
+                '^/admin' : ''
             }
             // onProxyReq (proxyReq, req, res) {
             //     proxyReq.setHeader('Host', host)

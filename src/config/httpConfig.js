@@ -10,7 +10,7 @@ axios.defaults.timeout = 10000
 axios.defaults.headers = {'cache-control': 'no-cache'}
 
 const originMap = {
-    api: '/admin-api'
+    api: '/admin'
 }
 
 const getURL = (url, origin = 'api', mock = false) => {
