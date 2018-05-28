@@ -34,13 +34,13 @@
                     <Option v-for="item in roleList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
             </FormItem>
-            <FormItem prop="phoneNum" label="手机号" required>
+            <FormItem prop="phoneNum" label="手机号">
                 <Input v-model.trim="newUser.phoneNum" placeholder="请输入手机号（可选）"></Input>
             </FormItem>
-            <FormItem prop="email" label="邮箱" required>
+            <FormItem prop="email" label="邮箱">
                 <Input v-model.trim="newUser.email" placeholder="请输入邮箱（可选）"></Input>
             </FormItem>
-            <FormItem prop="status" label="邮箱" required>
+            <FormItem prop="status" label="状态" required>
                 <iSwitch size="large" v-model="newUser.status">
                     <span slot="open">启用</span>
                     <span slot="close">停用</span>
@@ -133,11 +133,11 @@ export default {
             formRef: 'adduser',
             newUser: {},
             ruleValidate: {
-                username: [
+                userCode: [
                     {required: true, message: '必填项', trigger: 'blur'},
                     {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
                 ],
-                nickname: [
+                userName: [
                     {required: true, message: '必填项', trigger: 'blur'},
                     {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/, message: '只能包含中文、字母、数字、_', trigger: 'blur'}
                 ],

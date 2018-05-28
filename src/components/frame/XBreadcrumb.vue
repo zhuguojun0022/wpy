@@ -49,6 +49,14 @@ export default {
     height: 32px;
     line-height: 32px;
     padding: 10px 20px;
+
+    a {
+        &:hover {
+            color: #495060;
+            cursor: default;
+        }
+    }
+
     .iconfont {
         margin-right: 5px;
         font-size: 12px;
