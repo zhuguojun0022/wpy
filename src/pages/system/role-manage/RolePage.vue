@@ -299,14 +299,14 @@ export default {
         },
         searchRoleList () {
             systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
-            this.tableData = result.roleList
-        })
+                this.tableData = result.roleList
+            })
         },
         authorizedUserList () {
             systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
-            this.tableUserData = result.authorizedUserList
-            this.totalNum = result.authorizedUserList.totalNum
-        })
+                this.tableUserData = result.authorizedUserList
+                this.totalNum = result.authorizedUserList.totalNum
+            })
         }
     },
     mounted () {

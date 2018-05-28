@@ -236,19 +236,19 @@ export default {
         },
         searchBilllDetails () {
             billApi.searchBilllDetails().then(({data: {result, code, msg}}) => {
-            this.detailsTableData = result.listty
-        })
+                this.detailsTableData = result.listty
+            })
         },
         searchReconciliation () {
             billApi.searchReconciliation().then(({data: {result, code, msg}}) => {
-            // this.tableData = result.list
-            let reconciliation = '平账'
-            this.tableDataClon = result.list
-            this.totalNum = result.totalNum
-            this.tableData = this.tableDataClon.filter(item => {
-                return reconciliation.includes(item.checkState)
+                // this.tableData = result.list
+                let reconciliation = '平账'
+                this.tableDataClon = result.list
+                this.totalNum = result.totalNum
+                this.tableData = this.tableDataClon.filter(item => {
+                    return reconciliation.includes(item.checkState)
+                })
             })
-        })
         }
     },
     computed: {},
