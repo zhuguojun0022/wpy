@@ -37,47 +37,44 @@
                     <span class="reconciliation-span"> {{item.endTime}} </span>
                 </li>
             </ul>
-            <ul class="reconciliation pull-left" v-for="item in detailsTableData"  :key="item">
+            <ul class="reconciliation pull-left reconciliation-right" v-for="item in detailsTableData"  :key="item">
                 <li class="reconciliation-li">
-                    <p class="reconciliation-p">总收入金额</p>
+                    <p class="reconciliation-right-p">总收入金额</p>
                     <span class="reconciliation-span"> ￥{{item.totalAmount | filterMoney}} </span>
                 </li>
                 <li class="reconciliation-li">
-                    <p class="reconciliation-p">总收入笔数</p>
+                    <p class="reconciliation-right-p">总收入笔数</p>
                     <span class="reconciliation-span"> {{item.totalAmount | filterNum}} </span>
                 </li>
                 <li class="reconciliation-li">
-                    <p class="reconciliation-p">总退款金额</p>
+                    <p class="reconciliation-right-p">总退款金额</p>
                     <span class="reconciliation-span"> ￥{{item.totalRefunds | filterMoney}} </span>
                 </li>
                 <li class="reconciliation-li">
-                    <p class="reconciliation-p">总退款笔数</p>
+                    <p class="reconciliation-right-p">总退款笔数</p>
                     <span class="reconciliation-span"> {{item.totalRefunds | filterNum}} </span>
                 </li>
                 <li class="reconciliation-li">
-                    <p class="reconciliation-p">渠道手续费</p>
+                    <p class="reconciliation-right-p">渠道手续费</p>
                     <span class="reconciliation-span"> ￥{{item.fees}} </span>
                 </li>
                 <li class="reconciliation-li">
-                    <p class="reconciliation-p">净交易额</p>
+                    <p class="reconciliation-right-p">净交易额</p>
                     <span class="reconciliation-span"> ￥{{item.businessAmount}} </span>
                 </li>
             </ul>
         </div>
     </template>
     <template>
-        <h5>核对结果</h5>
-        <Checkbox-group v-model="checkAll" @on-change="changeTableColumns" class="check-group">
+        <div class="check-result">
+            <h5>核对结果</h5>
             <span class="check-group-title">核对状态</span>
-            <Checkbox label="平账">平账</Checkbox>
-            <Checkbox label="差异账">差异账</Checkbox>
-            <Checkbox label="人工平账">人工平账</Checkbox>
-            <Checkbox label="单边账">单边账</Checkbox>
-            <Checkbox label="支付渠道单边账">支付渠道单边账</Checkbox>
-            <Checkbox label="待对账">待对账</Checkbox>
-        </Checkbox-group>
-        <Table :columns="columns" :data="tableData"></Table>
-        <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
+            <Checkbox-group v-model="checkAll" @on-change="changeTableColumns" class="check-group">
+                <Checkbox :label="checkbox.value" v-for="checkbox in checkboxGroup">{{checkbox.value}}</Checkbox>
+            </Checkbox-group>
+            <Table :columns="columns" :data="tableData"></Table>
+            <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
+        </div>
     </template>
     <Modal v-model="errorHandlShow" :title="errorHandlTitle" ref="modal" class="bill-details">
         <Form :model="errorHandling" :label-width="90" class="chacuochuli" label-position="left">
@@ -152,6 +149,14 @@ export default {
     name: 'billDetails',
     data () {
         return {
+            checkboxGroup: [
+                {value: '平账'},
+                {value: '差异账'},
+                {value: '人工平账'},
+                {value: '单边账'},
+                {value: '支付渠道单边账'},
+                {value: '待对账'}
+            ],
             detailsTableData: [],
             checkAll: ['平账'],
             tableDataClon: [],
@@ -179,7 +184,7 @@ export default {
                 {title: '差错内容', key: 'errorContent', width: 100},
                 {title: '差错处理描述', key: 'errorProcessDescribe', width: 160},
                 {title: '差错处理时间', key: 'errorProcessTime', width: 160},
-                {title: '差错处理前核对状态', key: 'beforeErrorState', width: 160},
+                {title: '差错处理前核对状态', key: 'beforeErrorState', width: 160, fixed: 'right'},
                 {
                     title: '操作',
                     width: 140,
@@ -280,12 +285,24 @@ export default {
         padding: 10px 0;
     }
 }
+.reconciliation-right{
+    &-p{
+        display: inline-block;
+        width: 100px;
+        padding: 10px 0;
+        color: #999999;
+    }
+}
 .check-group{
         margin: 10px 0;
+        display: inline-block;
         &-title{
             margin-right: 8px;
         }
     }
+.check-result{
+    margin: 20px 0;
+}
 }
 .bill-details{
     .ivu-input[disabled]{
