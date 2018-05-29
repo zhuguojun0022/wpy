@@ -2,15 +2,22 @@ import Vue from 'vue'
 import axios from 'axios'
 import {Message} from 'iview'
 import router from '../router'
+import { getToken } from '../common/utils'
 
 Vue.prototype.$axios = axios
 
-axios.defaults.baseURL = '/'
-axios.defaults.timeout = 10000
-axios.defaults.headers = {'cache-control': 'no-cache'}
+const server = axios.create({
+    baseURL: '/',
+    timeout: 30000,
+    headers: {
+        'Cache-Control': 'no-cache',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json;charset=utf-8'
+    }
+})
 
 const originMap = {
-    api: '/admin'
+    api: process.env.NODE_ENV === 'production' ? '' : '/admin'
 }
 
 const getURL = (url, origin = 'api', mock = false) => {
@@ -25,7 +32,10 @@ function replaceRequestURL (config) {
 }
 
 // 公共拦截器
-axios.interceptors.request.use(config => {
+server.interceptors.request.use(config => {
+    if (getToken()) {
+        config.headers['X-TOKEN'] = getToken()
+    }
     replaceRequestURL(config)
     return config
 }, error => {
@@ -42,7 +52,7 @@ function clientErrorProcess (response) {
     }
 }
 
-axios.interceptors.response.use(response => {
+server.interceptors.response.use(response => {
     const {config, data} = response
     if (data && data.code &&
         (data.code.startsWith('4') || data.code.startsWith('5'))) {
@@ -70,4 +80,4 @@ axios.interceptors.response.use(response => {
     return Promise.reject(error)
 })
 
-export default axios
+export default server

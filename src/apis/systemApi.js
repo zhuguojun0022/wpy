@@ -1,16 +1,26 @@
 import http from '../config/httpConfig'
 
-const searchUserList = () => http.get('/user/userlist', {mock: true})
+const searchUserList = (pageSize, currentPage, userAdminName, roleId, userAdminStatus) => http.post(`/useradmin/query`, {
+    pageSize, currentPage, userAdminName, roleId, userAdminStatus
+})
 
-const addUserInfo = () => http.post('', {})
+const searchDownRoleList = () => http.get('/useradmin/queryUserNoAuthRoles')
 
-const updateUserInfo = () => http.post('', {})
+const addUserInfo = (userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus) => http.post('/useradmin/add', {
+    userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus
+})
 
-const deleteUserInfo = () => http.post('', {})
+const updateUserInfo = (userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus) => http.post('/useradmin/modifyUserAdmin', {
+    userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus
+})
 
-const updateUserState = () => http.post('', {})
+const deleteUserInfo = (userIds) => http.post('/useradmin/delUserAdmin', {userIds})
 
-const resetUserPwd = () => http.post('', {})
+const updateUserState = (userAdminId, userAdminStatus) => http.post('/useradmin/setUserAdminStatus', {
+    userAdminId, userAdminStatus
+})
+
+const resetUserPwd = (userAdminId) => http.post('/useradmin/resetAdminPwd', {userAdminId})
 
 const searchRoleList = () => http.get('/user/rolelist', {mock: true})
 
@@ -20,6 +30,7 @@ const authorizedUserList = () => http.get('/user/authorizedUserlist', {mock: tru
 
 export default {
     searchUserList,
+    searchDownRoleList,
     addUserInfo,
     updateUserInfo,
     deleteUserInfo,

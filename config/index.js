@@ -3,7 +3,8 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
-const host = "localhost:18080"
+// const host = "localhost:18080"
+const host = "11.240.240.33:8091"
 
 module.exports = {
   dev: {
@@ -12,13 +13,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/admin': {
-            target: `http://${host}`,
+            target: 'http://' + host + '/',
+            changeOrigin: true,
             pathRewrite: {
-                '^/admin' : ''
+                '^/admin' : '/admin'
             }
-            // onProxyReq (proxyReq, req, res) {
-            //     proxyReq.setHeader('Host', host)
-            // }
         },
         '/mock': 'http://localhost:18080'
     },
@@ -61,7 +60,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/admin/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

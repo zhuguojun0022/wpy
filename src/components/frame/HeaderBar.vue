@@ -12,24 +12,31 @@
 </div>
 </template>
 <script>
+import {loginOut} from '../../common/utils'
 export default {
+    name: 'header-bar',
     data () {
-        this.$getLoginUser().then((user) => {
-            this.user = user
-        })
         return {
             user: {}
         }
     },
+    mounted () {
+        console.log(this.$getLoginUser())
+        // this.$getLoginUser().then((user) => {
+        //     console.log(user)
+        //     this.user = user
+        // })
+    },
     methods: {
         onLogout () {
+            loginOut()
             this.$router.replace('/login')
         }
     }
 }
 </script>
 <style lang="less">
-@header-height:52px;
+@header-height:64px;
 .header-bar {
     background: #fff;
     height: @header-height;
@@ -38,9 +45,9 @@ export default {
     .user-box {
         float: right;
         height: @header-height;
-        padding: 10px;
+        // padding: 10px;
         width: 120px;
-        line-height: 32px;
+        line-height: @header-height;
         text-align: center;
         .name {
             font-weight: bold;
