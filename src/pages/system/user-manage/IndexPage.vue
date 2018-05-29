@@ -52,13 +52,13 @@
 </GPage>
 </template>
 <script>
-import {TableHeader, TableFooter, TableSwitch} from '../../../components/table'
+import {TableHeader, TableFooter} from '../../../components/table'
 import {systemApi} from '../../../apis/'
 import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
 
 export default {
-    components: {TableHeader, TableFooter, TableSwitch},
+    components: {TableHeader, TableFooter},
     data () {
         return {
             filterName: '',
@@ -129,7 +129,7 @@ export default {
                             type: 'primary',
                             on: {
                                 click: () => {
-                                    this.onResetPasswordClick(row.id)
+                                    this.onResetPasswordClick(row)
                                 }
                             }
                         }])
@@ -181,7 +181,7 @@ export default {
         this.searchDownRoleList()
     },
     methods: {
-        ...mapMutations(['resetBreadcrumb']),
+        ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onCreateNewUser () {
             this.diaShow = true
         },
@@ -200,7 +200,8 @@ export default {
                 loading: true,
                 onOk: () => {
                     // TODO 刷新数据
-                    let userIdsStr = this.selectedRows.join(',')
+                    let arr = this.selectedRows.map(e => e.userAdminId)
+                    let userIdsStr = arr.join(',')
                     systemApi.deleteUserInfo(userIdsStr).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
                         if (resultCode === '000000') {
@@ -271,7 +272,28 @@ export default {
             this.diaTitle = '修改用户'
             this.diaShow = true
         },
-        onResetPasswordClick (id) {},
+        onResetPasswordClick (row) {
+            this.$Modal.confirm({
+                title: '用户密码重置确认',
+                content: `您将重置该用户密码，是否继续？`,
+                closable: false,
+                loading: true,
+                onOk: () => {
+                    // TODO 刷新数据
+                    systemApi.resetUserPwd(row.userAdminId).then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
+                },
+                onCancel: () => {}
+            })
+        },
         onCancelClick (name) {
             this.$refs[name].resetFields()
             this.diaShow = false
@@ -322,6 +344,7 @@ export default {
             })
         },
         searchUserList () {
+            this.openLoading()
             systemApi.searchUserList(
                 this.pageSize,
                 this.currentPage,
@@ -329,8 +352,15 @@ export default {
                 this.filterRole,
                 this.filterStatus
             ).then(({data: {result, resultCode, msg}}) => {
-                this.tableData = result.list
-                this.totalNum = result.total
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.tableData = result.list
+                    this.totalNum = result.total
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+                this.closeLoading()
             })
         },
         searchDownRoleList () {

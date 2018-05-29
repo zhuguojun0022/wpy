@@ -2,9 +2,12 @@
 <div class="gui-page" :class="{'gui-page-bg': bg}">
     <h1 v-show="title">{{title}}</h1>
     <slot></slot>
+    <Spin fix v-show="showLoading"></Spin>
 </div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
     props: {
         title: String,
@@ -12,12 +15,19 @@ export default {
             type: Boolean,
             default: false
         }
+    },
+    computed: {
+        ...mapGetters({
+            showLoading: 'getShowLoading'
+        })
     }
 }
 </script>
 
 <style lang="less">
 .gui-page {
+    position: relative;
+
     &.gui-page-bg {
         padding: 20px 16px;
         background-color: #fff;
