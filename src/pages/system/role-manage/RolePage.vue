@@ -39,7 +39,7 @@
     <Modal v-model="authorizedUserShow" :title="authorizedUserTitle" ref="modal">
         <table-header>
             <div slot="left">
-                <Input icon="ios-search" placeholder="用户名/姓名" style="width: 200px" @on-change="filterName"></Input>
+                <Input icon="ios-search" placeholder="用户名/姓名" v-model="nameKey" style="width: 200px" @on-change="filterName"></Input>
                 <Button type="primary" @click="onCreateNewUser">新建用户</Button>
             </div>
         </table-header>
@@ -107,6 +107,7 @@ export default {
                             on: {
                                 click: () => {
                                     this.authorizedUserClick(row)
+                                    console.log(row)
                                 }
                             }
                         }, {
@@ -140,6 +141,7 @@ export default {
             currentPage: 1,
             totalNum: 10,
             tableUserData: [],
+            nameKey: '',
             userColumns: [
                 {title: '已授权用户名(姓名)', key: 'authorizedUserName'},
                 {
@@ -175,6 +177,10 @@ export default {
         ...mapMutations(['resetBreadcrumb']),
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
+        filterName () {
+            this.authorizedUserList(this.nameKey)
+        },
+        onCreateNewUser () {},
         handleCurrentChange (v) {},
         filterData (arr) {
             var newArr = []
@@ -296,13 +302,14 @@ export default {
         },
         authorizedUserClick (row) {
             this.authorizedUserShow = true
+            this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
             systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
                 this.tableData = result.roleList
             })
         },
-        authorizedUserList () {
+        authorizedUserList (roleId) {
             systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
                 this.tableUserData = result.authorizedUserList
                 this.totalNum = result.authorizedUserList.totalNum
