@@ -10,15 +10,16 @@
             <Layout>
                 <Header :style="{padding: 0}" class="layout-header-bar">
                     <!-- <Icon @click.native="collapsedSider" :class="rotateIcon" :style="{margin: '20px'}" type="navicon-round" size="24"></Icon> -->
-                    <div class="user-box">
+                    <!-- <div class="user-box">
                         <Dropdown>
-                            <a class="name"><Icon type="person"></Icon>userName</a>
+                            <a class="name"><Icon type="person"></Icon>{{user.userAdminName}}</a>
                             <Icon type="arrow-down-b"></Icon>
                             <DropdownMenu slot="list">
                                 <DropdownItem @click.native="onLogout"><Icon type="android-exit"></Icon>退出</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
-                    </div>
+                    </div> -->
+                    <header-bar></header-bar>
                 </Header>
                 <x-breadcrumb></x-breadcrumb>
                 <Content :style="{margin: '20px', background: '#fff'}">
@@ -33,8 +34,10 @@ import Vue from 'vue'
 import Menu from '../components/frame/Menu'
 import Page from '../components/frame/Page'
 import HeaderBar from '../components/frame/HeaderBar'
-import {startGetLoginUser} from '../common/loginUser'
+// import {startGetLoginUser} from '../common/loginUser'
 import XBreadcrumb from '../components/frame/XBreadcrumb'
+// import { loginOut } from '../common/utils'
+
 Vue.component('GPage', Page)
 export default {
     components: {
@@ -47,7 +50,7 @@ export default {
         }
     },
     beforeCreate () {
-        startGetLoginUser()
+        // startGetLoginUser()
     },
     computed: {
         // rotateIcon () {
@@ -64,12 +67,10 @@ export default {
         // }
     },
     methods: {
-        // collapsedSider () {
-        //     this.$refs.side1.toggleCollapse()
-        // },
-        onLogout () {
-            this.$router.replace('/login')
-        }
+        // onLogout () {
+        //     loginOut()
+        //     this.$router.replace('/login')
+        // }
     },
     beforeRouteEnter (to, from, next) {
         next((vm) => {

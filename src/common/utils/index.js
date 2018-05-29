@@ -46,8 +46,43 @@ function dataMap (map, data) {
     return data
 }
 
+const SYSTEM_TOKEN = 'X-TOKEN'
+
+const ls = {
+    set (key, value) {
+        if (!key || !value) return
+        window.localStorage.setItem(key, JSON.stringify(value))
+    },
+    get (key) {
+        if (!key) return null
+        const _key = window.localStorage[key]
+        if (!_key) return null
+        return JSON.stringify(_key)
+    }
+}
+
+function getToken () {
+    return ls.get(SYSTEM_TOKEN)
+}
+
+function setToken (token) {
+    return ls.set(SYSTEM_TOKEN, token)
+}
+
+function checkLogin () {
+    return !!getToken()
+}
+
+function loginOut () {
+    window.localStorage.removeItem(SYSTEM_TOKEN)
+}
+
 export {
     isArray,
     dataMap,
-    isPlainObject
+    isPlainObject,
+    getToken,
+    setToken,
+    checkLogin,
+    loginOut
 }

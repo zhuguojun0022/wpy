@@ -8,9 +8,9 @@
         <template slot="right">
             <Input v-model="filterName" placeholder="用户名/姓名" style="width: 200px" clearable></Input>
             <Select v-model="filterRole" style="width: 200px" placeholder="角色">
-                <Option v-for="item in roleList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
             </Select>
-            <Select v-model="filterStatus" style="width: 200px" placeholder="状态">
+            <Select v-model="filterStatus" clearable style="width: 200px" placeholder="状态">
                 <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Button type="primary" @click="onSearchClick">查询</Button>
@@ -23,25 +23,22 @@
 
     <Modal v-model="diaShow" :title="diaTitle" ref="modal">
         <Form :model="newUser" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-user-form">
-            <FormItem prop="userCode" label="用户名" required>
-                <Input v-model.trim="newUser.userCode" placeholder="请输入用户名"></Input>
+            <FormItem prop="userAdminName" label="用户名" required>
+                <Input v-model.trim="newUser.userAdminName" placeholder="请输入用户名"></Input>
             </FormItem>
-            <FormItem prop="userName" label="姓名" required>
-                <Input v-model.trim="newUser.userName" placeholder="请输入姓名"></Input>
-            </FormItem>
-             <FormItem label="角色" prop="roles" required>
-                <Select v-model="newUser.roles">
-                    <Option v-for="item in roleList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+             <FormItem label="角色" prop="roleIds" required>
+                <Select v-model="newUser.roleIds" :multiple="true">
+                    <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem prop="phoneNum" label="手机号">
-                <Input v-model.trim="newUser.phoneNum" placeholder="请输入手机号（可选）"></Input>
+            <FormItem prop="userAdminMobile" label="手机号">
+                <Input v-model.trim="newUser.userAdminMobile" placeholder="请输入手机号（可选）"></Input>
             </FormItem>
-            <FormItem prop="email" label="邮箱">
-                <Input v-model.trim="newUser.email" placeholder="请输入邮箱（可选）"></Input>
+            <FormItem prop="userAdminEmail" label="邮箱">
+                <Input v-model.trim="newUser.userAdminEmail" placeholder="请输入邮箱（可选）"></Input>
             </FormItem>
-            <FormItem prop="status" label="状态" required>
-                <iSwitch size="large" v-model="newUser.status">
+            <FormItem prop="userAdminStatus" label="状态" required>
+                <iSwitch size="large" v-model="newUser.userAdminStatus">
                     <span slot="open">启用</span>
                     <span slot="close">停用</span>
                 </iSwitch>
@@ -68,22 +65,37 @@ export default {
             filterRole: '',
             filterStatus: '',
             roleList: [],
-            statusList: [],
+            statusList: [{
+                value: 1,
+                label: '启用'
+            }, {
+                value: 0,
+                label: '停用'
+            }],
             columns: [
                 {type: 'selection', width: 60, align: 'center'},
-                {title: '用户名', key: 'userCode'},
-                {title: '姓名', key: 'userName'},
-                {title: '手机号', key: 'phoneNum'},
-                {title: '邮箱', key: 'email'},
-                {title: '角色', key: 'roles'},
-                {title: '创建时间', key: 'createDate'},
+                {title: '用户名', key: 'userAdminName'},
+                {title: '手机号', key: 'userAdminMobile'},
+                {title: '邮箱', key: 'userAdminEmail'},
+                {
+                    title: '角色',
+                    key: 'roles',
+                    render: (h, {column, index, row}) => {
+                        let roles = row.roles.map(e => e.roleName)
+                        let roleStr = roles.join(',')
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: roleStr
+                        }])
+                    }},
+                {title: '创建时间', key: 'createTime'},
                 {
                     title: '状态',
-                    key: 'status',
+                    key: 'userAdminStatus',
                     render: (h, {row}) => {
                         return h('iSwitch', {
                             props: {
-                                value: row.status,
+                                value: row.userAdminStatus === 1,
                                 size: 'large'
                             },
                             on: {
@@ -125,23 +137,32 @@ export default {
                 }
             ],
             tableData: [],
+            pageSize: 20,
             totalNum: 0,
             currentPage: 1,
             diaShow: false,
             diaTitle: '新建用户',
             modal_loading: false,
             formRef: 'adduser',
-            newUser: {},
+            newUser: {
+                userAdminStatus: true,
+                roleIds: [],
+                userAdminName: '',
+                userAdminMobile: '',
+                userAdminEmail: ''
+            },
             ruleValidate: {
-                userCode: [
+                userAdminName: [
                     {required: true, message: '必填项', trigger: 'blur'},
                     {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
                 ],
-                userName: [
-                    {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/, message: '只能包含中文、字母、数字、_', trigger: 'blur'}
+                userAdminMobile: [
+                    {pattern: /^1\d{10}$/, message: '手机号码不正确', trigger: 'blur'}
                 ],
-                roles: [{required: true, message: '必填项', trigger: 'blur'}]
+                userAdminEmail: [
+                    {pattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/, message: '邮件格式不正确', trigger: 'blur'}
+                ],
+                roleIds: [{required: true, type: 'array', message: '必填项', trigger: 'change'}]
             },
             userStatus: userStatus,
             selectedRows: []
@@ -157,6 +178,7 @@ export default {
     },
     created () {
         this.searchUserList()
+        this.searchDownRoleList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb']),
@@ -178,14 +200,25 @@ export default {
                 onOk: () => {
                     this.$Modal.remove()
                     // TODO 刷新数据
+                    systemApi.deleteUserInfo(userIdsStr).then(({data: {result, resultCode, msg}}) => {
+                        this.$Message.success('Success!')
+                        this.onCancelClick(name)
+                        this.currentPage = 1
+                        this.searchUserList()
+                    })
                 },
                 onCancel: () => {
                     this.selectedRows = []
                 }
             })
         },
-        onSearchClick () {},
-        handleCurrentChange (v) {},
+        onSearchClick () {
+            this.searchUserList()
+        },
+        handleCurrentChange (v) {
+            this.currentPage = v
+            this.searchUserList()
+        },
         onSelectionChange (selection) {
             this.selectedRows = selection
         },
@@ -198,6 +231,24 @@ export default {
                 onOk: () => {
                     this.$Modal.remove()
                     // TODO 刷新数据
+                    let userIdsStr = this.selectedRows.join(',')
+                    systemApi.updateUserStatus(userIdsStr).then(({data: {result, resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            this.$Message.success('Success!')
+                            this.onCancelClick(name)
+                            this.currentPage = 1
+                            this.searchUserList()
+                        } else {
+                            this.$Message.success('Success!')
+                            this.$nextTick(() => {
+                                row.status = !val
+                            })
+                        }
+                    }).catch(() => {
+                        this.$nextTick(() => {
+                            row.status = !val
+                        })
+                    })
                 },
                 onCancel: () => {
                     this.$nextTick(() => {
@@ -207,7 +258,12 @@ export default {
             })
         },
         onEditClick (row) {
+            this.formRef = 'edituser'
             this.newUser = {...row}
+            let roleIds = this.newUser.roles.map(e => e.roleId)
+            this.newUser.roleIds = roleIds
+            this.newUser.userAdminStatus = this.newUser.userAdminStatus === 1
+            this.newUser.userAdminId = row.userAdminId
             this.diaTitle = '修改用户'
             this.diaShow = true
         },
@@ -216,25 +272,60 @@ export default {
             this.$refs[name].resetFields()
             this.diaShow = false
             this.diaTitle = '新建用户'
+            this.formRef = 'adduser'
         },
         onSubmitClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    this.$Message.success('Success!')
+                    let {userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus} = {
+                        ...this.newUser
+                    }
+                    userAdminStatus = userAdminStatus ? 1 : 0
+                    let roleIdsStr = roleIds.join(',')
+                    if (name === 'adduser') {
+                        systemApi.addUserInfo(userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode, msg}}) => {
+                            if (resultCode === '000000') {
+                                this.$Message.success('Success!')
+                                this.onCancelClick(name)
+                                this.currentPage = 1
+                                this.searchUserList()
+                            } else {
+                                this.$Message.error(msg)
+                            }
+                        })
+                    } else {
+                        let userAdminId = this.newUser.userAdminId
+                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode , msg}}) => {
+                            if (resultCode === '000000') {
+                                this.$Message.success('Success!')
+                                this.onCancelClick(name)
+                                this.searchUserList()
+                            } else {
+                                this.$Message.error(msg)
+                            }
+                        })
+                    }
+                    
                 } else {
-                    this.$Message.error('Fail!')
+                    this.$Message.error('校验失败!')
                 }
             })
         },
         searchUserList () {
-            systemApi.searchUserList().then(({data: {result, code, msg}}) => {
-                this.tableData = result.userList
-                this.totalNum = result.totalNum
+            systemApi.searchUserList(
+                this.pageSize,
+                this.currentPage,
+                this.filterName,
+                this.filterRole,
+                this.filterStatus
+            ).then(({data: {result, resultCode, msg}}) => {
+                this.tableData = result.list
+                this.totalNum = result.total
             })
         },
-        addUserInfo () {
-            systemApi.addUserInfo().then(({data: {result, code, msg}}) => {
-                // TODO
+        searchDownRoleList () {
+            systemApi.searchDownRoleList().then(({data: {result, resultCode, msg}}) => {
+                this.roleList = result
             })
         }
     }

@@ -1,28 +1,32 @@
 import http from '../config/httpConfig'
 
-function getImgVCode () {
-    return http.get('/validateCode/common', {mock: true})
+const mock = false
+
+function test (userAdminName) {
+    return http.post(`/useradmin/query`, {
+        userAdminName
+    })
 }
 
-const login = function (username, passwd, codeId = '', code = '') {
-    return http.post('/login/passwd', {
+const login = function (username, password, cid = '', code = '') {
+    return http.post('/auth/login', {
         username,
-        passwd,
-        codeId,
+        password,
+        cid,
         code
-    }, {mock: true})
+    }, {mock: mock})
 }
 
 const getMenu = function () {
-    return http.get('/user/menu', {mock: true})
+    return http.get('/user/menu', {mock: mock})
 }
 
 const getLoginInfo = function () {
-    return http.get('/getLoginInfo', {mock: true})
+    return http.get('/getLoginInfo', {mock: mock})
 }
 
 export default {
-    getImgVCode,
+    test,
     login,
     getMenu,
     getLoginInfo
