@@ -67,12 +67,18 @@ export default {
             this.imgCode = `${img}/admin/auth/captcha/genImage?cid=${this.randomString}`
         },
         handleSubmit () {
+            if (!this.form.username || !this.form.passwd || !this.form.vcode) {
+                this.$Message.warning('请填写完整登陆信息')
+                return
+            }
             const hash = sha256.create()
             hash.update(this.form.passwd)
-            infraApi.login(this.form.username, hash.hex(), this.randomString, this.form.vcode).then(({data}) => {
-                if (data.resultCode === '000000') {
-                    setLoginUser(data.result)
+            infraApi.login(this.form.username, hash.hex(), this.randomString, this.form.vcode).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    setLoginUser(result)
                     this.$router.push('/')
+                } else {
+                    this.$Message.error(msg)
                 }
             })
         }

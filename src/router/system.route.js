@@ -1,4 +1,4 @@
-import userManage from '../pages/system/user-manage/AdminUserPage'
+import userManage from '../pages/system/user-manage/IndexPage'
 import roleManage from '../pages/system/role-manage/RolePage'
 import menuManage from '../pages/system/menu-manage/IndexPage'
 

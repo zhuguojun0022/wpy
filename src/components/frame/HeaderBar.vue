@@ -2,7 +2,7 @@
 <div class="header-bar">
     <div class="user-box">
         <Dropdown>
-            <a class="name"><Icon type="person"></Icon>{{user.nickname}}</a>
+            <a class="name"><Icon type="person"></Icon>{{userAdminName}}</a>
             <Icon type="arrow-down-b"></Icon>
             <DropdownMenu slot="list">
                 <DropdownItem @click.native="onLogout"><Icon type="android-exit"></Icon>退出</DropdownItem>
@@ -17,16 +17,10 @@ export default {
     name: 'header-bar',
     data () {
         return {
-            user: {}
+            userAdminName: window.sessionStorage.getItem('USERNAME')
         }
     },
-    mounted () {
-        console.log(this.$getLoginUser())
-        // this.$getLoginUser().then((user) => {
-        //     console.log(user)
-        //     this.user = user
-        // })
-    },
+    mounted () {},
     methods: {
         onLogout () {
             loginOut()

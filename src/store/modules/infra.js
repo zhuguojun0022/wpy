@@ -1,6 +1,7 @@
 export default {
     state: {
-        breadcrumb: []
+        breadcrumb: [],
+        showLoading: false
     },
     mutations: {
         pushBreadcrumb (state, item) {
@@ -11,9 +12,16 @@ export default {
         },
         resetBreadcrumb (state, item) {
             state.breadcrumb = [item]
+        },
+        openLoading (state) {
+            state.showLoading = true
+        },
+        closeLoading (state) {
+            state.showLoading = false
         }
     },
     getters: {
-        getBreadcrumbData: state => state.breadcrumb
+        getBreadcrumbData: state => state.breadcrumb,
+        getShowLoading: state => state.showLoading
     }
 }
