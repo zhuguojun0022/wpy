@@ -72,12 +72,12 @@
 </GPage>
 </template>
 <script>
-import {TableHeader, TableFooter, TableSwitch} from '../../../components/table'
+import {TableHeader, TableFooter} from '../../../components/table'
 import {channelApi} from '../../../apis/'
 import {mapMutations} from 'vuex'
 
 export default {
-    components: {TableHeader, TableFooter, TableSwitch},
+    components: {TableHeader, TableFooter},
     data () {
         return {
             filterName: '',
