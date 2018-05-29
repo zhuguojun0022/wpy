@@ -70,7 +70,7 @@
             <h5>核对结果</h5>
             <span class="check-group-title">核对状态</span>
             <Checkbox-group v-model="checkAll" @on-change="changeTableColumns" class="check-group">
-                <Checkbox :label="checkbox.value" v-for="checkbox in checkboxGroup">{{checkbox.value}}</Checkbox>
+                <Checkbox :label="checkbox.value" v-for="checkbox in checkboxGroup" :key="checkbox.value">{{checkbox.value}}</Checkbox>
             </Checkbox-group>
             <Table :columns="columns" :data="tableData"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
@@ -79,15 +79,15 @@
     <Modal v-model="errorHandlShow" :title="errorHandlTitle" ref="modal" class="bill-details">
         <Form :model="errorHandling" :label-width="90" class="chacuochuli" label-position="left">
             <FormItem prop="errorClass" label="差错分类" class="no-border">
-                <Input v-model="errorHandling.errorClass" disabled></Input>
+                <strong>{{errorHandling.errorClass}}</strong>
             </FormItem>
             <FormItem prop="errorContent" label="差错内容" class="no-border">
-                <Input v-model="errorHandling.errorContent" disabled></Input>
+                <strong>{{errorHandling.errorContent}}</strong>
             </FormItem>
             <Row  :gutter="16">
                 <Col span="12">
                     <FormItem prop="beforeErrorState" label="交易" class="firstForm">
-                        <Input v-model="errorHandling.beforeErrorState" disabled></Input>
+                        <strong>【{{errorHandling.beforeErrorState}}】</strong>
                     </FormItem>
                     <FormItem prop="batch" label="交易流水号">
                         <Input v-model="errorHandling.batch" disabled></Input>
@@ -110,7 +110,7 @@
                 </Col>
                 <Col span="12">
                     <FormItem prop="money" label="支付渠道" class="firstForm">
-                        <Input v-model="errorHandling.money" disabled></Input>
+                        <strong>【{{errorHandling.money}}】</strong>
                     </FormItem>
                     <FormItem prop="channelPayNumber" label="渠道流水号">
                         <Input v-model="errorHandling.channelPayNumber" disabled></Input>
@@ -133,7 +133,7 @@
                 </Col>
             </Row>
             <FormItem prop="errorProcessDescribe" label="差错处理描述" class="no-border errorDescribe">
-                <Input v-model="errorHandling.errorProcessDescribe" type="textarea"></Input>
+                <Input v-model="errorHandling.errorProcessDescribe" :rows="4" type="textarea"></Input>
             </FormItem>
         </Form>
     </Modal>
