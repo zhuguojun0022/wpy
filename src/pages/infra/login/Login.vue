@@ -20,7 +20,7 @@
                     </FormItem>
                     <FormItem>
                         <Input class="vcode" size="large" placeholder="请输入验证码" v-model="form.vcode" @on-enter="handleSubmit()">
-                            <img slot="append" :src="imgCode" @click="getImgVCode">
+                            <img slot="append" :src="imgCode" width="80" height="36" @click="getImgVCode">
                         </Input>
                     </FormItem>
                     <FormItem>
@@ -43,15 +43,18 @@
 import sha256 from 'js-sha256'
 import {infraApi} from 'Apis/'
 import {setLoginUser} from '../../../common/loginUser'
+import {randomStr} from '../../../common/utils/randomString'
+
 export default {
     data () {
         return {
-            imgCode: '',
+            imgCode: null,
             form: {
                 username: '',
                 passwd: '',
                 vcode: ''
-            }
+            },
+            randomString: ''
         }
     },
     beforeMount () {
@@ -59,21 +62,17 @@ export default {
     },
     methods: {
         getImgVCode () {
-            infraApi.getImgVCode().then(({data: {result}}) => {
-                this.imgCode = 'data:image/png;base64,' + result.imgBase64
-                this.imgCodeId = result.id
-            })
+            this.randomString = randomStr(true, 8, 10)
+            let img = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8088'
+            this.imgCode = `${img}/admin/auth/captcha/genImage?cid=${this.randomString}`
         },
         handleSubmit () {
             const hash = sha256.create()
             hash.update(this.form.passwd)
-            infraApi.login(this.form.username, hash.hex(), this.imgCodeId, this.form.vcode).then(({data}) => {
-                if (data.code === '2000') {
+            infraApi.login(this.form.username, hash.hex(), this.randomString, this.form.vcode).then(({data}) => {
+                if (data.resultCode === '000000') {
                     setLoginUser(data.result)
                     this.$router.push('/')
-                } else if (data.code === '4002' || data.code === '4004') {
-                    this.imgCode = 'data:image/png;base64,' + data.result.imgBase64
-                    this.imgCodeId = data.result.id
                 }
             })
         }
