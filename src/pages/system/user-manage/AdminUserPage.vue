@@ -197,14 +197,20 @@ export default {
                 title: '删除信息确认',
                 content: `您是否删除选中的${this.selectedRows.length}条数据？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
+                    let userIdsStr = this.selectedRows.join(',')
                     systemApi.deleteUserInfo(userIdsStr).then(({data: {result, resultCode, msg}}) => {
-                        this.$Message.success('Success!')
-                        this.onCancelClick(name)
-                        this.currentPage = 1
-                        this.searchUserList()
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success('Success!')
+                            this.searchUserList()
+                        } else {
+                            this.$Message.error('Success!')
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
                     })
                 },
                 onCancel: () => {
@@ -228,16 +234,13 @@ export default {
                 title: '状态信息修改确认',
                 content: `您将${row.status ? '启用' : '停用'}该用户，是否继续？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
-                    let userIdsStr = this.selectedRows.join(',')
-                    systemApi.updateUserStatus(userIdsStr).then(({data: {result, resultCode, msg}}) => {
+                    systemApi.updateUserState(row.userAdminId, val ? 1 : 0).then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
                         if (resultCode === '000000') {
                             this.$Message.success('Success!')
-                            this.onCancelClick(name)
-                            this.currentPage = 1
-                            this.searchUserList()
                         } else {
                             this.$Message.success('Success!')
                             this.$nextTick(() => {
@@ -245,6 +248,7 @@ export default {
                             })
                         }
                     }).catch(() => {
+                        this.$Modal.remove()
                         this.$nextTick(() => {
                             row.status = !val
                         })
@@ -282,8 +286,10 @@ export default {
                     }
                     userAdminStatus = userAdminStatus ? 1 : 0
                     let roleIdsStr = roleIds.join(',')
+                    this.modal_loading = true
                     if (name === 'adduser') {
                         systemApi.addUserInfo(userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode, msg}}) => {
+                            this.modal_loading = false
                             if (resultCode === '000000') {
                                 this.$Message.success('Success!')
                                 this.onCancelClick(name)
@@ -292,10 +298,13 @@ export default {
                             } else {
                                 this.$Message.error(msg)
                             }
+                        }).catch(() => {
+                            this.modal_loading = false
                         })
                     } else {
                         let userAdminId = this.newUser.userAdminId
-                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode , msg}}) => {
+                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode, msg}}) => {
+                            this.modal_loading = false
                             if (resultCode === '000000') {
                                 this.$Message.success('Success!')
                                 this.onCancelClick(name)
@@ -303,9 +312,10 @@ export default {
                             } else {
                                 this.$Message.error(msg)
                             }
+                        }).catch(() => {
+                            this.modal_loading = false
                         })
                     }
-                    
                 } else {
                     this.$Message.error('校验失败!')
                 }
