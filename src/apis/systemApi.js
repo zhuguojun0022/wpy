@@ -6,12 +6,12 @@ const searchUserList = (pageSize, currentPage, userAdminName, roleId, userAdminS
 
 const searchDownRoleList = () => http.get('/useradmin/queryUserNoAuthRoles')
 
-const addUserInfo = (userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus) => http.post('/useradmin/add', {
-    userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus
+const addUserInfo = (userAdminName, userAdminEmail, userAdminMobile, roleIds) => http.post('/useradmin/add', {
+    userAdminName, userAdminEmail, userAdminMobile, roleIds
 })
 
-const updateUserInfo = (userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus) => http.post('/useradmin/modifyUserAdmin', {
-    userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus
+const updateUserInfo = (userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIds) => http.post('/useradmin/modifyUserAdmin', {
+    userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIds
 })
 
 const deleteUserInfo = (userIds) => http.post('/useradmin/delUserAdmin', {userIds})
