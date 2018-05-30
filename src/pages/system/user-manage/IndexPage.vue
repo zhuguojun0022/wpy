@@ -21,7 +21,7 @@
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
-    <Modal v-model="diaShow" :title="diaTitle" ref="modal">
+    <Modal v-model="diaShow" :mask-closable="false" :closable="false" :title="diaTitle" ref="modal">
         <Form :model="newUser" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-user-form">
             <FormItem prop="userAdminName" label="用户名" required>
                 <Input v-model.trim="newUser.userAdminName" placeholder="请输入用户名"></Input>
@@ -56,6 +56,7 @@ import {TableHeader, TableFooter} from '../../../components/table'
 import {systemApi} from '../../../apis/'
 import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
+import {formatDateTime} from '../../../common/utils'
 
 export default {
     components: {TableHeader, TableFooter},
@@ -87,8 +88,18 @@ export default {
                             tag: 'span',
                             label: roleStr
                         }])
-                    }},
-                {title: '创建时间', key: 'createTime'},
+                    }
+                },
+                {
+                    title: '创建时间',
+                    key: 'createTime',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: formatDateTime(row.createTime)
+                        }])
+                    }
+                },
                 {
                     title: '状态',
                     key: 'userAdminStatus',

@@ -63,8 +63,8 @@ export default {
     methods: {
         getImgVCode () {
             this.randomString = randomStr(true, 8, 10)
-            let img = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8088'
-            this.imgCode = `${img}/admin/auth/captcha/genImage?cid=${this.randomString}`
+            let img = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8088/admin'
+            this.imgCode = `${img}/auth/captcha/genImage?cid=${this.randomString}`
         },
         handleSubmit () {
             if (!this.form.username || !this.form.passwd || !this.form.vcode) {

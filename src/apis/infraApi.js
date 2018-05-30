@@ -18,7 +18,7 @@ const login = function (username, password, cid = '', code = '') {
 }
 
 const getMenu = function () {
-    return http.get('/user/menu', {mock: mock})
+    return http.get('/user/menu', {mock: true})
 }
 
 const getLoginInfo = function () {

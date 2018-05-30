@@ -77,6 +77,24 @@ function loginOut () {
     window.localStorage.removeItem(SYSTEM_TOKEN)
 }
 
+function formatDateTime (timeStamp) {
+    if (!timeStamp) return ''
+    let date = new Date()
+    date.setTime(timeStamp * 1000)
+    let y = date.getFullYear()
+    let m = date.getMonth() + 1
+    let d = date.getDate()
+    let h = date.getHours()
+    let minute = date.getMinutes()
+    let second = date.getSeconds()
+    m = m < 10 ? ('0' + m) : m
+    d = d < 10 ? ('0' + d) : d
+    h = h < 10 ? ('0' + h) : h
+    minute = minute < 10 ? ('0' + minute) : minute
+    second = second < 10 ? ('0' + second) : second
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second
+}
+
 export {
     isArray,
     dataMap,
@@ -84,5 +102,6 @@ export {
     getToken,
     setToken,
     checkLogin,
-    loginOut
+    loginOut,
+    formatDateTime
 }
