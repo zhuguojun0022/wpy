@@ -32,17 +32,17 @@
                 </Select>
             </FormItem>
             <FormItem prop="userAdminMobile" label="手机号">
-                <Input v-model.trim="newUser.userAdminMobile" placeholder="请输入手机号（可选）"></Input>
+                <Input v-model.trim="newUser.userAdminMobile" :maxlength="11" placeholder="请输入手机号（可选）"></Input>
             </FormItem>
             <FormItem prop="userAdminEmail" label="邮箱">
                 <Input v-model.trim="newUser.userAdminEmail" placeholder="请输入邮箱（可选）"></Input>
             </FormItem>
-            <FormItem prop="userAdminStatus" label="状态" required>
+            <!-- <FormItem prop="userAdminStatus" label="状态" required>
                 <iSwitch size="large" v-model="newUser.userAdminStatus">
                     <span slot="open">启用</span>
                     <span slot="close">停用</span>
                 </iSwitch>
-            </FormItem>
+            </FormItem> -->
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -156,7 +156,6 @@ export default {
             modal_loading: false,
             formRef: 'adduser',
             newUser: {
-                userAdminStatus: true,
                 roleIds: [],
                 userAdminName: '',
                 userAdminMobile: '',
@@ -216,10 +215,10 @@ export default {
                     systemApi.deleteUserInfo(userIdsStr).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
                         if (resultCode === '000000') {
-                            this.$Message.success('Success!')
+                            this.$Message.success(msg)
                             this.searchUserList()
                         } else {
-                            this.$Message.error('Success!')
+                            this.$Message.error(msg)
                         }
                     }).catch(() => {
                         this.$Modal.remove()
@@ -252,9 +251,9 @@ export default {
                     systemApi.updateUserState(row.userAdminId, val ? 1 : 0).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
                         if (resultCode === '000000') {
-                            this.$Message.success('Success!')
+                            this.$Message.success(msg)
                         } else {
-                            this.$Message.success('Success!')
+                            this.$Message.success(msg)
                             this.$nextTick(() => {
                                 row.status = !val
                             })
@@ -278,7 +277,6 @@ export default {
             this.newUser = {...row}
             let roleIds = this.newUser.roles.map(e => e.roleId)
             this.newUser.roleIds = roleIds
-            this.newUser.userAdminStatus = this.newUser.userAdminStatus === 1
             this.newUser.userAdminId = row.userAdminId
             this.diaTitle = '修改用户'
             this.diaShow = true
@@ -314,17 +312,16 @@ export default {
         onSubmitClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    let {userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminStatus} = {
+                    let {userAdminName, userAdminEmail, userAdminMobile, roleIds} = {
                         ...this.newUser
                     }
-                    userAdminStatus = userAdminStatus ? 1 : 0
                     let roleIdsStr = roleIds.join(',')
                     this.modal_loading = true
                     if (name === 'adduser') {
-                        systemApi.addUserInfo(userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode, msg}}) => {
+                        systemApi.addUserInfo(userAdminName, userAdminEmail, userAdminMobile, roleIdsStr).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
-                                this.$Message.success('Success!')
+                                this.$Message.success(msg)
                                 this.onCancelClick(name)
                                 this.currentPage = 1
                                 this.searchUserList()
@@ -336,10 +333,10 @@ export default {
                         })
                     } else {
                         let userAdminId = this.newUser.userAdminId
-                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminStatus).then(({data: {result, resultCode, msg}}) => {
+                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
-                                this.$Message.success('Success!')
+                                this.$Message.success(msg)
                                 this.onCancelClick(name)
                                 this.searchUserList()
                             } else {

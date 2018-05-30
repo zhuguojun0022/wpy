@@ -51,13 +51,13 @@ const SYSTEM_TOKEN = 'X-TOKEN'
 const ls = {
     set (key, value) {
         if (!key || !value) return
-        window.localStorage.setItem(key, JSON.stringify(value))
+        window.localStorage.setItem(key, value)
     },
     get (key) {
         if (!key) return null
         const _key = window.localStorage[key]
         if (!_key) return null
-        return JSON.stringify(_key)
+        return _key
     }
 }
 
@@ -80,7 +80,7 @@ function loginOut () {
 function formatDateTime (timeStamp) {
     if (!timeStamp) return ''
     let date = new Date()
-    date.setTime(timeStamp * 1000)
+    date.setTime(timeStamp)
     let y = date.getFullYear()
     let m = date.getMonth() + 1
     let d = date.getDate()
