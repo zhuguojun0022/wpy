@@ -419,8 +419,8 @@ export default {
                 this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
-                    this.tableUserData = result.authorizedUserList
-                    this.totalNum = result.authorizedUserList.totalNum
+                    this.tableUserData = result.list
+                    this.totalNumAuthorizedUser = result.total
                 } else {
                     this.$Message.error(msg)
                 }
