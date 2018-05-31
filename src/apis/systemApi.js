@@ -40,6 +40,10 @@ const searchMenuList = () => http.get('/user/menu', {mock: true})
 
 const authorizedUserList = (roleId, userAdminName, currentPage, pageSize) => http.post('/role/queryRoleUsers', {roleId, userAdminName, currentPage, pageSize}, {mock: false})
 
+const authorizedMenuTree = (roleId) => http.post('/role/queryRoleMenuTree', {roleId})
+
+const updateAuthorizedMenuTree = (roleId, menuIds) => http.post('/role/saveRoleMenu', {roleId, menuIds})
+
 export default {
     searchUserList,
     searchDownRoleList,
@@ -55,5 +59,7 @@ export default {
     updateRoleState,
     searchMenuList,
     authorizedUserList,
-    deleteRoleUser
+    deleteRoleUser,
+    authorizedMenuTree,
+    updateAuthorizedMenuTree
 }

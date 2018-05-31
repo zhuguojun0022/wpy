@@ -11,8 +11,8 @@
         </Col>
         <Col span="6" class="authorize">
             <span class="authorize-title">授权功能</span>
-            <Button type="primary" v-if="clickRole" class="authorize-save">保存</Button>
-            <Tree :data="treeData" show-checkbox v-if="clickRole"></Tree>
+            <Button type="primary" v-if="clickRole" class="authorize-save" @click="updateTree">保存</Button>
+            <Tree :data="treeData" show-checkbox v-if="clickRole" :ref='trees'></Tree>
         </Col>
     </Row>
     <Modal v-model="newRoleShow" :title="newRoleTitle" ref="modal">
@@ -29,7 +29,6 @@
                     <span slot="close">停用</span>
                 </iSwitch>
             </FormItem>
-
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -54,7 +53,7 @@
 <script>
 import { TableHeader, TableFooter } from '../../../components/table'
 import {mapMutations} from 'vuex'
-import {infraApi, systemApi} from '../../../apis'
+import {systemApi} from '../../../apis'
 import {formatDateTime} from '../../../common/utils'
 
 export default {
@@ -133,6 +132,7 @@ export default {
                     }
                 }
             ],
+            trees: 'checked',
             treeData: [],
             clickRole: false,
             newRoleShow: false,
@@ -157,6 +157,7 @@ export default {
             tableUserData: [],
             nameKey: '',
             currentRoleId: '',
+            highlightRoleId: '',
             userColumns: [
                 {title: '已授权用户名(姓名)', key: 'userAdminName'},
                 {
@@ -206,48 +207,70 @@ export default {
             var newArr = []
             arr.map((item) => {
                 var childrenArr
-                if (!item.leaf) {
-                    childrenArr = this.filterData(item.subMenu)
+                if (item.children !== null && item.children !== []) {
+                    childrenArr = this.filterData(item.children)
                 } else {
                     childrenArr = []
                 }
                 newArr.push({
-                    title: item.menuName,
-                    leaf: item.leaf,
-                    menuIcon: item.menuIcon,
+                    title: item.menuTitle,
+                    checked: item.selected,
                     children: childrenArr,
-                    render: (h, { root, node, data }) => {
-                        var c = item.menuIcon
-                        return h('span', {
-                            style: {
-                                display: 'inline-block',
-                                width: '100%'
-                            }
-                        }, [
-                            h('span', [
-                                h('i', {
-                                    attrs: {
-                                        class: c + ' iconfont'
-                                    },
-                                    style: {
-                                        marginRight: '8px'
-                                    }
-                                }),
-                                h('span', item.menuName)
-                            ])
-                        ])
-                    }
+                    expand: item.expand,
+                    menuId: item.menuId,
+                    menuPid: item.menuPid
                 })
             })
             return newArr
         },
-        loadData () {
-            infraApi.getMenu().then(({data: {result}}) => {
-                this.treeData = this.filterData(result)
+        loadData (roleId) {
+            this.openLoading()
+            systemApi.authorizedMenuTree(roleId).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.$Message.success(msg)
+                    this.treeData = this.filterData(result)
+                } else {
+                    this.$Message.success(msg)
+                }
+            }).catch(() => {
             })
         },
-        singleClick () {
+        singleClick (currentRow) {
             this.clickRole = true
+            this.highlightRoleId = currentRow.roleId
+            console.log(currentRow.roleId)
+            this.loadData(currentRow.roleId)
+        },
+        filterTreeData (arr) {
+            console.log(arr)
+            var newArr = []
+            console.log(this.treeData)
+            arr.map((item) => {
+                if (item.checked) {
+                    newArr.push(item.menuId)
+                }
+                console.log('newArr', newArr)
+            })
+            var menuIds = newArr.join(',')
+            console.log(menuIds)
+            return menuIds
+        },
+        updateTree () {
+            let roleId = this.highlightRoleId
+            let checkout = this.trees
+            let menuIds = this.filterTreeData(this.$refs[checkout].getCheckedNodes())
+            this.openLoading()
+            systemApi.updateAuthorizedMenuTree(roleId, menuIds).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.$Message.success(msg)
+                    this.treeData = this.filterData(result)
+                } else {
+                    this.$Message.success(msg)
+                }
+            }).catch(() => {
+            })
         },
         onStatusChange (row, val) {
             row.roleStatus = val
@@ -423,6 +446,7 @@ export default {
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
+            console.log('aaaaa', this.$refs)
             this.openLoading()
             systemApi.searchRoleList(
                 this.currentPage, this.pageSize
@@ -459,7 +483,7 @@ export default {
         }
     },
     mounted () {
-        this.loadData()
+        // this.loadData()
     },
     computed: {}
 }
