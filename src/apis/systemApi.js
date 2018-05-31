@@ -24,7 +24,15 @@ const resetUserPwd = (userAdminId) => http.post('/useradmin/resetAdminPwd', {use
 
 const searchRoleList = () => http.get('/user/rolelist', {mock: true})
 
-const searchMenuList = () => http.get('/user/menu', {mock: true})
+const getMenuTree = () => http.get('/menu/tree')
+
+const addMenu = (menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/add', {
+    menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
+})
+
+const updateMenuTree = (menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/update', {
+    menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
+})
 
 const authorizedUserList = () => http.get('/user/authorizedUserlist', {mock: true})
 
@@ -37,6 +45,8 @@ export default {
     updateUserState,
     resetUserPwd,
     searchRoleList,
-    searchMenuList,
-    authorizedUserList
+    authorizedUserList,
+    getMenuTree,
+    addMenu,
+    updateMenuTree
 }
