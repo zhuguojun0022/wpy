@@ -22,11 +22,21 @@ const updateUserState = (userAdminId, userAdminStatus) => http.post('/useradmin/
 
 const resetUserPwd = (userAdminId) => http.post('/useradmin/resetAdminPwd', {userAdminId})
 
-const searchRoleList = () => http.get('/user/rolelist', {mock: true})
+const searchRoleList = (currentPage, pageSize) => http.post('/role/query', {currentPage, pageSize}, {mock: false})
+
+const addRoleInfo = (roleName, roleRemark, roleStatus) => http.post('/role/add', {roleName, roleRemark, roleStatus})
+
+const updateRoleState = (roleId, roleStatus) => http.post('/role/setRoleStatus', {roleId, roleStatus})
+
+const updateRoleInfo = (roleId, roleName, roleRemark, roleStatus) => http.post('/role/modifyRole', {
+    roleId, roleName, roleRemark, roleStatus
+})
+
+const deleteRoleInfo = (roleId) => http.post('/role/delRole', {roleId})
 
 const searchMenuList = () => http.get('/user/menu', {mock: true})
 
-const authorizedUserList = () => http.get('/user/authorizedUserlist', {mock: true})
+const authorizedUserList = (roleId, currentPage, pageSize) => http.post('/role/queryRoleUsers', {roleId, currentPage, pageSize}, {mock: false})
 
 export default {
     searchUserList,
@@ -37,6 +47,10 @@ export default {
     updateUserState,
     resetUserPwd,
     searchRoleList,
+    addRoleInfo,
+    updateRoleInfo,
+    deleteRoleInfo,
+    updateRoleState,
     searchMenuList,
     authorizedUserList
 }

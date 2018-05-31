@@ -20,8 +20,8 @@
             <FormItem prop="roleName" label="角色名称" required>
                 <Input v-model.trim="newRole.roleName" placeholder="请输入角色名称"></Input>
             </FormItem>
-            <FormItem prop="roleDescription" label="角色描述">
-                <Input v-model.trim="newRole.roleDescription" type="textarea" placeholder="请输入角色描述"></Input>
+            <FormItem prop="roleRemark" label="角色描述">
+                <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
             <FormItem prop="status" label="状态">
                 <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
@@ -44,7 +44,7 @@
             </div>
         </table-header>
         <Table :columns="userColumns" :data="tableUserData"></Table>
-        <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
+        <table-footer :total-num="totalNumAuthorizedUser" :current-page="currentPageAuthorizedUser" @on-change="handleCurrentChange"></table-footer>
     </Modal>
     <Modal v-model="reNewRoleShow" ref="modal">
 
@@ -55,6 +55,8 @@
 import { TableHeader, TableFooter } from '../../../components/table'
 import {mapMutations} from 'vuex'
 import {infraApi, systemApi} from '../../../apis'
+import {formatDateTime} from '../../../common/utils'
+
 export default {
     components: {TableHeader, TableFooter},
     data () {
@@ -62,17 +64,26 @@ export default {
             tableData: [],
             columns: [
                 {title: '角色名称', key: 'roleName'},
-                {title: '角色描述', key: 'roleDescription'},
+                {title: '角色描述', key: 'roleRemark'},
                 {title: '角色ID', key: 'roleId'},
-                {title: '创建人', key: 'founder'},
-                {title: '创建时间', key: 'creationTime'},
+                {title: '创建人', key: 'createUserNo'},
+                {
+                    title: '创建时间',
+                    key: 'createTime',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: formatDateTime(row.createTime)
+                        }])
+                    }
+                },
                 {
                     title: '状态',
                     key: 'status',
                     render: (h, {row}) => {
                         return h('iSwitch', {
                             props: {
-                                value: row.status,
+                                value: row.roleStatus === 1,
                                 size: 'large'
                             },
                             on: {
@@ -139,7 +150,10 @@ export default {
             authorizedUserShow: false,
             authorizedUserTitle: '授权用户',
             currentPage: 1,
+            pageSize: 10,
             totalNum: 10,
+            currentPageAuthorizedUser: 1,
+            totalNumAuthorizedUser: 10,
             tableUserData: [],
             nameKey: '',
             userColumns: [
@@ -174,14 +188,19 @@ export default {
         this.searchRoleList()
     },
     methods: {
-        ...mapMutations(['resetBreadcrumb']),
+        ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
         filterName () {
             this.authorizedUserList(this.nameKey)
         },
-        onCreateNewUser () {},
-        handleCurrentChange (v) {},
+        onCreateNewUser () {
+
+        },
+        handleCurrentChange (v) {
+            this.currentPage = v
+            this.searchUserList()
+        },
         filterData (arr) {
             var newArr = []
             arr.map((item) => {
@@ -230,18 +249,34 @@ export default {
             this.clickRole = true
         },
         onStatusChange (row, val) {
-            row.status = val
+            row.roleStatus = val
             this.$Modal.confirm({
                 title: '状态信息修改确认',
-                content: `您将${row.status ? '启用' : '停用'}该角色，是否继续？`,
+                content: `您将${row.roleStatus ? '启用' : '停用'}该角色，是否继续？`,
                 closable: false,
                 onOk: () => {
                     this.$Modal.remove()
                     // TODO 刷新数据
+                    systemApi.updateRoleState(row.roleId, val ? '1' : '0').then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                        } else {
+                            this.$Message.success(msg)
+                            this.$nextTick(() => {
+                                row.roleStatus = !val
+                            })
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                        this.$nextTick(() => {
+                            row.roleStatus = !val
+                        })
+                    })
                 },
                 onCancel: () => {
                     this.$nextTick(() => {
-                        row.status = !val
+                        row.roleStatus = !val
                     })
                 }
             })
@@ -270,11 +305,55 @@ export default {
             this.$refs[role].resetFields()
             this.newRoleShow = false
             this.newRoleTitle = '新建角色'
+            this.formRef = 'addrole'
         },
         onSubmitClick (role) {
             this.$refs[role].validate((valid) => {
                 if (valid) {
-                    this.$Message.success('Success!')
+                    let {roleName, roleRemark, status} = {
+                        ...this.newRole
+                    }
+                    this.modal_loading = true
+                    let roleStatus = status ? '1' : '0'
+                    if (role === 'addrole') {
+                        systemApi.addRoleInfo(
+                            roleName,
+                            roleRemark,
+                            roleStatus
+                        ).then(({data: {result, resultCode, msg}}) => {
+                            this.modal_loading = false
+                            if (resultCode === '000000') {
+                                this.$Message.success(msg)
+                                this.onCancelClick(role)
+                                this.currentPage = 1
+                                this.searchRoleList()
+                            } else {
+                                this.$Message.error(msg)
+                            }
+                        }).catch(() => {
+                            this.modal_loading = false
+                        })
+                    } else {
+                        let roleId = this.newRole.roleId
+                        let roleStatus = status ? '1' : '0'
+                        systemApi.updateRoleInfo(
+                            roleId,
+                            roleName,
+                            roleRemark,
+                            roleStatus
+                        ).then(({data: {result, resultCode, msg}}) => {
+                            this.modal_loading = false
+                            if (resultCode === '000000') {
+                                this.$Message.success(msg)
+                                this.onCancelClick(name)
+                                this.searchUserList()
+                            } else {
+                                this.$Message.error(msg)
+                            }
+                        }).catch(() => {
+                            this.modal_loading = false
+                        })
+                    }
                 } else {
                     this.$Message.error('Fail!')
                 }
@@ -285,6 +364,7 @@ export default {
             console.log(this.newRole)
             this.newRoleTitle = '修改角色'
             this.newRoleShow = true
+            this.formRef = 'editRole'
         },
         deleteClick (row) {
             this.$Modal.confirm({
@@ -294,6 +374,17 @@ export default {
                 onOk: () => {
                     this.$Modal.remove()
                     // TODO 刷新数据
+                    systemApi.deleteRoleInfo(row.roleId).then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                            this.searchRoleList()
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
                 },
                 onCancel: () => {
                     this.selectedRows = []
@@ -305,14 +396,34 @@ export default {
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
-            systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
-                this.tableData = result.roleList
+            this.openLoading()
+            systemApi.searchRoleList(
+                this.currentPage, this.pageSize
+            ).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    console.log(result.list)
+                    this.tableData = result.list
+                    this.totalNum = result.total
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+                this.closeLoading()
             })
         },
         authorizedUserList (roleId) {
-            systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
-                this.tableUserData = result.authorizedUserList
-                this.totalNum = result.authorizedUserList.totalNum
+            systemApi.authorizedUserList(
+                roleId,
+                this.currentPageAuthorizedUser,
+                this.pageSize
+            ).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.tableUserData = result.authorizedUserList
+                    this.totalNum = result.authorizedUserList.totalNum
+                } else {
+                    this.$Message.error(msg)
+                }
             })
         }
     },
