@@ -34,9 +34,11 @@ const updateRoleInfo = (roleId, roleName, roleRemark, roleStatus) => http.post('
 
 const deleteRoleInfo = (roleId) => http.post('/role/delRole', {roleId})
 
+const deleteRoleUser = (userAdminRoleId) => http.post('/role/delRoleUser', {userAdminRoleId})
+
 const searchMenuList = () => http.get('/user/menu', {mock: true})
 
-const authorizedUserList = (roleId, currentPage, pageSize) => http.post('/role/queryRoleUsers', {roleId, currentPage, pageSize}, {mock: false})
+const authorizedUserList = (roleId, userAdminName, currentPage, pageSize) => http.post('/role/queryRoleUsers', {roleId, userAdminName, currentPage, pageSize}, {mock: false})
 
 export default {
     searchUserList,
@@ -52,5 +54,6 @@ export default {
     deleteRoleInfo,
     updateRoleState,
     searchMenuList,
-    authorizedUserList
+    authorizedUserList,
+    deleteRoleUser
 }

@@ -156,8 +156,9 @@ export default {
             totalNumAuthorizedUser: 10,
             tableUserData: [],
             nameKey: '',
+            currentRoleId: '',
             userColumns: [
-                {title: '已授权用户名(姓名)', key: 'authorizedUserName'},
+                {title: '已授权用户名(姓名)', key: 'userAdminName'},
                 {
                     title: '操作',
                     render: (h, {column, index, row}) => {
@@ -166,7 +167,7 @@ export default {
                             type: 'error',
                             on: {
                                 click: () => {
-                                    this.deleteClick(row)
+                                    this.deleteUserClick(row)
                                 }
                             }
                         }])
@@ -192,7 +193,7 @@ export default {
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
         filterName () {
-            this.authorizedUserList(this.nameKey)
+            this.authorizedUserList(this.currentRoleId)
         },
         onCreateNewUser () {
 
@@ -366,6 +367,31 @@ export default {
             this.newRoleShow = true
             this.formRef = 'editRole'
         },
+        deleteUserClick (row) {
+            this.$Modal.confirm({
+                title: '删除信息确认',
+                content: `您是否确认删除选中的此条数据？`,
+                closable: false,
+                onOk: () => {
+                    this.$Modal.remove()
+                    // TODO 刷新数据
+                    systemApi.deleteRoleUser(row.userAdminRoleId).then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                            this.authorizedUserList(this.currentRoleId)
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
+                },
+                onCancel: () => {
+                    this.selectedRows = []
+                }
+            })
+        },
         deleteClick (row) {
             this.$Modal.confirm({
                 title: '删除信息确认',
@@ -393,6 +419,7 @@ export default {
         },
         authorizedUserClick (row) {
             this.authorizedUserShow = true
+            this.currentRoleId = row.roleId
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
@@ -413,14 +440,18 @@ export default {
             })
         },
         authorizedUserList (roleId) {
+            let userAdminName = this.nameKey
+            this.openLoading()
             systemApi.authorizedUserList(
                 roleId,
+                userAdminName,
                 this.currentPageAuthorizedUser,
                 this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableUserData = result.list
-                    this.totalNumAuthorizedUser = result.total
+                    this.totalNum = result.total
                 } else {
                     this.$Message.error(msg)
                 }
