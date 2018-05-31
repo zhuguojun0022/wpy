@@ -17,7 +17,7 @@ const server = axios.create({
 })
 
 const originMap = {
-    api: process.env.NODE_ENV === 'production' ? '' : '/admin'
+    api: ''
 }
 
 const getURL = (url, origin = 'api', mock = false) => {
