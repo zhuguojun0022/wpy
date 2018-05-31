@@ -8,7 +8,7 @@ Vue.prototype.$axios = axios
 
 const server = axios.create({
     baseURL: '/',
-    timeout: 30000,
+    timeout: 60000,
     headers: {
         'Cache-Control': 'no-cache',
         'X-Requested-With': 'XMLHttpRequest',
