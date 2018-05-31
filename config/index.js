@@ -4,7 +4,9 @@
 
 const path = require('path')
 // const host = "localhost:18080"
+// 
 const host = "11.240.240.25:8091"
+
 
 module.exports = {
   dev: {
@@ -12,11 +14,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/admin': {
+        '/': {
             target: 'http://' + host + '/',
             changeOrigin: true,
             pathRewrite: {
-                '^/admin' : '/admin'
+                '^/' : ''
             }
         },
         '/mock': 'http://localhost:18080'
