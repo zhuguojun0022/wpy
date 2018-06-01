@@ -24,12 +24,12 @@ const resetUserPwd = (userAdminId) => http.post('/useradmin/resetAdminPwd', {use
 
 const searchRoleList = (currentPage, pageSize) => http.post('/role/query', {currentPage, pageSize}, {mock: false})
 
-const addRoleInfo = (roleName, roleRemark, roleStatus) => http.post('/role/add', {roleName, roleRemark, roleStatus})
+const addRoleInfo = (roleName, roleRemark) => http.post('/role/add', {roleName, roleRemark})
 
 const updateRoleState = (roleId, roleStatus) => http.post('/role/setRoleStatus', {roleId, roleStatus})
 
-const updateRoleInfo = (roleId, roleName, roleRemark, roleStatus) => http.post('/role/modifyRole', {
-    roleId, roleName, roleRemark, roleStatus
+const updateRoleInfo = (roleId, roleName, roleRemark) => http.post('/role/modifyRole', {
+    roleId, roleName, roleRemark
 })
 
 const deleteRoleInfo = (roleId) => http.post('/role/delRole', {roleId})

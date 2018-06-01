@@ -80,6 +80,7 @@ export default {
                     title: '状态',
                     key: 'status',
                     render: (h, {row}) => {
+                        console.log(h)
                         return h('iSwitch', {
                             props: {
                                 value: row.roleStatus === 1,
@@ -87,6 +88,7 @@ export default {
                             },
                             on: {
                                 'on-change': (val) => {
+                                    console.log(val)
                                     this.onStatusChange(row, val)
                                 }
                             }
@@ -107,7 +109,8 @@ export default {
                             label: '修改',
                             type: 'primary',
                             on: {
-                                click: () => {
+                                click: (e) => {
+                                    e.stopPropagation()
                                     this.reviseClick(row)
                                 }
                             }
@@ -115,7 +118,8 @@ export default {
                             label: '授权用户',
                             type: 'primary',
                             on: {
-                                click: () => {
+                                click: (e) => {
+                                    e.stopPropagation()
                                     this.authorizedUserClick(row)
                                     console.log(row)
                                 }
@@ -124,7 +128,8 @@ export default {
                             label: '删除',
                             type: 'error',
                             on: {
-                                click: () => {
+                                click: (e) => {
+                                    e.stopPropagation()
                                     this.deleteClick(row)
                                 }
                             }
@@ -459,14 +464,12 @@ export default {
         },
         authorizedUserList (roleId) {
             let userAdminName = this.nameKey
-            this.openLoading()
             systemApi.authorizedUserList(
                 roleId,
                 userAdminName,
                 this.currentPageAuthorizedUser,
                 this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
-                this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableUserData = result.list
                     this.totalNumAuthorizedUser = result.total
