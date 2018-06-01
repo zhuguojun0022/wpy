@@ -23,12 +23,12 @@
             <FormItem prop="roleRemark" label="角色描述">
                 <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
-            <FormItem prop="status" label="状态">
+            <!-- <FormItem prop="status" label="状态">
                 <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
                     <span slot="open">启用</span>
                     <span slot="close">停用</span>
                 </iSwitch>
-            </FormItem>
+            </FormItem> -->
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -334,16 +334,14 @@ export default {
         onSubmitClick (role) {
             this.$refs[role].validate((valid) => {
                 if (valid) {
-                    let {roleName, roleRemark, status} = {
+                    let {roleName, roleRemark} = {
                         ...this.newRole
                     }
                     this.modal_loading = true
-                    let roleStatus = status ? '1' : '0'
                     if (role === 'addrole') {
                         systemApi.addRoleInfo(
                             roleName,
-                            roleRemark,
-                            roleStatus
+                            roleRemark
                         ).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
@@ -359,18 +357,16 @@ export default {
                         })
                     } else {
                         let roleId = this.newRole.roleId
-                        let roleStatus = status ? '1' : '0'
                         systemApi.updateRoleInfo(
                             roleId,
                             roleName,
-                            roleRemark,
-                            roleStatus
+                            roleRemark
                         ).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
                                 this.$Message.success(msg)
-                                this.onCancelClick(name)
-                                this.searchUserList()
+                                this.onCancelClick(role)
+                                this.searchRoleList()
                             } else {
                                 this.$Message.error(msg)
                             }
@@ -473,10 +469,12 @@ export default {
                 this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableUserData = result.list
-                    this.totalNum = result.total
+                    this.totalNumAuthorizedUser = result.total
                 } else {
                     this.$Message.error(msg)
                 }
+            }).catch(() => {
+                this.closeLoading()
             })
         }
     },
