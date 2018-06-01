@@ -267,7 +267,7 @@ export default {
                     this.$Message.success(msg)
                     this.treeData = this.filterData(result)
                 } else {
-                    this.$Message.success(msg)
+                    this.$Message.error(msg)
                 }
             }).catch(() => {
             })
@@ -286,7 +286,7 @@ export default {
                         if (resultCode === '000000') {
                             this.$Message.success(msg)
                         } else {
-                            this.$Message.success(msg)
+                            this.$Message.error(msg)
                             this.$nextTick(() => {
                                 row.roleStatus = !val
                             })
@@ -446,14 +446,12 @@ export default {
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
-            console.log('aaaaa', this.$refs)
             this.openLoading()
             systemApi.searchRoleList(
                 this.currentPage, this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
-                    console.log(result.list)
                     this.tableData = result.list
                     this.totalNum = result.total
                 } else {
