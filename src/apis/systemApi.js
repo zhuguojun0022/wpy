@@ -36,13 +36,21 @@ const deleteRoleInfo = (roleId) => http.post('/role/delRole', {roleId})
 
 const deleteRoleUser = (userAdminRoleId) => http.post('/role/delRoleUser', {userAdminRoleId})
 
-const searchMenuList = () => http.get('/user/menu', {mock: true})
-
 const authorizedUserList = (roleId, userAdminName, currentPage, pageSize) => http.post('/role/queryRoleUsers', {roleId, userAdminName, currentPage, pageSize}, {mock: false})
 
 const authorizedMenuTree = (roleId) => http.post('/role/queryRoleMenuTree', {roleId})
 
 const updateAuthorizedMenuTree = (roleId, menuIds) => http.post('/role/saveRoleMenu', {roleId, menuIds})
+
+const getMenuTree = () => http.get('/menu/tree')
+
+const addMenu = (menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/add', {
+    menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
+})
+
+const updateMenuTree = (menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/update', {
+    menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
+})
 
 export default {
     searchUserList,
@@ -57,9 +65,11 @@ export default {
     updateRoleInfo,
     deleteRoleInfo,
     updateRoleState,
-    searchMenuList,
     authorizedUserList,
     deleteRoleUser,
     authorizedMenuTree,
-    updateAuthorizedMenuTree
+    updateAuthorizedMenuTree,
+    getMenuTree,
+    addMenu,
+    updateMenuTree
 }

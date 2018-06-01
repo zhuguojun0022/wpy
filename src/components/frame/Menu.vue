@@ -69,11 +69,6 @@ export default {
     },
     watch: {
         '$route' (route, old) {
-            if (route.name === 'nopermission') {
-                this.pActiveLeafId = this.clickedMenuId
-                this.pActiveBranche = null
-                this.cActiveLeafId = this.clickedMenuId
-            }
             if (route.name === old.name) return
             this.init()
         }
