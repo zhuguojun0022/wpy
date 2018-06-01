@@ -11,8 +11,8 @@
         </Col>
         <Col span="6" class="authorize">
             <span class="authorize-title">授权功能</span>
-            <Button type="primary" v-if="clickRole" class="authorize-save">保存</Button>
-            <Tree :data="treeData" show-checkbox v-if="clickRole"></Tree>
+            <Button type="primary" v-if="clickRole" class="authorize-save" @click="updateTree">保存</Button>
+            <Tree :data="treeData" show-checkbox v-if="clickRole" :ref='trees'></Tree>
         </Col>
     </Row>
     <Modal v-model="newRoleShow" :title="newRoleTitle" ref="modal">
@@ -20,8 +20,8 @@
             <FormItem prop="roleName" label="角色名称" required>
                 <Input v-model.trim="newRole.roleName" placeholder="请输入角色名称"></Input>
             </FormItem>
-            <FormItem prop="roleDescription" label="角色描述">
-                <Input v-model.trim="newRole.roleDescription" type="textarea" placeholder="请输入角色描述"></Input>
+            <FormItem prop="roleRemark" label="角色描述">
+                <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
             <FormItem prop="status" label="状态">
                 <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
@@ -29,7 +29,6 @@
                     <span slot="close">停用</span>
                 </iSwitch>
             </FormItem>
-
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -44,7 +43,7 @@
             </div>
         </table-header>
         <Table :columns="userColumns" :data="tableUserData"></Table>
-        <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
+        <table-footer :total-num="totalNumAuthorizedUser" :current-page="currentPageAuthorizedUser" @on-change="handleCurrentChange"></table-footer>
     </Modal>
     <Modal v-model="reNewRoleShow" ref="modal">
 
@@ -54,7 +53,9 @@
 <script>
 import { TableHeader, TableFooter } from '../../../components/table'
 import {mapMutations} from 'vuex'
-import {infraApi, systemApi} from '../../../apis'
+import {systemApi} from '../../../apis'
+import {formatDateTime} from '../../../common/utils'
+
 export default {
     components: {TableHeader, TableFooter},
     data () {
@@ -62,17 +63,26 @@ export default {
             tableData: [],
             columns: [
                 {title: '角色名称', key: 'roleName'},
-                {title: '角色描述', key: 'roleDescription'},
+                {title: '角色描述', key: 'roleRemark'},
                 {title: '角色ID', key: 'roleId'},
-                {title: '创建人', key: 'founder'},
-                {title: '创建时间', key: 'creationTime'},
+                {title: '创建人', key: 'createUserNo'},
+                {
+                    title: '创建时间',
+                    key: 'createTime',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: formatDateTime(row.createTime)
+                        }])
+                    }
+                },
                 {
                     title: '状态',
                     key: 'status',
                     render: (h, {row}) => {
                         return h('iSwitch', {
                             props: {
-                                value: row.status,
+                                value: row.roleStatus === 1,
                                 size: 'large'
                             },
                             on: {
@@ -122,6 +132,7 @@ export default {
                     }
                 }
             ],
+            trees: 'checked',
             treeData: [],
             clickRole: false,
             newRoleShow: false,
@@ -139,11 +150,16 @@ export default {
             authorizedUserShow: false,
             authorizedUserTitle: '授权用户',
             currentPage: 1,
+            pageSize: 10,
             totalNum: 10,
+            currentPageAuthorizedUser: 1,
+            totalNumAuthorizedUser: 10,
             tableUserData: [],
             nameKey: '',
+            currentRoleId: '',
+            highlightRoleId: '',
             userColumns: [
-                {title: '已授权用户名(姓名)', key: 'authorizedUserName'},
+                {title: '已授权用户名(姓名)', key: 'userAdminName'},
                 {
                     title: '操作',
                     render: (h, {column, index, row}) => {
@@ -152,7 +168,7 @@ export default {
                             type: 'error',
                             on: {
                                 click: () => {
-                                    this.deleteClick(row)
+                                    this.deleteUserClick(row)
                                 }
                             }
                         }])
@@ -174,74 +190,117 @@ export default {
         this.searchRoleList()
     },
     methods: {
-        ...mapMutations(['resetBreadcrumb']),
+        ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
         filterName () {
-            this.authorizedUserList(this.nameKey)
+            this.authorizedUserList(this.currentRoleId)
         },
-        onCreateNewUser () {},
-        handleCurrentChange (v) {},
+        onCreateNewUser () {
+
+        },
+        handleCurrentChange (v) {
+            this.currentPage = v
+            this.searchUserList()
+        },
         filterData (arr) {
             var newArr = []
             arr.map((item) => {
                 var childrenArr
-                if (!item.leaf) {
-                    childrenArr = this.filterData(item.subMenu)
+                if (item.children !== null && item.children !== []) {
+                    childrenArr = this.filterData(item.children)
                 } else {
                     childrenArr = []
                 }
                 newArr.push({
-                    title: item.menuName,
-                    leaf: item.leaf,
-                    menuIcon: item.menuIcon,
+                    title: item.menuTitle,
+                    checked: item.selected,
                     children: childrenArr,
-                    render: (h, { root, node, data }) => {
-                        var c = item.menuIcon
-                        return h('span', {
-                            style: {
-                                display: 'inline-block',
-                                width: '100%'
-                            }
-                        }, [
-                            h('span', [
-                                h('i', {
-                                    attrs: {
-                                        class: c + ' iconfont'
-                                    },
-                                    style: {
-                                        marginRight: '8px'
-                                    }
-                                }),
-                                h('span', item.menuName)
-                            ])
-                        ])
-                    }
+                    expand: item.expand,
+                    menuId: item.menuId,
+                    menuPid: item.menuPid
                 })
             })
             return newArr
         },
-        loadData () {
-            infraApi.getMenu().then(({data: {result}}) => {
-                this.treeData = this.filterData(result)
+        loadData (roleId) {
+            this.openLoading()
+            systemApi.authorizedMenuTree(roleId).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.$Message.success(msg)
+                    this.treeData = this.filterData(result)
+                } else {
+                    this.$Message.success(msg)
+                }
+            }).catch(() => {
             })
         },
-        singleClick () {
+        singleClick (currentRow) {
             this.clickRole = true
+            this.highlightRoleId = currentRow.roleId
+            console.log(currentRow.roleId)
+            this.loadData(currentRow.roleId)
+        },
+        filterTreeData (arr) {
+            console.log(arr)
+            var newArr = []
+            console.log(this.treeData)
+            arr.map((item) => {
+                if (item.checked) {
+                    newArr.push(item.menuId)
+                }
+                console.log('newArr', newArr)
+            })
+            var menuIds = newArr.join(',')
+            console.log(menuIds)
+            return menuIds
+        },
+        updateTree () {
+            let roleId = this.highlightRoleId
+            let checkout = this.trees
+            let menuIds = this.filterTreeData(this.$refs[checkout].getCheckedNodes())
+            this.openLoading()
+            systemApi.updateAuthorizedMenuTree(roleId, menuIds).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.$Message.success(msg)
+                    this.treeData = this.filterData(result)
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+            })
         },
         onStatusChange (row, val) {
-            row.status = val
+            row.roleStatus = val
             this.$Modal.confirm({
                 title: '状态信息修改确认',
-                content: `您将${row.status ? '启用' : '停用'}该角色，是否继续？`,
+                content: `您将${row.roleStatus ? '启用' : '停用'}该角色，是否继续？`,
                 closable: false,
                 onOk: () => {
                     this.$Modal.remove()
                     // TODO 刷新数据
+                    systemApi.updateRoleState(row.roleId, val ? '1' : '0').then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                        } else {
+                            this.$Message.error(msg)
+                            this.$nextTick(() => {
+                                row.roleStatus = !val
+                            })
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                        this.$nextTick(() => {
+                            row.roleStatus = !val
+                        })
+                    })
                 },
                 onCancel: () => {
                     this.$nextTick(() => {
-                        row.status = !val
+                        row.roleStatus = !val
                     })
                 }
             })
@@ -270,11 +329,55 @@ export default {
             this.$refs[role].resetFields()
             this.newRoleShow = false
             this.newRoleTitle = '新建角色'
+            this.formRef = 'addrole'
         },
         onSubmitClick (role) {
             this.$refs[role].validate((valid) => {
                 if (valid) {
-                    this.$Message.success('Success!')
+                    let {roleName, roleRemark, status} = {
+                        ...this.newRole
+                    }
+                    this.modal_loading = true
+                    let roleStatus = status ? '1' : '0'
+                    if (role === 'addrole') {
+                        systemApi.addRoleInfo(
+                            roleName,
+                            roleRemark,
+                            roleStatus
+                        ).then(({data: {result, resultCode, msg}}) => {
+                            this.modal_loading = false
+                            if (resultCode === '000000') {
+                                this.$Message.success(msg)
+                                this.onCancelClick(role)
+                                this.currentPage = 1
+                                this.searchRoleList()
+                            } else {
+                                this.$Message.error(msg)
+                            }
+                        }).catch(() => {
+                            this.modal_loading = false
+                        })
+                    } else {
+                        let roleId = this.newRole.roleId
+                        let roleStatus = status ? '1' : '0'
+                        systemApi.updateRoleInfo(
+                            roleId,
+                            roleName,
+                            roleRemark,
+                            roleStatus
+                        ).then(({data: {result, resultCode, msg}}) => {
+                            this.modal_loading = false
+                            if (resultCode === '000000') {
+                                this.$Message.success(msg)
+                                this.onCancelClick(name)
+                                this.searchUserList()
+                            } else {
+                                this.$Message.error(msg)
+                            }
+                        }).catch(() => {
+                            this.modal_loading = false
+                        })
+                    }
                 } else {
                     this.$Message.error('Fail!')
                 }
@@ -285,6 +388,32 @@ export default {
             console.log(this.newRole)
             this.newRoleTitle = '修改角色'
             this.newRoleShow = true
+            this.formRef = 'editRole'
+        },
+        deleteUserClick (row) {
+            this.$Modal.confirm({
+                title: '删除信息确认',
+                content: `您是否确认删除选中的此条数据？`,
+                closable: false,
+                onOk: () => {
+                    this.$Modal.remove()
+                    // TODO 刷新数据
+                    systemApi.deleteRoleUser(row.userAdminRoleId).then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                            this.authorizedUserList(this.currentRoleId)
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
+                },
+                onCancel: () => {
+                    this.selectedRows = []
+                }
+            })
         },
         deleteClick (row) {
             this.$Modal.confirm({
@@ -294,6 +423,17 @@ export default {
                 onOk: () => {
                     this.$Modal.remove()
                     // TODO 刷新数据
+                    systemApi.deleteRoleInfo(row.roleId).then(({data: {result, resultCode, msg}}) => {
+                        this.$Modal.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                            this.searchRoleList()
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
                 },
                 onCancel: () => {
                     this.selectedRows = []
@@ -302,22 +442,46 @@ export default {
         },
         authorizedUserClick (row) {
             this.authorizedUserShow = true
+            this.currentRoleId = row.roleId
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
-            systemApi.searchRoleList().then(({data: {result, code, msg}}) => {
-                this.tableData = result.roleList
+            this.openLoading()
+            systemApi.searchRoleList(
+                this.currentPage, this.pageSize
+            ).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.tableData = result.list
+                    this.totalNum = result.total
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+                this.closeLoading()
             })
         },
         authorizedUserList (roleId) {
-            systemApi.authorizedUserList().then(({data: {result, code, msg}}) => {
-                this.tableUserData = result.authorizedUserList
-                this.totalNum = result.authorizedUserList.totalNum
+            let userAdminName = this.nameKey
+            this.openLoading()
+            systemApi.authorizedUserList(
+                roleId,
+                userAdminName,
+                this.currentPageAuthorizedUser,
+                this.pageSize
+            ).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.tableUserData = result.list
+                    this.totalNum = result.total
+                } else {
+                    this.$Message.error(msg)
+                }
             })
         }
     },
     mounted () {
-        this.loadData()
+        // this.loadData()
     },
     computed: {}
 }

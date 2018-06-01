@@ -22,19 +22,27 @@ const updateUserState = (userAdminId, userAdminStatus) => http.post('/useradmin/
 
 const resetUserPwd = (userAdminId) => http.post('/useradmin/resetAdminPwd', {userAdminId})
 
-const searchRoleList = () => http.get('/user/rolelist', {mock: true})
+const searchRoleList = (currentPage, pageSize) => http.post('/role/query', {currentPage, pageSize}, {mock: false})
 
-const getMenuTree = () => http.get('/menu/tree')
+const addRoleInfo = (roleName, roleRemark, roleStatus) => http.post('/role/add', {roleName, roleRemark, roleStatus})
 
-const addMenu = (menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/add', {
-    menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
+const updateRoleState = (roleId, roleStatus) => http.post('/role/setRoleStatus', {roleId, roleStatus})
+
+const updateRoleInfo = (roleId, roleName, roleRemark, roleStatus) => http.post('/role/modifyRole', {
+    roleId, roleName, roleRemark, roleStatus
 })
 
-const updateMenuTree = (menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/update', {
-    menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
-})
+const deleteRoleInfo = (roleId) => http.post('/role/delRole', {roleId})
 
-const authorizedUserList = () => http.get('/user/authorizedUserlist', {mock: true})
+const deleteRoleUser = (userAdminRoleId) => http.post('/role/delRoleUser', {userAdminRoleId})
+
+const searchMenuList = () => http.get('/user/menu', {mock: true})
+
+const authorizedUserList = (roleId, userAdminName, currentPage, pageSize) => http.post('/role/queryRoleUsers', {roleId, userAdminName, currentPage, pageSize}, {mock: false})
+
+const authorizedMenuTree = (roleId) => http.post('/role/queryRoleMenuTree', {roleId})
+
+const updateAuthorizedMenuTree = (roleId, menuIds) => http.post('/role/saveRoleMenu', {roleId, menuIds})
 
 export default {
     searchUserList,
@@ -45,8 +53,13 @@ export default {
     updateUserState,
     resetUserPwd,
     searchRoleList,
+    addRoleInfo,
+    updateRoleInfo,
+    deleteRoleInfo,
+    updateRoleState,
+    searchMenuList,
     authorizedUserList,
-    getMenuTree,
-    addMenu,
-    updateMenuTree
+    deleteRoleUser,
+    authorizedMenuTree,
+    updateAuthorizedMenuTree
 }
