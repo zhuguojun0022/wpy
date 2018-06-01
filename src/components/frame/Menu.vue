@@ -13,12 +13,12 @@
 
                         <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i>
 
-                        {{pItem.menuName}}
+                        {{pItem.menuTitle}}
 
                         <i
                             class="ivu-icon ivu-icon-ios-arrow-down arrow-icon"
                             :class="{'open-ul': openedMenuId === pItem.menuId}"
-                            v-if="!pItem.leaf"></i>
+                            v-if="pItem.children.length !== 0"></i>
 
                     </div>
                     <!-- iview 展开动画组件 -->
@@ -26,13 +26,13 @@
                         <!-- 二级菜单ul -->
                         <ul class="normal-in-ul" v-show="openedMenuId === pItem.menuId">
 
-                            <li class="normal-c-li" v-for="cItem in pItem.subMenu" :key="cItem.menuId">
+                            <li class="normal-c-li" v-for="cItem in pItem.children" :key="cItem.menuId">
                                 <!-- 二级菜单 title -->
                                 <div class="menu-title"
                                     :class="{'c-active-leaf': cActiveLeafId === cItem.menuId}"
                                     @click="secondLevalClick(cItem)"
                                     >
-                                    {{cItem.menuName}}
+                                    {{cItem.menuTitle}}
                                 </div>
 
                             </li>
@@ -56,7 +56,7 @@ export default {
     props: {},
     data () {
         infraApi.getMenu().then(({data: {result}}) => {
-            this.init(result)
+            this.init(result.children)
         })
         return {
             menuList: [],
@@ -92,15 +92,15 @@ export default {
             console.log(menu, this.$route.name)
             let nowMenuName = this.$route.name
             menuList.forEach(e => {
-                if (e.menuUrl === nowMenuName) {
+                if (e.menuRouter === nowMenuName) {
                     this.pActiveLeafId = e.menuId
                     this.openedMenuId = null
                     this.cActiveLeafId = null
                     this.pActiveBranche = null
                 }
-                if (e.subMenu) {
-                    e.subMenu.forEach(el => {
-                        if (el.menuUrl === nowMenuName) {
+                if (e.chlidren) {
+                    e.chlidren.forEach(el => {
+                        if (el.menuRouter === nowMenuName) {
                             this.cActiveLeafId = el.menuId
                             this.pActiveLeafId = null
                             this.pActiveBranche = el.menuPid
@@ -123,7 +123,7 @@ export default {
             }
             if (pItem.leaf) {
                 this.$router.push({
-                    name: pItem.menuUrl
+                    name: pItem.menuRouter
                 })
             } else {
                 this.openedMenuId = pItem.menuId
@@ -133,7 +133,7 @@ export default {
             this.clickedMenuId = cItem.menuId
             this.cActiveLeafId = this.clickedMenuId
             this.$router.push({
-                name: cItem.menuUrl
+                name: cItem.menuRouter
             })
         }
     }
