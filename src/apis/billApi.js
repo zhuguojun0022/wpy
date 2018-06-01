@@ -1,13 +1,16 @@
 import http from '../config/httpConfig'
 
-const searchBillList = () => http.get('/bill/billlist', {mock: true})
+const searchBillList = (pageSize, currentPage, merchantName, channelId, recordStatus, startTime, finishTime, createTime) => http.post('/bill', {pageSize, currentPage, merchantName, channelId, recordStatus, startTime, finishTime, createTime}, {mock: false})
 
-const searchReconciliation = () => http.get('/bill/detailslist', {mock: true})
+const searchTypeList = () => http.get('/bill/channel', {mock: false})
 
-const searchBilllDetails = () => http.get('/bill/billlDetails', {mock: true})
+const searchBillRecordList = (pageSize, currentPage, status) => http.post('/bill/detail', {pageSize, currentPage, status}, {mock: false})
+
+const updateErrorHandle = (tradeId, recordId, errHandle) => http.post('/bill/errHandle', {tradeId, recordId, errHandle}, {mock: false})
 
 export default {
     searchBillList,
-    searchReconciliation,
-    searchBilllDetails
+    searchBillRecordList,
+    searchTypeList,
+    updateErrorHandle
 }

@@ -3,15 +3,15 @@
     <table-header>
         <template slot="right">
             <Input v-model="filterName" placeholder="收单账户" style="width: 200px" clearable></Input>
-            <Select v-model="filterRole" style="width: 200px" placeholder="支付渠道">
-                <Option v-for="item in roleList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Select v-model="payType" style="width: 150px" placeholder="支付渠道">
+                <Option v-for="item in roleList" :value="item.channelId" :key="item.channelId">{{ item.channelName }}</Option>
             </Select>
-            <Select v-model="filterStatus" style="width: 200px" placeholder="对账进度">
-                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Select v-model="ContrastProcess" style="width: 100px" placeholder="对账进度">
+                <Option v-for="item in statusList" :value="item.recordStatus" :key="item.recordStatus">{{ item.label }}</Option>
             </Select>
-            <Select v-model="filterStatus" style="width: 200px" placeholder="日期">
-                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
+            <DatePicker type="date" placeholder="对账开始时间" style="width: 150px" v-model="startTime"></DatePicker>
+            <DatePicker type="date" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
+            <DatePicker type="date" placeholder="渠道账单生成时间" style="width: 150px" v-model="bulidTime"></DatePicker>
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
     </table-header>
@@ -26,6 +26,7 @@
 import {TableHeader, TableFooter} from '../../components/table'
 import {billApi} from '../../apis/'
 import {mapMutations} from 'vuex'
+import {formatDateTime} from '../../common/utils'
 
 export default {
     components: {TableHeader, TableFooter},
@@ -35,25 +36,69 @@ export default {
             filterRole: '',
             filterStatus: '',
             roleList: [],
-            statusList: [],
+            startTime: '',
+            endTime: '',
+            bulidTime: '',
+            payType: '',
+            ContrastProcess: '',
+            statusList: [
+                {recordStatus: 0, label: '有差异'},
+                {recordStatus: 1, label: '已核对'}
+            ],
             columns: [
-                {title: '收单商户', key: 'merchants'},
-                {title: '支付渠道', key: 'payChannel'},
-                {title: '对账开始时间', key: 'startTime'},
-                {title: '对账结束时间', key: 'endTime'},
-                {title: '渠道账单生成时间', key: 'generateTime'},
-                {title: '净交易额', key: 'businessAmount'},
-                {title: '总收入金额 | 笔数', key: 'totalAmount'},
-                {title: '渠道手续费', key: 'fees'},
+                {title: '收单商户', key: 'merchantName'},
+                {title: '支付渠道', key: 'channelName'},
                 {
-                    title: '对账进度',
-                    key: 'progress',
+                    title: '对账开始时间',
+                    key: 'startTime',
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
-                            label: row.progress,
+                            label: formatDateTime(row.startTime)
+                        }])
+                    }
+                },
+                {
+                    title: '对账结束时间',
+                    key: 'finishTime',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: formatDateTime(row.finishTime)
+                        }])
+                    }
+                },
+                {
+                    title: '渠道账单生成时间',
+                    key: 'createTime',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: formatDateTime(row.createTime)
+                        }])
+                    }
+                },
+                {title: '净交易额', key: 'netSales'},
+                {
+                    title: '总收入金额 | 笔数',
+                    key: 'totalIncome',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: '￥' + row.totalIncome + ' | ' + row.incomeNum
+                        }])
+                    }
+                },
+                {title: '渠道手续费', key: 'channelFee'},
+                {
+                    title: '对账进度',
+                    key: 'recordStatus',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: row.recordStatus === 1 ? '已核对' : '有差异',
                             style: {
-                                color: row.progress === '有差异' ? 'red' : '#495060'
+                                color: row.progress === 0 ? 'red' : '#495060'
                             }
                         }])
                     }
@@ -66,7 +111,11 @@ export default {
                             type: 'primary',
                             on: {
                                 click: () => {
-                                    this.onWatchClick(row.billId)
+                                    console.log(row)
+                                    var billInfo = JSON.stringify(row)
+                                    sessionStorage.setItem('billInfo', billInfo)
+                                    console.log(billInfo)
+                                    this.onWatchClick(row.recordId)
                                 }
                             }
                         }])
@@ -75,6 +124,7 @@ export default {
             ],
             tableData: [],
             totalNum: 0,
+            pageSize: 10,
             currentPage: 1
         }
     },
@@ -88,9 +138,10 @@ export default {
     },
     created () {
         this.searchBillList()
+        this.searchTypeList()
     },
     methods: {
-        ...mapMutations(['resetBreadcrumb']),
+        ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         rowClassName (row) {
             if (row.progress === '有差异') {
                 return 'error-line'
@@ -99,7 +150,10 @@ export default {
             }
         },
         handleCurrentChange () {},
-        onSearchClick () {},
+        onSearchClick () {
+            this.searchBillList()
+            console.log(this.startTime.getTime(), this.endTime, this.bulidTime)
+        },
         onWatchClick (id) {
             this.$router.push({
                 name: 'billDetails',
@@ -108,10 +162,53 @@ export default {
                 }
             })
         },
+        searchTypeList () {
+            billApi.searchTypeList().then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.roleList = result
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+            })
+        },
         searchBillList () {
-            billApi.searchBillList().then(({data: {result, code, msg}}) => {
-                this.tableData = result.list
-                this.totalNum = result.totalNum
+            this.openLoading()
+            let startTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
+            let endTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
+            let bulidTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
+            // if (this.startTime !== ''){
+            //     let startTime = this.startTime.getTime()
+            // } else {
+            //     let startTime = ''
+            // }
+            // if (this.endTime !== ''){
+            //     let endTime = this.endTime.getTime()
+            // } else {
+            //     let endTime = ''
+            // }
+            // if (this.bulidTime !== ''){
+            //     let bulidTime = this.bulidTime.getTime()
+            // } else {
+            //     let bulidTime = ''
+            // }
+            billApi.searchBillList(
+                this.pageSize,
+                this.currentPage,
+                this.filterName,
+                this.payType,
+                this.ContrastProcess,
+                startTime,
+                endTime,
+                bulidTime
+            ).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.tableData = result.list
+                    this.totalNum = result.total
+                } else {
+                    this.$Message.error(msg)
+                }
             })
         }
     }

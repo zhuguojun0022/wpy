@@ -27,6 +27,7 @@ import {
     Layout,
     Sider,
     Tree,
+    DatePicker,
     CheckboxGroup,
     Checkbox,
     Spin
@@ -59,6 +60,7 @@ Vue.component('Tree', Tree)
 Vue.component('CheckboxGroup', CheckboxGroup)
 Vue.component('Checkbox', Checkbox)
 Vue.component('Spin', Spin)
+Vue.component('DatePicker', DatePicker)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal
