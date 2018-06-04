@@ -39,7 +39,7 @@
         <table-header>
             <div slot="left">
                 <Input icon="ios-search" placeholder="用户名/姓名" v-model="nameKey" style="width: 200px" @on-change="filterName"></Input>
-                <Button type="primary" @click="onCreateNewUser">新建用户</Button>
+                <Button type="primary" @click="onCreateNewUser">授权用户</Button>
             </div>
         </table-header>
         <Table :columns="userColumns" :data="tableUserData"></Table>

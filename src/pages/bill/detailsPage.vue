@@ -89,20 +89,20 @@
                     <FormItem prop="beforeErrorState" label="交易" class="firstForm">
                         <strong>【{{checkStatus(errorHandling.checkStatus)}}】</strong>
                     </FormItem>
-                    <FormItem prop="batch" label="交易流水号">
-                        <Input v-model="errorHandling.serialsNum" disabled></Input>
+                    <FormItem prop="batch" label-width='100' label="交易流水号">
+                        <span>{{errorHandling.serialsNum}}</span>
                     </FormItem>
-                    <FormItem prop="transactionTime" label="交易完成时间">
-                        <Input v-model="errorHandling.tradeFinishTime" disabled></Input>
+                    <FormItem prop="transactionTime" label-width='100' label="交易完成时间">
+                        <span>{{errorHandling.tradeFinishTime}}</span>
                     </FormItem>
-                    <FormItem prop="typeTrade" label="交易类型">
-                        <Input v-model="errorHandling.tradeType" disabled></Input>
+                    <FormItem prop="typeTrade" label-width='100' label="交易类型">
+                        <span>{{tradeType(errorHandling.tradeType)}}</span>
                     </FormItem>
-                    <FormItem prop="beforeErrorState" label="交易状态">
-                        <Input disabled></Input>
+                    <FormItem prop="beforeErrorState" label-width='100' label="交易状态">
+                        <span>{{checkStatus(errorHandling.checkStatus)}}</span>
                     </FormItem>
-                    <FormItem prop="money" label="金额">
-                        <Input v-model="'￥'+errorHandling.serialsSum" disabled></Input>
+                    <FormItem prop="money" label-width='100' label="金额">
+                        <span>￥ {{errorHandling.serialsSum}}</span>
                     </FormItem>
                     <FormItem>
                         <Input disabled></Input>
@@ -112,23 +112,23 @@
                     <FormItem prop="money" label="支付渠道" class="firstForm">
                         <strong>【{{detailsTableData[0].channelName}}】</strong>
                     </FormItem>
-                    <FormItem prop="channelPayNumber" label="渠道流水号">
-                        <Input v-model="errorHandling.channelSerialsNum" disabled></Input>
+                    <FormItem prop="channelPayNumber" label-width='100' label="渠道流水号">
+                        <span>{{errorHandling.channelSerialsNum}}</span>
                     </FormItem>
-                    <FormItem prop="transactionTime" label="交易完成时间">
-                        <Input v-model="errorHandling.tradeFinishTime" disabled></Input>
+                    <FormItem prop="transactionTime" label-width='100' label="交易完成时间">
+                        <span>{{errorHandling.tradeFinishTime}}</span>
                     </FormItem>
-                    <FormItem prop="typeTrade" label="交易类型">
-                        <Input v-model="errorHandling.tradeType" disabled></Input>
+                    <FormItem prop="typeTrade" label-width='100' label="交易类型">
+                        <span>{{tradeType(errorHandling.tradeType)}}</span>
                     </FormItem>
-                    <FormItem prop="money" label="金额">
-                        <Input v-model="'￥'+errorHandling.serialsSum" disabled></Input>
+                    <FormItem prop="money" label-width='100' label="金额">
+                        <span>￥ {{errorHandling.serialsSum}}</span>
                     </FormItem>
-                    <FormItem prop="channelFee" label="服务费">
-                        <Input v-model="'￥'+errorHandling.channelFee" disabled></Input>
+                    <FormItem prop="channelFee" label-width='100' label="服务费">
+                        <span>￥ {{errorHandling.channelFee}}</span>
                     </FormItem>
-                    <FormItem prop="channelSettlementMoney" label="结算金额">
-                        <Input v-model="'￥'+errorHandling.channelSerialsFixSum" disabled></Input>
+                    <FormItem prop="channelSettlementMoney" label-width='100' label="结算金额">
+                        <span>￥ {{errorHandling.channelSerialsFixSum}}</span>
                     </FormItem>
                 </Col>
             </Row>
@@ -196,7 +196,17 @@ export default {
                         }])
                     }
                 },
-                {title: '交易类型', key: 'tradeType', width: 100},
+                {
+                    title: '交易类型', 
+                    key: 'tradeType', 
+                    width: 100,
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: this.tradeType(row.tradeType)
+                        }])
+                    }
+                },
                 {title: '金额', key: 'serialsSum', width: 100},
                 {title: '渠道金额', key: 'channelSerialsSum', width: 100},
                 {title: '渠道手续费', key: 'channelFee', width: 100},
@@ -265,7 +275,8 @@ export default {
                     width: 140,
                     fixed: 'right',
                     render: (h, {column, index, row}) => {
-                        if (row.beforeErrorState !== '') {
+                        console.log('row.checkStatus', row.checkStatus)
+                        if (row.checkStatus !== 0 && row.checkStatus !== 1 && row.checkStatus !== 5) {
                             return this.getCellRender(h, [{
                                 label: '差错处理',
                                 type: 'error',
@@ -273,6 +284,14 @@ export default {
                                     click: () => {
                                         this.clickErrHadling(row)
                                     }
+                                }
+                            }])
+                        } else {
+                            return this.getCellRender(h, [{
+                                tag: 'span',
+                                label: ' --',
+                                style: {
+                                    marginLeft: '8px'
                                 }
                             }])
                         }
@@ -309,6 +328,15 @@ export default {
                 return '差异账'
             } else if (status === 5) {
                 return '人工平账'
+            }
+        },
+        tradeType (status) {
+            if (status === 0) {
+                return '消费'
+            } else if (status === 1) {
+                return '退款'
+            } else if (status === 2) {
+                return '冲正'
             }
         },
         errStatus (status) {
@@ -362,6 +390,7 @@ export default {
             let errHandle = this.errorHandling.errHandle
             billApi.updateErrorHandle(tradeId, recordId, errHandle).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
+                    this.searchBillRecordList()
                     this.$Message.success(msg)
                 } else {
                     this.$Message.error(msg)
@@ -453,6 +482,9 @@ export default {
         background: #f8f8f9;
         font-weight: bold;
         border-top: 1px solid #dddee1;
+        > span{
+            margin-left: 10px;
+        }
     }
     .no-border{
         border: none;

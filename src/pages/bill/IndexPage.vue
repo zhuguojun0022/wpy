@@ -194,6 +194,7 @@ export default {
                 } else {
                     this.$Message.error(msg)
                 }
+            }).catch(() => {
             })
         }
     }
