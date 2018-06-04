@@ -38,8 +38,16 @@
     <Modal v-model="authorizedUserShow" :title="authorizedUserTitle" ref="modal">
         <table-header>
             <div slot="left">
-                <Input icon="ios-search" placeholder="用户名/姓名" v-model="nameKey" style="width: 200px" @on-change="filterName"></Input>
-                <Button type="primary" @click="onCreateNewUser">授权用户</Button>
+                <Select
+                v-model="nameKey"
+                filterable
+                remote
+                :remote-method="filterName"
+                :loading="loadings"
+                style="width: 200px">
+                    <Option v-for="(option, index) in userNameList" :value="option.userAdminId" :key="index">{{option.userAdminName}}</Option>
+                </Select>
+                <Button type="primary" @click="updateUser">授权用户</Button>
             </div>
         </table-header>
         <Table :columns="userColumns" :data="tableUserData"></Table>
@@ -121,7 +129,6 @@ export default {
                                 click: (e) => {
                                     e.stopPropagation()
                                     this.authorizedUserClick(row)
-                                    console.log(row)
                                 }
                             }
                         }, {
@@ -138,9 +145,11 @@ export default {
                 }
             ],
             trees: 'checked',
+            userNameList: [],
             treeData: [],
             clickRole: false,
             newRoleShow: false,
+            loadings: false,
             newRoleTitle: '新建角色',
             reNewRoleShow: false,
             modal_loading: false,
@@ -198,11 +207,44 @@ export default {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
-        filterName () {
-            this.authorizedUserList(this.currentRoleId)
+        filterName (value) {
+            console.log('value', value)
+            if (value !== '') {
+                this.loadings = true
+                setTimeout(() => {
+                    this.loadings = false
+                    systemApi.searchUnAuthorizedUserList(this.currentRoleId, value).then(({data: {result, resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            console.log(result)
+                            this.userNameList = []
+                            result.forEach((item, index) => {
+                                this.userNameList.push({
+                                    userAdminId: item.userAdminId,
+                                    userAdminName: item.userAdminName
+                                })
+                            })
+                            console.log('this.userNameList', this.userNameList)
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                    })
+                }, 200)
+            } else {
+                this.userNameList = []
+            }
         },
-        onCreateNewUser () {
-
+        updateUser () {
+            systemApi.updateAuthorizedUser(this.currentRoleId, this.nameKey).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    console.log(result)
+                    this.authorizedUserList(this.currentRoleId)
+                    this.$Message.success(msg)
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+            })
         },
         handleCurrentChange (v) {
             this.currentPage = v
@@ -236,7 +278,7 @@ export default {
                     this.$Message.success(msg)
                     this.treeData = this.filterData(result)
                 } else {
-                    this.$Message.success(msg)
+                    this.$Message.error(msg)
                 }
             }).catch(() => {
             })
@@ -443,7 +485,9 @@ export default {
         },
         authorizedUserClick (row) {
             this.authorizedUserShow = true
+            this.nameKey = ''
             this.currentRoleId = row.roleId
+            this.userNameList = []
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
@@ -463,7 +507,7 @@ export default {
             })
         },
         authorizedUserList (roleId) {
-            let userAdminName = this.nameKey
+            let userAdminName = ''
             systemApi.authorizedUserList(
                 roleId,
                 userAdminName,

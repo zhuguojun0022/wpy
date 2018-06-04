@@ -197,8 +197,8 @@ export default {
                     }
                 },
                 {
-                    title: '交易类型', 
-                    key: 'tradeType', 
+                    title: '交易类型',
+                    key: 'tradeType',
                     width: 100,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{

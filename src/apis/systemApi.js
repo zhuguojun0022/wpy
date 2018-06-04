@@ -42,6 +42,10 @@ const authorizedMenuTree = (roleId) => http.post('/role/queryRoleMenuTree', {rol
 
 const updateAuthorizedMenuTree = (roleId, menuIds) => http.post('/role/saveRoleMenu', {roleId, menuIds})
 
+const searchUnAuthorizedUserList = (roleId, userAdminName) => http.post('/role/queryRoleNoAuthUser', {roleId, userAdminName})
+
+const updateAuthorizedUser = (roleId, userAdminId) => http.post('/role/addUserAdminRole', {roleId, userAdminId})
+
 const getMenuTree = () => http.get('/menu/tree')
 
 const addMenu = (menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid) => http.post('/menu/add', {
@@ -71,5 +75,7 @@ export default {
     updateAuthorizedMenuTree,
     getMenuTree,
     addMenu,
-    updateMenuTree
+    updateMenuTree,
+    searchUnAuthorizedUserList,
+    updateAuthorizedUser
 }
