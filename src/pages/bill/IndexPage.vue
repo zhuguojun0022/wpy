@@ -3,14 +3,14 @@
     <table-header>
         <template slot="right">
             <Input v-model="filterName" placeholder="收单账户" style="width: 200px" clearable></Input>
-            <Select v-model="payType" style="width: 150px" placeholder="支付渠道">
+            <Select v-model="payType" style="width: 100px" placeholder="支付渠道">
                 <Option v-for="item in roleList" :value="item.channelId" :key="item.channelId">{{ item.channelName }}</Option>
             </Select>
             <Select v-model="ContrastProcess" style="width: 100px" placeholder="对账进度">
                 <Option v-for="item in statusList" :value="item.recordStatus" :key="item.recordStatus">{{ item.label }}</Option>
             </Select>
             <DatePicker type="date" placeholder="对账开始时间" style="width: 150px" v-model="startTime"></DatePicker>
-            <DatePicker type="date" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
+            <DatePicker type="date" :options="endDate" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
             <DatePicker type="date" placeholder="渠道账单生成时间" style="width: 150px" v-model="bulidTime"></DatePicker>
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
@@ -42,8 +42,8 @@ export default {
             payType: '',
             ContrastProcess: '',
             statusList: [
-                {recordStatus: 0, label: '有差异'},
-                {recordStatus: 1, label: '已核对'}
+                {recordStatus: 3, label: '已核对'},
+                {recordStatus: 4, label: '有差异'}
             ],
             columns: [
                 {title: '收单商户', key: 'merchantName'},
@@ -177,21 +177,6 @@ export default {
             let startTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
             let endTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
             let bulidTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
-            // if (this.startTime !== ''){
-            //     let startTime = this.startTime.getTime()
-            // } else {
-            //     let startTime = ''
-            // }
-            // if (this.endTime !== ''){
-            //     let endTime = this.endTime.getTime()
-            // } else {
-            //     let endTime = ''
-            // }
-            // if (this.bulidTime !== ''){
-            //     let bulidTime = this.bulidTime.getTime()
-            // } else {
-            //     let bulidTime = ''
-            // }
             billApi.searchBillList(
                 this.pageSize,
                 this.currentPage,

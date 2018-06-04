@@ -70,7 +70,7 @@
             <h5>核对结果</h5>
             <span class="check-group-title">核对状态</span>
             <Checkbox-group v-model="checkAll" @on-change="changeTableColumns" class="check-group">
-                <Checkbox :value="checkbox.value" v-for="checkbox in checkboxGroup" :label="checkbox.key" v-bind:key='checkbox.key'>{{checkbox.value}}</Checkbox>
+                <Checkbox :value="checkbox.value" v-for="checkbox in checkboxGroup" :label="checkbox.key" :key='checkbox.key'>{{checkbox.value}}</Checkbox>
             </Checkbox-group>
             <Table :columns="columns" :data="tableData"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
@@ -79,7 +79,7 @@
     <Modal v-model="errorHandlShow" :title="errorHandlTitle" ref="modal" class="bill-details" @on-ok="errorSure" @on-cancel="cancel">
         <Form :model="errorHandling" :label-width="90" class="chacuochuli" label-position="left">
             <FormItem prop="errorClass" label="差错分类" class="no-border">
-                <strong>{{errorHandling.errStatus}}</strong>
+                <strong>{{errStatus(errorHandling.errStatus)}}</strong>
             </FormItem>
             <FormItem prop="errorContent" label="差错内容" class="no-border">
                 <strong>{{errorHandling.errDetail}}</strong>
@@ -87,7 +87,7 @@
             <Row  :gutter="16">
                 <Col span="12">
                     <FormItem prop="beforeErrorState" label="交易" class="firstForm">
-                        <strong>【{{errorHandling.beforeErrorState}}】</strong>
+                        <strong>【{{checkStatus(errorHandling.checkStatus)}}】</strong>
                     </FormItem>
                     <FormItem prop="batch" label="交易流水号">
                         <Input v-model="errorHandling.serialsNum" disabled></Input>
@@ -99,10 +99,10 @@
                         <Input v-model="errorHandling.tradeType" disabled></Input>
                     </FormItem>
                     <FormItem prop="beforeErrorState" label="交易状态">
-                        <Input v-model="errorHandling.checkStatus" disabled></Input>
+                        <Input disabled></Input>
                     </FormItem>
                     <FormItem prop="money" label="金额">
-                        <Input v-model="errorHandling.serialsSum" disabled></Input>
+                        <Input v-model="'￥'+errorHandling.serialsSum" disabled></Input>
                     </FormItem>
                     <FormItem>
                         <Input disabled></Input>
@@ -110,7 +110,7 @@
                 </Col>
                 <Col span="12">
                     <FormItem prop="money" label="支付渠道" class="firstForm">
-                        <strong>【{{errorHandling.money}}】</strong>
+                        <strong>【{{detailsTableData[0].channelName}}】</strong>
                     </FormItem>
                     <FormItem prop="channelPayNumber" label="渠道流水号">
                         <Input v-model="errorHandling.channelSerialsNum" disabled></Input>
@@ -122,18 +122,18 @@
                         <Input v-model="errorHandling.tradeType" disabled></Input>
                     </FormItem>
                     <FormItem prop="money" label="金额">
-                        <Input v-model="errorHandling.serialsSum" disabled></Input>
+                        <Input v-model="'￥'+errorHandling.serialsSum" disabled></Input>
                     </FormItem>
                     <FormItem prop="channelFee" label="服务费">
-                        <Input v-model="errorHandling.hannelFee" disabled></Input>
+                        <Input v-model="'￥'+errorHandling.channelFee" disabled></Input>
                     </FormItem>
                     <FormItem prop="channelSettlementMoney" label="结算金额">
-                        <Input v-model="errorHandling.channelSerialsFixSum" disabled></Input>
+                        <Input v-model="'￥'+errorHandling.channelSerialsFixSum" disabled></Input>
                     </FormItem>
                 </Col>
             </Row>
             <FormItem prop="errorProcessDescribe" label="差错处理描述" class="no-border errorDescribe">
-                <Input v-model="errHandle" :value="errorHandling.errHandle" :rows="4" type="textarea"></Input>
+                <Input v-model="errorHandling.errHandle" :rows="4" type="textarea"></Input>
             </FormItem>
         </Form>
     </Modal>
@@ -151,16 +151,17 @@ export default {
     data () {
         return {
             checkboxGroup: [
+                {value: '待对账', key: 0},
                 {value: '平账', key: 1},
-                {value: '差异账', key: 2},
-                {value: '人工平账', key: 3},
-                {value: '单边账', key: 4},
-                {value: '支付渠道单边账', key: 5},
-                {value: '待对账', key: 6}
+                {value: '平台单边账', key: 2},
+                {value: '支付渠道单边账', key: 3},
+                {value: '差异账', key: 4},
+                {value: '人工平帐', key: 5}
             ],
             detailsTableData: [],
             checkAll: [],
             tableDataClon: [],
+            empty: '',
             errorHandling: {},
             errorHandlShow: false,
             errHandle: '',
@@ -200,7 +201,17 @@ export default {
                 {title: '渠道金额', key: 'channelSerialsSum', width: 100},
                 {title: '渠道手续费', key: 'channelFee', width: 100},
                 {title: '渠道结算金额', key: 'channelSerialsFixSum', width: 140},
-                {title: '核对状态', key: 'checkStatus', width: 100},
+                {
+                    title: '核对状态',
+                    key: 'checkStatus',
+                    width: 100,
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: this.checkStatus(row.checkStatus)
+                        }])
+                    }
+                },
                 {
                     title: '核对完成时间',
                     key: 'checkTime',
@@ -213,7 +224,17 @@ export default {
                     }
                 },
                 {title: '核对次数', key: 'checkTimes', width: 100},
-                {title: '差错分类', key: 'errStatus', width: 100},
+                {
+                    title: '差错分类',
+                    key: 'errStatus',
+                    width: 100,
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: this.errStatus(row.errStatus)
+                        }])
+                    }
+                },
                 {title: '差错内容', key: 'errDetail', width: 100},
                 {title: '差错处理描述', key: 'errHandle', width: 160},
                 {
@@ -231,7 +252,13 @@ export default {
                     title: '差错处理前核对状态',
                     key: 'preCheckStatus',
                     width: 160,
-                    fixed: 'right'
+                    fixed: 'right',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: this.checkStatus(row.preCheckStatus)
+                        }])
+                    }
                 },
                 {
                     title: '操作',
@@ -264,13 +291,45 @@ export default {
     },
     created () {
         this.searchBillRecordList()
-        // this.searchBilllDetails()
+        this.searchBilllDetails()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         handleCurrentChange () {},
+        checkStatus (status) {
+            if (status === 0) {
+                return '待对账'
+            } else if (status === 1) {
+                return '平帐'
+            } else if (status === 2) {
+                return '平台单边账'
+            } else if (status === 3) {
+                return '支付渠道单边账'
+            } else if (status === 4) {
+                return '差异账'
+            } else if (status === 5) {
+                return '人工平账'
+            }
+        },
+        errStatus (status) {
+            if (status === 0) {
+                return '支付状态不一致'
+            } else if (status === 1) {
+                return '第三方支付流水号不一致'
+            } else if (status === 2) {
+                return '交易类型不一致'
+            } else if (status === 3) {
+                return '金额不一致'
+            } else if (status === 4) {
+                return '退款原渠道流水号不一致'
+            } else if (status === 5) {
+                return '交易日期不一致'
+            } else if (status === 6) {
+                return '重复退款'
+            }
+        },
         changeTableColumns (checkAll) {
-            this.searchReconciliation()
+            this.searchBillRecordList()
         },
         clickErrHadling (row) {
             this.errorHandling = {...row}
@@ -294,23 +353,27 @@ export default {
                 } else {
                     this.$Message.error(msg)
                 }
+            }).catch(() => {
             })
         },
         errorSure () {
             let tradeId = this.errorHandling.tradeId
             let recordId = this.errorHandling.recordId
-            let errHandle = this.errHandle
+            let errHandle = this.errorHandling.errHandle
             billApi.updateErrorHandle(tradeId, recordId, errHandle).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
                     this.$Message.success(msg)
                 } else {
                     this.$Message.error(msg)
                 }
+            }).catch(() => {
             })
         },
         cancel () {}
     },
-    computed: {},
+    computed: {
+
+    },
     filters: {
         filterProgress: function (value) {
             let filterProgress = value === 1 ? '已核对' : '有差异'
@@ -321,16 +384,16 @@ export default {
             return filterChannelName
         },
         filtercreateTime: function (value) {
-            let filtercreateTime = formatDateTime(value).split(' ')
-            return filtercreateTime[0]
+            let filtercreateTime = formatDateTime(value)
+            return filtercreateTime
         },
         filterfinishTimee: function (value) {
-            let filterfinishTimee = formatDateTime(value).split(' ')
-            return filterfinishTimee[0]
+            let filterfinishTimee = formatDateTime(value)
+            return filterfinishTimee
         },
         filterstartTime: function (value) {
-            let filterstartTime = formatDateTime(value).split(' ')
-            return filterstartTime[0]
+            let filterstartTime = formatDateTime(value)
+            return filterstartTime
         }
     }
 }
