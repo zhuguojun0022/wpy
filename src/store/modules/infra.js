@@ -1,7 +1,8 @@
 export default {
     state: {
         breadcrumb: [],
-        showLoading: false
+        showLoading: false,
+        billDetailInfo: []
     },
     mutations: {
         pushBreadcrumb (state, item) {

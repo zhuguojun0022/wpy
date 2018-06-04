@@ -24,12 +24,12 @@ const resetUserPwd = (userAdminId) => http.post('/useradmin/resetAdminPwd', {use
 
 const searchRoleList = (currentPage, pageSize) => http.post('/role/query', {currentPage, pageSize}, {mock: false})
 
-const addRoleInfo = (roleName, roleRemark, roleStatus) => http.post('/role/add', {roleName, roleRemark, roleStatus})
+const addRoleInfo = (roleName, roleRemark) => http.post('/role/add', {roleName, roleRemark})
 
 const updateRoleState = (roleId, roleStatus) => http.post('/role/setRoleStatus', {roleId, roleStatus})
 
-const updateRoleInfo = (roleId, roleName, roleRemark, roleStatus) => http.post('/role/modifyRole', {
-    roleId, roleName, roleRemark, roleStatus
+const updateRoleInfo = (roleId, roleName, roleRemark) => http.post('/role/modifyRole', {
+    roleId, roleName, roleRemark
 })
 
 const deleteRoleInfo = (roleId) => http.post('/role/delRole', {roleId})
@@ -41,6 +41,10 @@ const authorizedUserList = (roleId, userAdminName, currentPage, pageSize) => htt
 const authorizedMenuTree = (roleId) => http.post('/role/queryRoleMenuTree', {roleId})
 
 const updateAuthorizedMenuTree = (roleId, menuIds) => http.post('/role/saveRoleMenu', {roleId, menuIds})
+
+const searchUnAuthorizedUserList = (roleId, userAdminName) => http.post('/role/queryRoleNoAuthUser', {roleId, userAdminName})
+
+const updateAuthorizedUser = (roleId, userAdminId) => http.post('/role/addUserAdminRole', {roleId, userAdminId})
 
 const getMenuTree = () => http.get('/menu/tree')
 
@@ -71,5 +75,7 @@ export default {
     updateAuthorizedMenuTree,
     getMenuTree,
     addMenu,
-    updateMenuTree
+    updateMenuTree,
+    searchUnAuthorizedUserList,
+    updateAuthorizedUser
 }

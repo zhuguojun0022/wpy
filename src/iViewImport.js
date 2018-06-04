@@ -27,8 +27,10 @@ import {
     Layout,
     Sider,
     Tree,
+    DatePicker,
     CheckboxGroup,
     Checkbox,
+    AutoComplete,
     Spin
 } from 'iview'
 Vue.component('Button', Button)
@@ -59,6 +61,8 @@ Vue.component('Tree', Tree)
 Vue.component('CheckboxGroup', CheckboxGroup)
 Vue.component('Checkbox', Checkbox)
 Vue.component('Spin', Spin)
+Vue.component('DatePicker', DatePicker)
+Vue.component('AutoComplete', AutoComplete)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal

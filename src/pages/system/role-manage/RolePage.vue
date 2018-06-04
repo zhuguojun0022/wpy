@@ -23,12 +23,12 @@
             <FormItem prop="roleRemark" label="角色描述">
                 <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
-            <FormItem prop="status" label="状态">
+            <!-- <FormItem prop="status" label="状态">
                 <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
                     <span slot="open">启用</span>
                     <span slot="close">停用</span>
                 </iSwitch>
-            </FormItem>
+            </FormItem> -->
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -38,8 +38,16 @@
     <Modal v-model="authorizedUserShow" :title="authorizedUserTitle" ref="modal">
         <table-header>
             <div slot="left">
-                <Input icon="ios-search" placeholder="用户名/姓名" v-model="nameKey" style="width: 200px" @on-change="filterName"></Input>
-                <Button type="primary" @click="onCreateNewUser">新建用户</Button>
+                <Select
+                v-model="nameKey"
+                filterable
+                remote
+                :remote-method="filterName"
+                :loading="loadings"
+                style="width: 200px">
+                    <Option v-for="(option, index) in userNameList" :value="option.userAdminId" :key="index">{{option.userAdminName}}</Option>
+                </Select>
+                <Button type="primary" @click="updateUser">授权用户</Button>
             </div>
         </table-header>
         <Table :columns="userColumns" :data="tableUserData"></Table>
@@ -80,6 +88,7 @@ export default {
                     title: '状态',
                     key: 'status',
                     render: (h, {row}) => {
+                        console.log(h)
                         return h('iSwitch', {
                             props: {
                                 value: row.roleStatus === 1,
@@ -87,6 +96,7 @@ export default {
                             },
                             on: {
                                 'on-change': (val) => {
+                                    console.log(val)
                                     this.onStatusChange(row, val)
                                 }
                             }
@@ -107,7 +117,8 @@ export default {
                             label: '修改',
                             type: 'primary',
                             on: {
-                                click: () => {
+                                click: (e) => {
+                                    e.stopPropagation()
                                     this.reviseClick(row)
                                 }
                             }
@@ -115,16 +126,17 @@ export default {
                             label: '授权用户',
                             type: 'primary',
                             on: {
-                                click: () => {
+                                click: (e) => {
+                                    e.stopPropagation()
                                     this.authorizedUserClick(row)
-                                    console.log(row)
                                 }
                             }
                         }, {
                             label: '删除',
                             type: 'error',
                             on: {
-                                click: () => {
+                                click: (e) => {
+                                    e.stopPropagation()
                                     this.deleteClick(row)
                                 }
                             }
@@ -133,9 +145,11 @@ export default {
                 }
             ],
             trees: 'checked',
+            userNameList: [],
             treeData: [],
             clickRole: false,
             newRoleShow: false,
+            loadings: false,
             newRoleTitle: '新建角色',
             reNewRoleShow: false,
             modal_loading: false,
@@ -193,11 +207,44 @@ export default {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
-        filterName () {
-            this.authorizedUserList(this.currentRoleId)
+        filterName (value) {
+            console.log('value', value)
+            if (value !== '') {
+                this.loadings = true
+                setTimeout(() => {
+                    this.loadings = false
+                    systemApi.searchUnAuthorizedUserList(this.currentRoleId, value).then(({data: {result, resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            console.log(result)
+                            this.userNameList = []
+                            result.forEach((item, index) => {
+                                this.userNameList.push({
+                                    userAdminId: item.userAdminId,
+                                    userAdminName: item.userAdminName
+                                })
+                            })
+                            console.log('this.userNameList', this.userNameList)
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    }).catch(() => {
+                    })
+                }, 200)
+            } else {
+                this.userNameList = []
+            }
         },
-        onCreateNewUser () {
-
+        updateUser () {
+            systemApi.updateAuthorizedUser(this.currentRoleId, this.nameKey).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    console.log(result)
+                    this.authorizedUserList(this.currentRoleId)
+                    this.$Message.success(msg)
+                } else {
+                    this.$Message.error(msg)
+                }
+            }).catch(() => {
+            })
         },
         handleCurrentChange (v) {
             this.currentPage = v
@@ -231,7 +278,7 @@ export default {
                     this.$Message.success(msg)
                     this.treeData = this.filterData(result)
                 } else {
-                    this.$Message.success(msg)
+                    this.$Message.error(msg)
                 }
             }).catch(() => {
             })
@@ -334,16 +381,14 @@ export default {
         onSubmitClick (role) {
             this.$refs[role].validate((valid) => {
                 if (valid) {
-                    let {roleName, roleRemark, status} = {
+                    let {roleName, roleRemark} = {
                         ...this.newRole
                     }
                     this.modal_loading = true
-                    let roleStatus = status ? '1' : '0'
                     if (role === 'addrole') {
                         systemApi.addRoleInfo(
                             roleName,
-                            roleRemark,
-                            roleStatus
+                            roleRemark
                         ).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
@@ -359,18 +404,16 @@ export default {
                         })
                     } else {
                         let roleId = this.newRole.roleId
-                        let roleStatus = status ? '1' : '0'
                         systemApi.updateRoleInfo(
                             roleId,
                             roleName,
-                            roleRemark,
-                            roleStatus
+                            roleRemark
                         ).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
                                 this.$Message.success(msg)
-                                this.onCancelClick(name)
-                                this.searchUserList()
+                                this.onCancelClick(role)
+                                this.searchRoleList()
                             } else {
                                 this.$Message.error(msg)
                             }
@@ -442,7 +485,9 @@ export default {
         },
         authorizedUserClick (row) {
             this.authorizedUserShow = true
+            this.nameKey = ''
             this.currentRoleId = row.roleId
+            this.userNameList = []
             this.authorizedUserList(row.roleId)
         },
         searchRoleList () {
@@ -462,21 +507,21 @@ export default {
             })
         },
         authorizedUserList (roleId) {
-            let userAdminName = this.nameKey
-            this.openLoading()
+            let userAdminName = ''
             systemApi.authorizedUserList(
                 roleId,
                 userAdminName,
                 this.currentPageAuthorizedUser,
                 this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
-                this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableUserData = result.list
-                    this.totalNum = result.total
+                    this.totalNumAuthorizedUser = result.total
                 } else {
                     this.$Message.error(msg)
                 }
+            }).catch(() => {
+                this.closeLoading()
             })
         }
     },
