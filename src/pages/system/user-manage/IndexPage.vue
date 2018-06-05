@@ -181,7 +181,7 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: to.name,
+                name: '用户管理',
                 icon: 'icon-xitongguanli'
             })
         })

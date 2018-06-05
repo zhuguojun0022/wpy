@@ -75,7 +75,7 @@ export default {
             infraApi.login(this.form.username, hash, this.randomString, this.form.vcode).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
                     setLoginUser(result)
-                    this.$router.push('/')
+                    this.$router.push('/sys/user')
                 } else {
                     this.$Message.error(msg)
                 }

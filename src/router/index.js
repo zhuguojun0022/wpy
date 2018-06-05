@@ -7,7 +7,7 @@ import BillManagePage from './bill.route'
 
 export default [{
     path: '/',
-    redirect: '/index'
+    redirect: '/index/sys/user'
 }, {
     path: '/login',
     name: 'login',

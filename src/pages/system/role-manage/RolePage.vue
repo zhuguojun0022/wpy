@@ -7,7 +7,7 @@
     </table-header>
     <Row :gutter="16">
         <Col span="18">
-            <Table highlight-row :columns="columns" :data="tableData" @on-current-change="singleClick"></Table>
+            <Table highlight-row :columns="columns" :data="tableData" @on-row-dblclick="singleClick"></Table>
         </Col>
         <Col span="6" class="authorize">
             <span class="authorize-title">授权功能</span>
@@ -23,12 +23,6 @@
             <FormItem prop="roleRemark" label="角色描述">
                 <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
-            <!-- <FormItem prop="status" label="状态">
-                <iSwitch size="large" v-model="newRole.status" @on-change="reOnStatusChange(newRole.status)">
-                    <span slot="open">启用</span>
-                    <span slot="close">停用</span>
-                </iSwitch>
-            </FormItem> -->
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -39,12 +33,13 @@
         <table-header>
             <div slot="left">
                 <Select
-                v-model="nameKey"
-                filterable
-                remote
-                :remote-method="filterName"
-                :loading="loadings"
-                style="width: 200px">
+                    v-model="nameKey"
+                    filterable
+                    remote
+                    clearable
+                    :remote-method="filterName"
+                    :loading="loadings"
+                    style="width: 200px">
                     <Option v-for="(option, index) in userNameList" :value="option.userAdminId" :key="index">{{option.userAdminName}}</Option>
                 </Select>
                 <Button type="primary" @click="updateUser">授权用户</Button>
@@ -88,7 +83,6 @@ export default {
                     title: '状态',
                     key: 'status',
                     render: (h, {row}) => {
-                        console.log(h)
                         return h('iSwitch', {
                             props: {
                                 value: row.roleStatus === 1,
@@ -194,7 +188,7 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: to.name,
+                name: '角色管理',
                 icon: 'icon-xitongguanli'
             })
         })
@@ -208,31 +202,23 @@ export default {
         onClickPrimaryBtn () {},
         onNewUserSubmint () {},
         filterName (value) {
-            console.log('value', value)
-            if (value !== '') {
-                this.loadings = true
-                setTimeout(() => {
-                    this.loadings = false
-                    systemApi.searchUnAuthorizedUserList(this.currentRoleId, value).then(({data: {result, resultCode, msg}}) => {
-                        if (resultCode === '000000') {
-                            console.log(result)
-                            this.userNameList = []
-                            result.forEach((item, index) => {
-                                this.userNameList.push({
-                                    userAdminId: item.userAdminId,
-                                    userAdminName: item.userAdminName
-                                })
-                            })
-                            console.log('this.userNameList', this.userNameList)
-                        } else {
-                            this.$Message.error(msg)
-                        }
-                    }).catch(() => {
-                    })
-                }, 200)
-            } else {
+            if (!value) {
                 this.userNameList = []
+                return
             }
+            this.loadings = true
+            setTimeout(() => {
+                systemApi.searchUnAuthorizedUserList(this.currentRoleId, value).then(({data: {result, resultCode, msg}}) => {
+                    this.loadings = false
+                    if (resultCode === '000000') {
+                        this.userNameList = result
+                    } else {
+                        this.$Message.error(msg)
+                    }
+                }).catch(() => {
+                    this.loadings = false
+                })
+            }, 200)
         },
         updateUser () {
             systemApi.updateAuthorizedUser(this.currentRoleId, this.nameKey).then(({data: {result, resultCode, msg}}) => {
@@ -275,7 +261,6 @@ export default {
             systemApi.authorizedMenuTree(roleId).then(({data: {result, resultCode, msg}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
-                    this.$Message.success(msg)
                     this.treeData = this.filterData(result)
                 } else {
                     this.$Message.error(msg)
@@ -286,7 +271,6 @@ export default {
         singleClick (currentRow) {
             this.clickRole = true
             this.highlightRoleId = currentRow.roleId
-            console.log(currentRow.roleId)
             this.loadData(currentRow.roleId)
         },
         filterTreeData (arr) {

@@ -3,64 +3,64 @@
     <template>
         <div class="clearfix">
             <h5>对账记录</h5>
-            <ul class="reconciliation pull-left" v-for="item in detailsTableData" :key="item" style="width: 50%">
+            <ul class="reconciliation pull-left" style="width: 50%">
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">收单商户</p>
-                    <span class="reconciliation-span"> {{item.merchantName}} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.merchantName}} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">商户号</p>
-                    <span class="reconciliation-span"> {{item.merchantId}} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.merchantId}} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">对账日期</p>
-                    <span class="reconciliation-span"> {{item.startTime | filterstartTime}} 至 {{item.finishTime | filterfinishTimee}}</span>
+                    <span class="reconciliation-span"> {{detailsTableData.startTime | filterstartTime}} 至 {{detailsTableData.finishTime | filterfinishTimee}}</span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">对账进度</p>
-                    <span class="reconciliation-span"> {{item.progress | filterProgress}} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.progress | filterProgress}} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">支付渠道</p>
-                    <span> {{item.channelName}} </span>
+                    <span> {{detailsTableData.channelName}} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">渠道账单生成时间</p>
-                    <span class="reconciliation-span"> {{item.createTime | filtercreateTime}} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.createTime | filtercreateTime}} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">对账开始时间</p>
-                    <span class="reconciliation-span"> {{item.startTime | filterstartTime}} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.startTime | filterstartTime}} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-p">对账结束时间</p>
-                    <span class="reconciliation-span"> {{item.finishTime | filterfinishTimee}} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.finishTime | filterfinishTimee}} </span>
                 </li>
             </ul>
-            <ul class="reconciliation pull-left reconciliation-right" v-for="item in detailsTableData"  :key="item">
+            <ul class="reconciliation pull-left reconciliation-right">
                 <li class="reconciliation-li">
                     <p class="reconciliation-right-p">总收入金额</p>
-                    <span class="reconciliation-span"> ￥{{item.totalIncome }} </span>
+                    <span class="reconciliation-span"> ￥{{detailsTableData.totalIncome }} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-right-p">总收入笔数</p>
-                    <span class="reconciliation-span"> {{item.incomeNum }} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.incomeNum }} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-right-p">总退款金额</p>
-                    <span class="reconciliation-span"> ￥{{item.totalRefund }} </span>
+                    <span class="reconciliation-span"> ￥{{detailsTableData.totalRefund }} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-right-p">总退款笔数</p>
-                    <span class="reconciliation-span"> {{item.refundNum }} </span>
+                    <span class="reconciliation-span"> {{detailsTableData.refundNum }} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-right-p">渠道手续费</p>
-                    <span class="reconciliation-span"> ￥{{item.channelFee }} </span>
+                    <span class="reconciliation-span"> ￥{{detailsTableData.channelFee }} </span>
                 </li>
                 <li class="reconciliation-li">
                     <p class="reconciliation-right-p">净交易额</p>
-                    <span class="reconciliation-span"> ￥{{item.netSales}} </span>
+                    <span class="reconciliation-span"> ￥{{detailsTableData.netSales}} </span>
                 </li>
             </ul>
         </div>
@@ -70,7 +70,7 @@
             <h5>核对结果</h5>
             <span class="check-group-title">核对状态</span>
             <Checkbox-group v-model="checkAll" @on-change="changeTableColumns" class="check-group">
-                <Checkbox :value="checkbox.value" v-for="checkbox in checkboxGroup" :label="checkbox.key" :key='checkbox.key'>{{checkbox.value}}</Checkbox>
+                <Checkbox v-for="checkbox in checkboxGroup" :value="checkbox.value" :label="checkbox.key" :key='checkbox.key'>{{checkbox.value}}</Checkbox>
             </Checkbox-group>
             <Table :columns="columns" :data="tableData"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
@@ -89,19 +89,19 @@
                     <FormItem prop="beforeErrorState" label="交易" class="firstForm">
                         <strong>【{{checkStatus(errorHandling.checkStatus)}}】</strong>
                     </FormItem>
-                    <FormItem prop="batch" label-width='100' label="交易流水号">
+                    <FormItem prop="batch" :label-width='100' label="交易流水号">
                         <span>{{errorHandling.serialsNum}}</span>
                     </FormItem>
-                    <FormItem prop="transactionTime" label-width='100' label="交易完成时间">
+                    <FormItem prop="transactionTime" :label-width='100' label="交易完成时间">
                         <span>{{errorHandling.tradeFinishTime}}</span>
                     </FormItem>
-                    <FormItem prop="typeTrade" label-width='100' label="交易类型">
+                    <FormItem prop="typeTrade" :label-width='100' label="交易类型">
                         <span>{{tradeType(errorHandling.tradeType)}}</span>
                     </FormItem>
-                    <FormItem prop="beforeErrorState" label-width='100' label="交易状态">
+                    <FormItem prop="beforeErrorState" :label-width='100' label="交易状态">
                         <span>{{checkStatus(errorHandling.checkStatus)}}</span>
                     </FormItem>
-                    <FormItem prop="money" label-width='100' label="金额">
+                    <FormItem prop="money" :label-width='100' label="金额">
                         <span>￥ {{errorHandling.serialsSum}}</span>
                     </FormItem>
                     <FormItem>
@@ -110,24 +110,24 @@
                 </Col>
                 <Col span="12">
                     <FormItem prop="money" label="支付渠道" class="firstForm">
-                        <strong>【{{detailsTableData[0].channelName}}】</strong>
+                        <strong>【{{detailsTableData.channelName}}】</strong>
                     </FormItem>
-                    <FormItem prop="channelPayNumber" label-width='100' label="渠道流水号">
+                    <FormItem prop="channelPayNumber" :label-width='100' label="渠道流水号">
                         <span>{{errorHandling.channelSerialsNum}}</span>
                     </FormItem>
-                    <FormItem prop="transactionTime" label-width='100' label="交易完成时间">
+                    <FormItem prop="transactionTime" :label-width='100' label="交易完成时间">
                         <span>{{errorHandling.tradeFinishTime}}</span>
                     </FormItem>
-                    <FormItem prop="typeTrade" label-width='100' label="交易类型">
+                    <FormItem prop="typeTrade" :label-width='100' label="交易类型">
                         <span>{{tradeType(errorHandling.tradeType)}}</span>
                     </FormItem>
-                    <FormItem prop="money" label-width='100' label="金额">
+                    <FormItem prop="money" :label-width='100' label="金额">
                         <span>￥ {{errorHandling.serialsSum}}</span>
                     </FormItem>
-                    <FormItem prop="channelFee" label-width='100' label="服务费">
+                    <FormItem prop="channelFee" :label-width='100' label="服务费">
                         <span>￥ {{errorHandling.channelFee}}</span>
                     </FormItem>
-                    <FormItem prop="channelSettlementMoney" label-width='100' label="结算金额">
+                    <FormItem prop="channelSettlementMoney" :label-width='100' label="结算金额">
                         <span>￥ {{errorHandling.channelSerialsFixSum}}</span>
                     </FormItem>
                 </Col>
@@ -158,7 +158,7 @@ export default {
                 {value: '差异账', key: 4},
                 {value: '人工平帐', key: 5}
             ],
-            detailsTableData: [],
+            detailsTableData: {},
             checkAll: [],
             tableDataClon: [],
             empty: '',
@@ -302,18 +302,22 @@ export default {
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
-            vm.resetBreadcrumb({
-                name: to.name,
-                icon: 'home'
+            vm.pushBreadcrumb({
+                name: '对账详情'
             })
         })
     },
     created () {
         this.searchBillRecordList()
+    },
+    mounted () {
         this.searchBilllDetails()
     },
+    beforeDestroy () {
+        window.sessionStorage.removeItem('billInfo')
+    },
     methods: {
-        ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
+        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading']),
         handleCurrentChange () {},
         checkStatus (status) {
             if (status === 0) {
@@ -366,11 +370,8 @@ export default {
             this.errorHandlShow = true
         },
         searchBilllDetails () {
-            // billApi.searchBilllDetails().then(({data: {result, code, msg}}) => {
-            //     this.detailsTableData = result.listty
-            // })
             let billInfo = sessionStorage.getItem('billInfo')
-            this.detailsTableData.push(JSON.parse(billInfo))
+            this.detailsTableData = JSON.parse(billInfo)
             console.log(this.detailsTableData)
         },
         searchBillRecordList () {

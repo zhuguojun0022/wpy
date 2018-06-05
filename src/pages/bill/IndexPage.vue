@@ -3,15 +3,15 @@
     <table-header>
         <template slot="right">
             <Input v-model="filterName" placeholder="收单账户" style="width: 200px" clearable></Input>
-            <Select v-model="payType" style="width: 100px" placeholder="支付渠道">
+            <Select v-model="payType" clearable style="width: 100px" placeholder="支付渠道">
                 <Option v-for="item in roleList" :value="item.channelId" :key="item.channelId">{{ item.channelName }}</Option>
             </Select>
-            <Select v-model="ContrastProcess" style="width: 100px" placeholder="对账进度">
+            <Select v-model="ContrastProcess" clearable style="width: 100px" placeholder="对账进度">
                 <Option v-for="item in statusList" :value="item.recordStatus" :key="item.recordStatus">{{ item.label }}</Option>
             </Select>
-            <DatePicker type="date" placeholder="对账开始时间" style="width: 150px" v-model="startTime"></DatePicker>
-            <DatePicker type="date" :options="endDate" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
-            <DatePicker type="date" placeholder="渠道账单生成时间" style="width: 150px" v-model="bulidTime"></DatePicker>
+            <DatePicker clearable type="date" placeholder="对账开始时间" style="width: 150px" v-model="startTime"></DatePicker>
+            <DatePicker clearable type="date" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
+            <DatePicker clearable type="date" placeholder="渠道账单生成时间" style="width: 150px" v-model="bulidTime"></DatePicker>
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
     </table-header>
@@ -131,7 +131,7 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: to.name,
+                name: '对账',
                 icon: 'icon-duizhangguanli'
             })
         })
@@ -152,7 +152,6 @@ export default {
         handleCurrentChange () {},
         onSearchClick () {
             this.searchBillList()
-            console.log(this.startTime.getTime(), this.endTime, this.bulidTime)
         },
         onWatchClick (id) {
             this.$router.push({

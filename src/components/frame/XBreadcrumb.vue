@@ -1,10 +1,10 @@
 <template>
 <div class="ivu-breadcrumb breadcrumb">
-    <span v-for="data in breadcrumbData" :key="data.name">
+    <span v-for="(data) in breadcrumbData" :key="data.name">
         <a class="ivu-breadcrumb-item-link">
             <i class="iconfont" :class="data.icon"></i>{{data.name}}
         </a>
-        <span class="ivu-breadcrumb-item-separator"></span>
+        <span class="ivu-breadcrumb-item-separator">/</span>
     </span>
 </div>
 </template>

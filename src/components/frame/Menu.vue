@@ -84,7 +84,6 @@ export default {
             } else {
                 menuList = menu
             }
-            console.log(menu, this.$route.name)
             let nowMenuName = this.$route.name
             menuList.forEach(e => {
                 if (e.menuRouter === nowMenuName) {
@@ -93,8 +92,8 @@ export default {
                     this.cActiveLeafId = null
                     this.pActiveBranche = null
                 }
-                if (e.chlidren) {
-                    e.chlidren.forEach(el => {
+                if (e.children.length > 0) {
+                    e.children.forEach(el => {
                         if (el.menuRouter === nowMenuName) {
                             this.cActiveLeafId = el.menuId
                             this.pActiveLeafId = null
