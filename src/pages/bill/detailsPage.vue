@@ -161,7 +161,6 @@ export default {
             detailsTableData: {},
             checkAll: [],
             tableDataClon: [],
-            empty: '',
             errorHandling: {},
             errorHandlShow: false,
             errHandle: '',
@@ -275,7 +274,6 @@ export default {
                     width: 140,
                     fixed: 'right',
                     render: (h, {column, index, row}) => {
-                        console.log('row.checkStatus', row.checkStatus)
                         if (row.checkStatus !== 0 && row.checkStatus !== 1 && row.checkStatus !== 5) {
                             return this.getCellRender(h, [{
                                 label: '差错处理',
@@ -365,14 +363,12 @@ export default {
         },
         clickErrHadling (row) {
             this.errorHandling = {...row}
-            console.log(this.errorHandling)
             this.errorHandlTitle = '差错处理'
             this.errorHandlShow = true
         },
         searchBilllDetails () {
             let billInfo = sessionStorage.getItem('billInfo')
             this.detailsTableData = JSON.parse(billInfo)
-            console.log(this.detailsTableData)
         },
         searchBillRecordList () {
             billApi.searchBillRecordList(this.pageSize, this.currentPage, this.checkAll).then(({data: {result, resultCode, msg}}) => {

@@ -90,7 +90,6 @@ export default {
                             },
                             on: {
                                 'on-change': (val) => {
-                                    console.log(val)
                                     this.onStatusChange(row, val)
                                 }
                             }
@@ -223,7 +222,6 @@ export default {
         updateUser () {
             systemApi.updateAuthorizedUser(this.currentRoleId, this.nameKey).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
-                    console.log(result)
                     this.authorizedUserList(this.currentRoleId)
                     this.$Message.success(msg)
                 } else {
@@ -274,17 +272,13 @@ export default {
             this.loadData(currentRow.roleId)
         },
         filterTreeData (arr) {
-            console.log(arr)
             var newArr = []
-            console.log(this.treeData)
             arr.map((item) => {
                 if (item.checked) {
                     newArr.push(item.menuId)
                 }
-                console.log('newArr', newArr)
             })
             var menuIds = newArr.join(',')
-            console.log(menuIds)
             return menuIds
         },
         updateTree () {
@@ -309,8 +303,8 @@ export default {
                 title: '状态信息修改确认',
                 content: `您将${row.roleStatus ? '启用' : '停用'}该角色，是否继续？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
                     systemApi.updateRoleState(row.roleId, val ? '1' : '0').then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
@@ -333,20 +327,6 @@ export default {
                     this.$nextTick(() => {
                         row.roleStatus = !val
                     })
-                }
-            })
-        },
-        reOnStatusChange (val) {
-            this.newRole.status = val
-            this.$Modal.confirm({
-                title: '状态信息修改确认',
-                content: `您将${val ? '启用' : '停用'}该角色，是否继续？`,
-                closable: false,
-                onOk: () => {
-                    this.$Modal.remove()
-                },
-                onCancel: () => {
-                    this.newRole.status = !val
                 }
             })
         },
@@ -412,7 +392,6 @@ export default {
         },
         reviseClick (row) {
             this.newRole = {...row}
-            console.log(this.newRole)
             this.newRoleTitle = '修改角色'
             this.newRoleShow = true
             this.formRef = 'editRole'
