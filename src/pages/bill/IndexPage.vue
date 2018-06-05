@@ -9,8 +9,7 @@
             <Select v-model="ContrastProcess" clearable style="width: 100px" placeholder="对账进度">
                 <Option v-for="item in statusList" :value="item.recordStatus" :key="item.recordStatus">{{ item.label }}</Option>
             </Select>
-            <DatePicker clearable type="date" placeholder="对账开始时间" style="width: 150px" v-model="startTime"></DatePicker>
-            <DatePicker clearable type="date" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
+            <DatePicker clearable type="daterange" placeholder="对账起始时间选择" style="width: 250px" v-model="TimeRange"></DatePicker>
             <DatePicker clearable type="date" placeholder="渠道账单生成时间" style="width: 150px" v-model="bulidTime"></DatePicker>
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
@@ -36,8 +35,7 @@ export default {
             filterRole: '',
             filterStatus: '',
             roleList: [],
-            startTime: '',
-            endTime: '',
+            TimeRange: ['', ''],
             bulidTime: '',
             payType: '',
             ContrastProcess: '',
@@ -111,10 +109,8 @@ export default {
                             type: 'primary',
                             on: {
                                 click: () => {
-                                    console.log(row)
                                     var billInfo = JSON.stringify(row)
                                     sessionStorage.setItem('billInfo', billInfo)
-                                    console.log(billInfo)
                                     this.onWatchClick(row.recordId)
                                 }
                             }
@@ -173,9 +169,9 @@ export default {
         },
         searchBillList () {
             this.openLoading()
-            let startTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
-            let endTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
-            let bulidTime = this.startTime === '' ? this.startTime : this.startTime.getTime()
+            let startTime = this.TimeRange[0] === '' ? '' : this.TimeRange[0].getTime()
+            let endTime = this.TimeRange[1] === '' ? '' : this.TimeRange[1].getTime()
+            let bulidTime = this.bulidTime === '' ? '' : this.bulidTime.getTime()
             billApi.searchBillList(
                 this.pageSize,
                 this.currentPage,
