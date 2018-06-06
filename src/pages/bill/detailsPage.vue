@@ -76,7 +76,7 @@
             <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
         </div>
     </template>
-    <Modal v-model="errorHandlShow" :title="errorHandlTitle" ref="modal" class="bill-details" @on-ok="errorSure" @on-cancel="cancel">
+    <Modal v-model="errorHandlShow" :title="errorHandlTitle" ref="modal" class="bill-details" :loading="loading" @on-ok="errorSure" @on-cancel="cancel">
         <Form :model="errorHandling" :label-width="90" class="chacuochuli" label-position="left">
             <FormItem prop="errorClass" label="差错分类" class="no-border">
                 <strong>{{errStatus(errorHandling.errStatus)}}</strong>
@@ -133,7 +133,7 @@
                 </Col>
             </Row>
             <FormItem prop="errorProcessDescribe" label="差错处理描述" class="no-border errorDescribe">
-                <Input v-model="errorHandling.errHandle" :rows="4" type="textarea"></Input>
+                <Input v-model.trim="errorHandling.errHandle" :rows="4" type="textarea"></Input>
             </FormItem>
         </Form>
     </Modal>
@@ -169,6 +169,7 @@ export default {
             tableData: [],
             totalNum: 0,
             currentPage: 1,
+            loading: true,
             pageSize: 10,
             columns: [
                 {title: '交易流水号', key: 'serialsNum', width: 140},
@@ -371,7 +372,9 @@ export default {
             this.detailsTableData = JSON.parse(billInfo)
         },
         searchBillRecordList () {
+            this.openLoading()
             billApi.searchBillRecordList(this.pageSize, this.currentPage, this.checkAll).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableData = result.list
                     this.totalNum = result.total
@@ -379,6 +382,7 @@ export default {
                     this.$Message.error(msg)
                 }
             }).catch(() => {
+                this.closeLoading()
             })
         },
         errorSure () {
@@ -386,6 +390,7 @@ export default {
             let recordId = this.errorHandling.recordId
             let errHandle = this.errorHandling.errHandle
             billApi.updateErrorHandle(tradeId, recordId, errHandle).then(({data: {result, resultCode, msg}}) => {
+                this.errorHandlShow = false
                 if (resultCode === '000000') {
                     this.searchBillRecordList()
                     this.$Message.success(msg)
@@ -393,6 +398,7 @@ export default {
                     this.$Message.error(msg)
                 }
             }).catch(() => {
+                this.errorHandlShow = false
             })
         },
         cancel () {}
@@ -402,11 +408,11 @@ export default {
     },
     filters: {
         filterProgress: function (value) {
-            let filterProgress = value === 1 ? '已核对' : '有差异'
+            let filterProgress = value === 3 ? '已核对' : '有差异'
             return filterProgress
         },
         filterChannelName: function (value) {
-            let filterChannelName = value === 1 ? '已核对' : '有差异'
+            let filterChannelName = value === 3 ? '已核对' : '有差异'
             return filterChannelName
         },
         filtercreateTime: function (value) {

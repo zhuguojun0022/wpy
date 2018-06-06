@@ -2,14 +2,15 @@
 <GPage bg class="bill-manage-page">
     <table-header>
         <template slot="right">
-            <Input v-model="filterName" placeholder="收单账户" style="width: 200px" clearable></Input>
+            <Input v-model="filterName" placeholder="收单商户" style="width: 200px" clearable></Input>
             <Select v-model="payType" clearable style="width: 100px" placeholder="支付渠道">
                 <Option v-for="item in roleList" :value="item.channelId" :key="item.channelId">{{ item.channelName }}</Option>
             </Select>
             <Select v-model="ContrastProcess" clearable style="width: 100px" placeholder="对账进度">
                 <Option v-for="item in statusList" :value="item.recordStatus" :key="item.recordStatus">{{ item.label }}</Option>
             </Select>
-            <DatePicker clearable type="daterange" placeholder="对账起始时间选择" style="width: 250px" v-model="TimeRange"></DatePicker>
+            <DatePicker clearable type="date" placeholder="对账开始时间" style="width: 150px" v-model="startTime"></DatePicker>
+            <DatePicker clearable type="date" placeholder="对账结束时间" style="width: 150px" v-model="endTime"></DatePicker>
             <DatePicker clearable type="date" placeholder="渠道账单生成时间" style="width: 150px" v-model="bulidTime"></DatePicker>
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
@@ -35,7 +36,8 @@ export default {
             filterRole: '',
             filterStatus: '',
             roleList: [],
-            TimeRange: ['', ''],
+            startTime: '',
+            endTime: '',
             bulidTime: '',
             payType: '',
             ContrastProcess: '',
@@ -94,9 +96,9 @@ export default {
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
-                            label: row.recordStatus === 1 ? '已核对' : '有差异',
+                            label: row.recordStatus === 3 ? '已核对' : '有差异',
                             style: {
-                                color: row.progress === 0 ? 'red' : '#495060'
+                                color: row.progress === 4 ? 'red' : '#495060'
                             }
                         }])
                     }
@@ -169,8 +171,8 @@ export default {
         },
         searchBillList () {
             this.openLoading()
-            let startTime = this.TimeRange[0] === '' ? '' : this.TimeRange[0].getTime()
-            let endTime = this.TimeRange[1] === '' ? '' : this.TimeRange[1].getTime()
+            let startTime = this.startTime === '' ? '' : this.startTime.getTime()
+            let endTime = this.endTime === '' ? '' : this.endTime.getTime()
             let bulidTime = this.bulidTime === '' ? '' : this.bulidTime.getTime()
             billApi.searchBillList(
                 this.pageSize,

@@ -45,7 +45,7 @@
                 <Button type="primary" @click="updateUser">授权用户</Button>
             </div>
         </table-header>
-        <Table :columns="userColumns" :data="tableUserData"></Table>
+        <Table :columns="userColumns" :data="tableUserData" :loading="modalLoading"></Table>
         <table-footer :total-num="totalNumAuthorizedUser" :current-page="currentPageAuthorizedUser" @on-change="handleCurrentChange"></table-footer>
     </Modal>
     <Modal v-model="reNewRoleShow" ref="modal">
@@ -138,6 +138,7 @@ export default {
                 }
             ],
             trees: 'checked',
+            modalLoading: '',
             userNameList: [],
             treeData: [],
             clickRole: false,
@@ -198,8 +199,6 @@ export default {
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
-        onClickPrimaryBtn () {},
-        onNewUserSubmint () {},
         filterName (value) {
             if (!value) {
                 this.userNameList = []
@@ -231,7 +230,7 @@ export default {
             })
         },
         handleCurrentChange (v) {
-            this.currentPage = v
+            this.currentPageAuthorizedUser = v
             this.searchUserList()
         },
         filterData (arr) {
@@ -401,8 +400,8 @@ export default {
                 title: '删除信息确认',
                 content: `您是否确认删除选中的此条数据？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
                     systemApi.deleteRoleUser(row.userAdminRoleId).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
@@ -417,7 +416,6 @@ export default {
                     })
                 },
                 onCancel: () => {
-                    this.selectedRows = []
                 }
             })
         },
@@ -426,8 +424,8 @@ export default {
                 title: '删除信息确认',
                 content: `您是否确认删除选中的此条数据？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
                     systemApi.deleteRoleInfo(row.roleId).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
@@ -442,7 +440,6 @@ export default {
                     })
                 },
                 onCancel: () => {
-                    this.selectedRows = []
                 }
             })
         },
@@ -471,12 +468,14 @@ export default {
         },
         authorizedUserList (roleId) {
             let userAdminName = ''
+            this.modalLoading = true
             systemApi.authorizedUserList(
                 roleId,
                 userAdminName,
                 this.currentPageAuthorizedUser,
                 this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
+                this.modalLoading = false
                 if (resultCode === '000000') {
                     this.tableUserData = result.list
                     this.totalNumAuthorizedUser = result.total
@@ -484,7 +483,7 @@ export default {
                     this.$Message.error(msg)
                 }
             }).catch(() => {
-                this.closeLoading()
+                this.modalLoading = false
             })
         }
     },

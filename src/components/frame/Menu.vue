@@ -34,9 +34,7 @@
                                     >
                                     {{cItem.menuTitle}}
                                 </div>
-
                             </li>
-
                         </ul>
                     </collapse-transition>
                 </li>
