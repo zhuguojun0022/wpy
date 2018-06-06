@@ -408,11 +408,11 @@ export default {
     },
     filters: {
         filterProgress: function (value) {
-            let filterProgress = value === 1 ? '已核对' : '有差异'
+            let filterProgress = value === 3 ? '已核对' : '有差异'
             return filterProgress
         },
         filterChannelName: function (value) {
-            let filterChannelName = value === 1 ? '已核对' : '有差异'
+            let filterChannelName = value === 3 ? '已核对' : '有差异'
             return filterChannelName
         },
         filtercreateTime: function (value) {
