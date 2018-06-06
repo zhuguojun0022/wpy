@@ -199,8 +199,6 @@ export default {
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
-        onClickPrimaryBtn () {},
-        onNewUserSubmint () {},
         filterName (value) {
             if (!value) {
                 this.userNameList = []
