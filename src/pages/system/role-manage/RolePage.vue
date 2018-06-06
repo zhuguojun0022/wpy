@@ -45,7 +45,7 @@
                 <Button type="primary" @click="updateUser">授权用户</Button>
             </div>
         </table-header>
-        <Table :columns="userColumns" :data="tableUserData"></Table>
+        <Table :columns="userColumns" :data="tableUserData" :loading="modalLoading"></Table>
         <table-footer :total-num="totalNumAuthorizedUser" :current-page="currentPageAuthorizedUser" @on-change="handleCurrentChange"></table-footer>
     </Modal>
     <Modal v-model="reNewRoleShow" ref="modal">
@@ -138,6 +138,7 @@ export default {
                 }
             ],
             trees: 'checked',
+            modalLoading: '',
             userNameList: [],
             treeData: [],
             clickRole: false,
@@ -469,12 +470,14 @@ export default {
         },
         authorizedUserList (roleId) {
             let userAdminName = ''
+            this.modalLoading = true
             systemApi.authorizedUserList(
                 roleId,
                 userAdminName,
                 this.currentPageAuthorizedUser,
                 this.pageSize
             ).then(({data: {result, resultCode, msg}}) => {
+                this.modalLoading = false
                 if (resultCode === '000000') {
                     this.tableUserData = result.list
                     this.totalNumAuthorizedUser = result.total
@@ -482,7 +485,7 @@ export default {
                     this.$Message.error(msg)
                 }
             }).catch(() => {
-                this.closeLoading()
+                this.modalLoading = false
             })
         }
     },

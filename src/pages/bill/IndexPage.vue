@@ -171,7 +171,7 @@ export default {
         },
         searchBillList () {
             this.openLoading()
-            let startTime = this.startTime=== '' ? '' : this.startTime.getTime()
+            let startTime = this.startTime === '' ? '' : this.startTime.getTime()
             let endTime = this.endTime === '' ? '' : this.endTime.getTime()
             let bulidTime = this.bulidTime === '' ? '' : this.bulidTime.getTime()
             billApi.searchBillList(
