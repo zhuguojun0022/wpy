@@ -231,7 +231,7 @@ export default {
             })
         },
         handleCurrentChange (v) {
-            this.currentPage = v
+            this.currentPageAuthorizedUser = v
             this.searchUserList()
         },
         filterData (arr) {
@@ -401,8 +401,8 @@ export default {
                 title: '删除信息确认',
                 content: `您是否确认删除选中的此条数据？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
                     systemApi.deleteRoleUser(row.userAdminRoleId).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
@@ -417,7 +417,6 @@ export default {
                     })
                 },
                 onCancel: () => {
-                    this.selectedRows = []
                 }
             })
         },
@@ -426,8 +425,8 @@ export default {
                 title: '删除信息确认',
                 content: `您是否确认删除选中的此条数据？`,
                 closable: false,
+                loading: true,
                 onOk: () => {
-                    this.$Modal.remove()
                     // TODO 刷新数据
                     systemApi.deleteRoleInfo(row.roleId).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
@@ -442,7 +441,6 @@ export default {
                     })
                 },
                 onCancel: () => {
-                    this.selectedRows = []
                 }
             })
         },
