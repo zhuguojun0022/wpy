@@ -79,6 +79,7 @@ export default {
                     this.$router.push('/')
                 } else {
                     this.$Message.error(msg)
+                    this.getImgVCode()
                 }
             })
         }
