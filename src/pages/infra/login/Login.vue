@@ -40,7 +40,7 @@
 </div>
 </template>
 <script>
-import sm3 from 'sm3'
+import sha256 from 'js-sha256'
 import {infraApi} from 'Apis/'
 import {setLoginUser} from '../../../common/loginUser'
 import {randomStr} from '../../../common/utils/randomString'
@@ -71,8 +71,9 @@ export default {
                 this.$Message.warning('请填写完整登陆信息')
                 return
             }
-            const hash = sm3(this.form.passwd)
-            infraApi.login(this.form.username, hash, this.randomString, this.form.vcode).then(({data: {result, resultCode, msg}}) => {
+            const hash = sha256.create()
+            hash.update(this.form.passwd)
+            infraApi.login(this.form.username, hash.hex(), this.randomString, this.form.vcode).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
                     setLoginUser(result)
                     this.$router.push('/')
