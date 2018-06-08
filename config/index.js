@@ -6,8 +6,8 @@ const path = require('path')
 // const host = "localhost:18080"
  
 // const host = "11.240.240.47:8091"
-const host = "11.240.240.98:8091"
-// const host = 'localhost:8080'
+// const host = "11.240.240.98:8091"
+const host = 'localhost:8080'
 
 
 module.exports = {
