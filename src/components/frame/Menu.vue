@@ -185,8 +185,8 @@ export default {
 
                     .normal-c-li {
                         .menu-title {
-                            padding: 5px 0 5px 50px;
-                            font-size: 12px;
+                            padding: 7px 0 7px 49px;
+                            font-size: 14px;
                         }
 
                         .c-active-leaf {

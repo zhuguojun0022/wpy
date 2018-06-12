@@ -22,7 +22,7 @@
                     <header-bar></header-bar>
                 </Header>
                 <x-breadcrumb></x-breadcrumb>
-                <Content :style="{margin: '20px', background: '#fff'}">
+                <Content :style="{margin: '0px', background: '#fff'}">
                     <router-view></router-view>
                 </Content>
             </Layout>
