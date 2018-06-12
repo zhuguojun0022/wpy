@@ -30,7 +30,7 @@ export default {
 }
 </script>
 <style lang="less">
-@header-height:64px;
+@header-height:44px;
 .header-bar {
     background: #fff;
     height: @header-height;

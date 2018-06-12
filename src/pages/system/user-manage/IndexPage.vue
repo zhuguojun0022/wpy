@@ -106,7 +106,9 @@ export default {
                     render: (h, {row}) => {
                         return h('iSwitch', {
                             props: {
-                                value: row.userAdminStatus === 1,
+                                trueValue: 1,
+                                falseValue: 0,
+                                value: row.userAdminStatus,
                                 size: 'large'
                             },
                             on: {
@@ -240,7 +242,7 @@ export default {
             this.selectedRows = selection
         },
         onStatusChange (row, val) {
-            row.status = val
+            row.userAdminStatus = val ? 1 : 0
             this.$Modal.confirm({
                 title: '状态信息修改确认',
                 content: `您将${row.status ? '启用' : '停用'}该用户，是否继续？`,
@@ -255,19 +257,19 @@ export default {
                         } else {
                             this.$Message.success(msg)
                             this.$nextTick(() => {
-                                row.status = !val
+                                row.userAdminStatus = val ? 0 : 1
                             })
                         }
                     }).catch(() => {
                         this.$Modal.remove()
                         this.$nextTick(() => {
-                            row.status = !val
+                            row.userAdminStatus = val ? 0 : 1
                         })
                     })
                 },
                 onCancel: () => {
                     this.$nextTick(() => {
-                        row.status = !val
+                        row.userAdminStatus = val ? 0 : 1
                     })
                 }
             })

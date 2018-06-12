@@ -48,7 +48,7 @@ export default {
 .breadcrumb {
     height: 32px;
     line-height: 32px;
-    padding: 10px 20px;
+    padding: 1px 20px;
 
     a {
         &:hover {

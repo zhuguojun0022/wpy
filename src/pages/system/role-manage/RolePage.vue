@@ -6,10 +6,11 @@
         </div>
     </table-header>
     <Row :gutter="16">
-        <Col span="18">
+        <Col span="19">
             <Table highlight-row :columns="columns" :data="tableData" @on-row-dblclick="singleClick"></Table>
+            <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
-        <Col span="6" class="authorize">
+        <Col span="5" class="authorize">
             <span class="authorize-title">授权功能</span>
             <Button type="primary" v-if="clickRole" class="authorize-save" @click="updateTree">保存</Button>
             <Tree :data="treeData" show-checkbox v-if="clickRole" :ref='trees'></Tree>
@@ -20,7 +21,7 @@
             <FormItem prop="roleName" label="角色名称" required>
                 <Input v-model.trim="newRole.roleName" placeholder="请输入角色名称"></Input>
             </FormItem>
-            <FormItem prop="roleRemark" label="角色描述">
+            <FormItem prop="roleRemark" label="角色描述" required>
                 <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
         </Form>
@@ -54,7 +55,7 @@
 </GPage>
 </template>
 <script>
-import { TableHeader, TableFooter } from '../../../components/table'
+import {TableHeader, TableFooter} from '../../../components/table'
 import {mapMutations} from 'vuex'
 import {systemApi} from '../../../apis'
 import {formatDateTime} from '../../../common/utils'
@@ -67,8 +68,8 @@ export default {
             columns: [
                 {title: '角色名称', key: 'roleName'},
                 {title: '角色描述', key: 'roleRemark'},
-                {title: '角色ID', key: 'roleId'},
-                {title: '创建人', key: 'createUserNo'},
+                {title: '角色ID', key: 'roleId', width: 100},
+                {title: '创建人', key: 'createUserNo', width: 100},
                 {
                     title: '创建时间',
                     key: 'createTime',
@@ -85,7 +86,9 @@ export default {
                     render: (h, {row}) => {
                         return h('iSwitch', {
                             props: {
-                                value: row.roleStatus === 1,
+                                trueValue: 1,
+                                falseValue: 0,
+                                value: row.roleStatus,
                                 size: 'large'
                             },
                             on: {
@@ -105,6 +108,7 @@ export default {
                 },
                 {
                     title: '操作',
+                    width: 200,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             label: '修改',
@@ -153,13 +157,17 @@ export default {
                 roleName: [
                     {required: true, message: '必填项', trigger: 'blur'},
                     {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/, message: '只能包含中文、字母、数字、_', trigger: 'blur'}
+                ],
+                roleRemark: [
+                    {required: true, message: '必填项', trigger: 'blur'},
+                    {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/, message: '只能包含中文、字母、数字、_', trigger: 'blur'}
                 ]
             },
             authorizedUserShow: false,
             authorizedUserTitle: '授权用户',
             currentPage: 1,
-            pageSize: 10,
-            totalNum: 10,
+            pageSize: 20,
+            totalNum: 0,
             currentPageAuthorizedUser: 1,
             totalNumAuthorizedUser: 10,
             tableUserData: [],
@@ -195,7 +203,7 @@ export default {
     },
     created () {
         this.searchRoleList()
-        this.searchRoleList()
+        // this.searchRoleList()
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
@@ -232,6 +240,10 @@ export default {
         handleCurrentChange (v) {
             this.currentPageAuthorizedUser = v
             this.searchUserList()
+        },
+        handleMainChange (v) {
+            this.currentPage = v
+            this.searchRoleList()
         },
         filterData (arr) {
             var newArr = []
@@ -297,7 +309,7 @@ export default {
             })
         },
         onStatusChange (row, val) {
-            row.roleStatus = val
+            row.roleStatus = val ? 1 : 0
             this.$Modal.confirm({
                 title: '状态信息修改确认',
                 content: `您将${row.roleStatus ? '启用' : '停用'}该角色，是否继续？`,
@@ -312,19 +324,19 @@ export default {
                         } else {
                             this.$Message.error(msg)
                             this.$nextTick(() => {
-                                row.roleStatus = !val
+                                row.roleStatus = val ? 0 : 1
                             })
                         }
                     }).catch(() => {
                         this.$Modal.remove()
                         this.$nextTick(() => {
-                            row.roleStatus = !val
+                            row.roleStatus = val ? 0 : 1
                         })
                     })
                 },
                 onCancel: () => {
                     this.$nextTick(() => {
-                        row.roleStatus = !val
+                        row.roleStatus = val ? 0 : 1
                     })
                 }
             })
@@ -486,9 +498,6 @@ export default {
                 this.modalLoading = false
             })
         }
-    },
-    mounted () {
-        // this.loadData()
     },
     computed: {}
 }
