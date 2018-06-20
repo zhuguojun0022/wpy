@@ -229,6 +229,7 @@ export default {
         updateUser () {
             systemApi.updateAuthorizedUser(this.currentRoleId, this.nameKey).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
+                    this.nameKey = ''
                     this.authorizedUserList(this.currentRoleId)
                     this.$Message.success(msg)
                 } else {

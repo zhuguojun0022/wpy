@@ -28,7 +28,7 @@
                         <FormItem prop="menuRouter" label="路由名称" :required="required">
                             <Input v-model.trim="menuItems.menuRouter" placeholder="请输入菜单路由"></Input>
                         </FormItem>
-                        <FormItem prop="menuRemark" label="菜单描述">
+                        <FormItem prop="menuRemark" label="菜单描述" required>
                             <Input v-model.trim="menuItems.menuRemark" type="textarea" placeholder="请输入描述信息"></Input>
                         </FormItem>
                         <FormItem>
@@ -83,6 +83,7 @@ export default {
                 menuOrder: '',
                 menuPid: ''
             }
+            this.formRef = 'newform'
         },
         onSelectChange (data) {
             this.menuItems = {...data[0]}

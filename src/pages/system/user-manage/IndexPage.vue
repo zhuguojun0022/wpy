@@ -7,7 +7,7 @@
         </template>
         <template slot="right">
             <Input v-model="filterName" placeholder="用户名/姓名" style="width: 200px" clearable></Input>
-            <Select v-model="filterRole" style="width: 200px" placeholder="角色">
+            <Select v-model="filterRole" style="width: 200px" placeholder="角色" clearable>
                 <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
             </Select>
             <Select v-model="filterStatus" clearable style="width: 200px" placeholder="状态">
@@ -26,7 +26,7 @@
             <FormItem prop="userAdminName" label="用户名" required>
                 <Input v-model.trim="newUser.userAdminName" placeholder="请输入用户名"></Input>
             </FormItem>
-             <FormItem label="角色" prop="roleIds" required>
+            <FormItem label="角色" prop="roleIds" required>
                 <Select v-model="newUser.roleIds" :multiple="true">
                     <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
                 </Select>
@@ -166,13 +166,13 @@ export default {
             ruleValidate: {
                 userAdminName: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
+                    {pattern: /^([a-zA-Z0-9_]{1,65})$/, message: '只能包含字母、数字、_，长度不能超过65位', trigger: 'blur'}
                 ],
                 userAdminMobile: [
                     {pattern: /^1\d{10}$/, message: '手机号码不正确', trigger: 'blur'}
                 ],
                 userAdminEmail: [
-                    {pattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/, message: '邮件格式不正确', trigger: 'blur'}
+                    {pattern: /^(?=\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$).{1,65}$/, message: '邮件格式不正确或长度过长', trigger: 'blur'}
                 ],
                 roleIds: [{required: true, type: 'array', message: '必填项', trigger: 'change'}]
             },
@@ -245,7 +245,7 @@ export default {
             row.userAdminStatus = val ? 1 : 0
             this.$Modal.confirm({
                 title: '状态信息修改确认',
-                content: `您将${row.status ? '启用' : '停用'}该用户，是否继续？`,
+                content: `您将${row.userAdminStatus ? '启用' : '停用'}该用户，是否继续？`,
                 closable: false,
                 loading: true,
                 onOk: () => {

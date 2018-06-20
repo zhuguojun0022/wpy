@@ -12,7 +12,7 @@ import {
     Switch,
     Message,
     Table,
-    // Tooltip,
+    Tooltip,
     Page,
     Select,
     Option,
@@ -42,7 +42,7 @@ Vue.component('Dropdown', Dropdown)
 Vue.component('DropdownMenu', DropdownMenu)
 Vue.component('DropdownItem', DropdownItem)
 Vue.component('Table', Table)
-// Vue.component('Tooltip', Tooltip)
+Vue.component('Tooltip', Tooltip)
 Vue.component('Page', Page)
 Vue.component('Select', Select)
 Vue.component('Option', Option)
