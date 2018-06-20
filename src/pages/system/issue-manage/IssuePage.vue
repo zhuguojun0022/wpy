@@ -12,7 +12,7 @@
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
     <Modal v-model="diaShow" :mask-closable="false" :closable="false" class-name="vertical-center-modal" :title="diaTitle" ref="modal">
-        <Form :model="newUser" :label-width="150" :rules="ruleValidate" :ref="formRef" class="new-user-form">
+        <Form :model="newUser" :label-width="150"  :ref="formRef" class="new-user-form">
             <FormItem  label="医保行政区划代码" >
                 <Input v-model.trim="newUser.regionNo" placeholder="请输入医保行政区划代码"></Input>
             </FormItem>
