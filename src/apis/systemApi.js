@@ -56,6 +56,20 @@ const updateMenuTree = (menuId, menuTitle, menuRouter, menuRemark, menuIcon, men
     menuId, menuTitle, menuRouter, menuRemark, menuIcon, menuOrder, menuPid
 })
 
+const searchRegionList = (pageSize, currentPage, regionName) => http.post(`/region/queryRegionList`, {
+    pageSize, currentPage, regionName
+})
+
+const addRegionInfo = (regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg) => http.post(`/region/addRegion`, {
+    regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg
+})
+
+const updateRegionInfo = (regionId, regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg) => http.post(`/region/modifyRegion`, {
+    regionId, regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg
+})
+
+const deleteRegionInfo = (regionId) => http.post(`/region/delRegion`, {regionId})
+
 export default {
     searchUserList,
     searchDownRoleList,
@@ -77,5 +91,9 @@ export default {
     addMenu,
     updateMenuTree,
     searchUnAuthorizedUserList,
-    updateAuthorizedUser
+    updateAuthorizedUser,
+    searchRegionList,
+    addRegionInfo,
+    updateRegionInfo,
+    deleteRegionInfo
 }
