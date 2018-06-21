@@ -13,7 +13,6 @@
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
     </table-header>
-
     <Table :columns="columns" :data="tableData"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
@@ -35,22 +34,6 @@
                 <Select v-model="channelItems.AAZ572">
                     <Option v-for="item in levelList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-            </FormItem>
-            <FormItem prop="accessType" label="渠道接入类型" required v-show="accessTypeVisibility">
-                <RadioGroup v-model="channelItems.accessType" @on-change="handleAccessTypeChange">
-                    <Radio v-for="item in accessTypeList" :label="item.value" :key="item.value">{{ item.label }}</Radio>
-                </RadioGroup>
-            </FormItem>
-            <FormItem prop="regionIdList" label="限定区划" required v-show="regionVisibility">
-                <div style="position:relative">
-                    <Select v-model="channelItems.regionIdList" :multiple="true" :filterable="true" :remote="true"
-                    :remote-method="searchRegionList" :loading="regionLoading">
-                        <Option v-for="item in regionList" :value="item.regionId" :key="item.regionId">{{ item.regionName }}</Option>
-                    </Select>
-                    <Tooltip :content="regionHint" style="position:absolute; left:370px; top:2px" placement="top">
-                        <Icon type="information-circled" ></Icon>
-                    </Tooltip>
-                </div>
             </FormItem>
             <FormItem prop="channelUser" label="联系人" required>
                 <Input v-model.trim="channelItems.channelUser" placeholder="请输入联系人"></Input>
@@ -80,7 +63,8 @@
             <FormItem prop="channelSecretKey" label="渠道SK" required>
                 <Input v-model.trim="channelItems.channelSecretKey" placeholder="请输入渠道SK"></Input>
             </FormItem>
-            <FormItem prop="checkSwitch" label="验签开关" required>
+            <!-- 延签开关隐藏，20180621汤老师提出 -->
+            <FormItem prop="checkSwitch" label="验签开关" required v-show="switchVisibility">
                 <iSwitch size="large" v-model="channelItems.checkSwitch" :true-value="1" :false-value="0" >
                     <span slot="open">开</span>
                     <span slot="close">关</span>
@@ -106,13 +90,10 @@ export default {
             filterName: '',
             filterCode: '',
             filterStatus: '',
-            regionVisibility: false,
-            accessTypeVisibility: true,
-            regionLoading: false,
-            regionHint: '输入名称进行模糊检索',
+            switchVisibility: false,
             typeList: [{
                 value: 0,
-                label: '第三方人社'
+                label: '第三方'
             }, {
                 value: 1,
                 label: '地方人社'
@@ -142,23 +123,9 @@ export default {
             levelList: [{
                 value: 1,
                 label: '一级'
-            }, {
-                value: 2,
-                label: '二级'
-            }, {
-                value: 3,
-                label: '三级'
             }],
-            accessTypeList: [{
-                value: 0,
-                label: '非限定渠道'
-            }, {
-                value: 1,
-                label: '限定渠道'
-            }],
-            regionList: [],
             columns: [
-                {title: '渠道编号', key: 'AAZ570', width: 100},
+                {title: '渠道编号', key: 'AAZ570', width: 150},
                 {title: '渠道名称', key: 'AAZ571'},
                 {
                     title: '渠道类型',
@@ -179,23 +146,6 @@ export default {
                         return this.getCellRender(h, [{
                             tag: 'span',
                             label: this.channelLevel(row.AAZ572)
-                        }])
-                    }
-                },
-                {
-                    title: '渠道限定区划',
-                    key: 'regionList',
-                    render: (h, {column, index, row}) => {
-                        let regionStr = ''
-                        row.regionList.forEach(element => {
-                            regionStr = regionStr + element.regionName + '、'
-                        })
-                        return this.getCellRender(h, [{
-                            label: regionStr,
-                            type: 'primary',
-                            style: {
-                                color: '#000000'
-                            }
                         }])
                     }
                 },
@@ -242,11 +192,21 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    if (row.confStatus === 2) {
-                                        this.startUse(row)
-                                    } else if (row.confStatus === 1) {
-                                        this.stopUse(row)
-                                    }
+                                    this.$Modal.confirm({
+                                        title: '操作确认',
+                                        content: `您将${row.confStatus === 2 ? '启用' : '停用'}该渠道，是否继续?`,
+                                        closable: false,
+                                        loading: true,
+                                        onOk: () => {
+                                            this.$Modal.remove()
+                                            if (row.confStatus === 2) {
+                                                this.startUse(row)
+                                            } else if (row.confStatus === 1) {
+                                                this.stopUse(row)
+                                            }
+                                        },
+                                        onCancel: () => {}
+                                    })
                                 }
                             }
                         }])
@@ -261,19 +221,14 @@ export default {
             diaTitleBaseInfo: '新增渠道',
             modal_loading: false,
             formRefBaseInfo: 'addChannel',
-            regionId: '',
-            regionNo: '',
-            regionName: '',
             channelItems: {
                 channelId: '',
                 AAZ570: '',
                 AAZ571: '',
                 AAZ572: '',
                 AAZ573: '',
-                accessType: '',
                 channelUser: '',
-                channelUserMobile: '',
-                regionIdList: []
+                channelUserMobile: ''
             },
             diaShowConfigInfo: false,
             diaTitleConfigInfo: '新增渠道配置',
@@ -282,7 +237,7 @@ export default {
             ruleValidateBaseInfo: {
                 AAZ570: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
+                    {pattern: /^1\d+$/, message: '只能包含数字', trigger: 'blur'}
                 ],
                 AAZ571: [
                     {required: true, message: '必填项', trigger: 'blur'},
@@ -308,15 +263,15 @@ export default {
                 ]
             },
             signList: [{
-                value: 'RSA256',
-                label: 'RSA256'
+                value: 'DES3',
+                label: 'DES3'
             }]
         }
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: '渠道配置',
+                name: '渠道管理',
                 icon: 'icon-qudaoguanli'
             })
         })
@@ -362,18 +317,6 @@ export default {
         onEditChannelClick (row) {
             this.formRefBaseInfo = 'editChannel'
             this.channelItems = {...row}
-            if (this.channelItems.accessType === 1) {
-                this.regionVisibility = true
-            } else {
-                this.regionVisibility = false
-            }
-            this.accessTypeVisibility = false
-            this.regionList = row.regionList
-            let list = []
-            row.regionList.forEach(element => {
-                list.push(element.regionId)
-            })
-            this.channelItems.regionIdList = list
             this.diaTitleBaseInfo = '修改渠道基本信息'
             this.diaShowBaseInfo = true
         },
@@ -393,24 +336,22 @@ export default {
             this.$refs[name].resetFields()
             this.diaShowBaseInfo = false
             this.diaTitleBaseInfo = '新增渠道'
-            this.regionVisibility = false
-            this.accessTypeVisibility = true
         },
         // 新增渠道commit事件
         onSubmitBaseClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    let {AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile, accessType, regionIdList} = {
+                    let {AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile} = {
                         ...this.channelItems
                     }
                     this.modal_loading = true
                     if (name === 'addChannel') {
-                        channelApi.addChannel(AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile, accessType, regionIdList).then(
+                        channelApi.addChannel(AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile).then(
                             ({data: {result, resultCode, msg}}) => {
                                 this.modal_loading = false
                                 if (resultCode === '000000') {
                                     this.$Message.success(msg)
-                                    this.onCancelConfigClick(name)
+                                    this.onCancelBaseClick(name)
                                     this.currentPage = 1
                                     this.searchChannelList()
                                 } else {
@@ -422,12 +363,12 @@ export default {
                         })
                     } else {
                         let channelId = this.channelItems.channelId
-                        channelApi.updateChannel(channelId, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile, regionIdList).then(
+                        channelApi.updateChannel(channelId, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile).then(
                             ({data: {result, resultCode, msg}}) => {
                                 this.modal_loading = false
                                 if (resultCode === '000000') {
                                     this.$Message.success(msg)
-                                    this.onCancelConfigClick(name)
+                                    this.onCancelBaseClick(name)
                                     this.currentPage = 1
                                     this.searchChannelList()
                                 } else {
@@ -438,7 +379,6 @@ export default {
                             this.modal_loading = false
                         })
                     }
-                    this.accessTypeVisibility = true
                 } else {
                     this.$Message.error('Fail!')
                 }
@@ -498,24 +438,6 @@ export default {
                 this.closeLoading()
             })
         },
-        handleAccessTypeChange (v) {
-            if (v === 1) {
-                this.regionVisibility = true
-            } else {
-                this.regionVisibility = false
-            }
-        },
-        searchRegionList (query) {
-            if (query !== '') {
-                this.regionLoading = true
-                channelApi.searchRegionList(this.regionId, this.regionNo, query).then(({data: {result, resultCode, msg}}) => {
-                    this.regionLoading = false
-                    this.regionList = result.list
-                })
-            } else {
-                this.regionList = []
-            }
-        },
         startUse (row) {
             this.channelItems = {...row}
             this.updateChannelStatus(true)
@@ -532,6 +454,18 @@ export default {
                     this.modal_loading = false
                     this.$Message.success(msg)
                     this.searchChannelList()
+                }
+            )
+        },
+        // 更新加密密钥方法
+        updateChannelEncryptKey (row) {
+            this.channelItems = {...row}
+            let {channelId} = {...this.channelItems}
+            this.modal_loading = true
+            channelApi.updateChannelEncryptKey(channelId).then(
+                ({data: {result, resultCode, msg}}) => {
+                    // refresh encryptkey
+                    this.modal_loading = false
                 }
             )
         }
