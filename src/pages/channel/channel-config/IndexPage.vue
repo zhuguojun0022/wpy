@@ -79,12 +79,12 @@
 </GPage>
 </template>
 <script>
-import {TableHeader, TableFooter} from '../../../components/table'
+import {TableHeader, TableFooter, Expand} from '../../../components/table'
 import {channelApi} from '../../../apis/'
 import {mapMutations} from 'vuex'
 
 export default {
-    components: {TableHeader, TableFooter},
+    components: {TableHeader, TableFooter, Expand},
     data () {
         return {
             filterName: '',
@@ -125,6 +125,17 @@ export default {
                 label: '一级'
             }],
             columns: [
+                {
+                    type: 'expand',
+                    width: 50,
+                    render: (h, params) => {
+                        return h(Expand, {
+                            props: {
+                                row: params.row
+                            }
+                        })
+                    }
+                },
                 {title: '渠道编号', key: 'AAZ570', width: 150},
                 {title: '渠道名称', key: 'AAZ571'},
                 {
@@ -458,11 +469,12 @@ export default {
             )
         },
         // 更新加密密钥方法
-        updateChannelEncryptKey (row) {
+        updateChannelEncryptKey: function (row) {
+            console.log('refresh')
             this.channelItems = {...row}
             let {channelId} = {...this.channelItems}
             this.modal_loading = true
-            channelApi.updateChannelEncryptKey(channelId).then(
+            channelApi.updateEncryptKey(channelId).then(
                 ({data: {result, resultCode, msg}}) => {
                     // refresh encryptkey
                     this.modal_loading = false
