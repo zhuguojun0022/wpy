@@ -470,7 +470,6 @@ export default {
         },
         // 更新加密密钥方法
         updateChannelEncryptKey: function (row) {
-            console.log('refresh')
             this.channelItems = {...row}
             let {channelId} = {...this.channelItems}
             this.modal_loading = true
