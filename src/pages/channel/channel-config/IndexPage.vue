@@ -20,7 +20,25 @@
     <Modal v-model="diaShowBaseInfo" :mask-closable="false" :closable="false" :title="diaTitleBaseInfo" ref="modal">
         <Form :model="channelItems" :label-width="100" :rules="ruleValidateBaseInfo" :ref="formRefBaseInfo" class="new-channel-form">
             <FormItem prop="AAZ570" label="渠道编码" required>
-                <Input v-model.trim="channelItems.AAZ570" placeholder="请输入渠道编码"></Input>
+                <div style="position:relative">
+                    <Input v-model.trim="channelItems.AAZ570" placeholder="请输入渠道编码"></Input>
+                    <Tooltip style="position:absolute; left:370px; top:2px;" placement="right">
+                        <div slot="content">
+                            <p>渠道编号编码规则：</p>
+                            <p>1.10位数字字符。</p>
+                            <p>2.地方APP（含地方人社、地方政府、地方部门、医院）：</p>
+                            <p>前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。</p>
+                            <p>3.全国统一的APP（如中央政府及政府各部门、银行总行、</p>
+                            <p>第三方可信渠道、第三方其他渠道APP）单独编码。</p>
+                            <p style="text-indent:20px">3.1 中央政府、政府各部门000001+4位序号（0001—9999）</p>
+                            <p style="text-indent:20px">3.2 银行类APP：9100**+4位序号（0001—9999）**为银行</p>
+                            <p style="text-indent:20px">大类；对于地方类银行，大类为地方商业银行</p>
+                            <p style="text-indent:20px">3.3 第三方可信渠道APP：9200+6位序号（000001—999999）</p>
+                            <p style="text-indent:20px">3.4 第三方其他渠道APP：9300+6位序号（000001—999999）</p>
+                        </div>
+                        <Icon type="information-circled" ></Icon>
+                    </Tooltip>
+                </div>
             </FormItem>
             <FormItem prop="AAZ571" label="渠道名称" required>
                 <Input v-model.trim="channelItems.AAZ571" placeholder="请输入渠道名称"></Input>
@@ -91,6 +109,7 @@ export default {
             filterCode: '',
             filterStatus: '',
             switchVisibility: false,
+            codehint: '渠道编号编码规则：\r\n 1.10位数字字符。\r 2.地方APP（含地方人社、地方政府、地方部门、医院）：前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。\r 3.全国统一的APP（如中央政府及政府各部门、银行总行、第三方可信渠道、第三方其他渠道APP）单独编码。\r 3.1 中央政府、政府各部门000001+4位序号（0001—9999）\r 3.2 银行类APP：9100**+4位序号（0001—9999）  **为银行大类；对于地方类银行，大类为地方商业银行\r 3.3 第三方可信渠道APP：9200+6位序号（000001—999999）\r 3.4 第三方其他渠道APP：9300+6位序号（000001—999999）\r',
             typeList: [{
                 value: 0,
                 label: '第三方'
