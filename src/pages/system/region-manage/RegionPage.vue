@@ -161,6 +161,8 @@ export default {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onCreateNewRegion () {
             this.diaShow = true
+            this.cardAuth = false
+            this.noCardAuth = false
             this.newUser.cardAuth = 0
             this.newUser.noCardAuth = 0
         },
@@ -222,7 +224,6 @@ export default {
                     let {regionId, regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg} = {
                         ...this.newUser
                     }
-                    console.log(this.newUser)
                     this.modal_loading = true
                     if (name === 'adduser') {
                         systemApi.addRegionInfo(regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg).then(({data: {result, resultCode, msg}}) => {

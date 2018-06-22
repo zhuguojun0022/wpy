@@ -6,6 +6,7 @@ let userPromise
 export function setLoginUser (user) {
     setToken(user.token)
     window.sessionStorage.setItem('USERNAME', user.userAdminName)
+    window.sessionStorage.setItem('USERID', user.userAdminId)
     userPromise = Promise.resolve(user)
 }
 

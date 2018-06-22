@@ -25,9 +25,20 @@ const getLoginInfo = function () {
     return http.get('/getLoginInfo', {mock: mock})
 }
 
+const changePwd = function (userAdminId, userAdminPwdOld, userAdminPwd) {
+    return http.post('/useradmin/setAdminPwd', {
+        userAdminId,
+        userAdminPwdOld,
+        userAdminPwd
+    }, {
+        mock: mock
+    })
+}
+
 export default {
     test,
     login,
     getMenu,
-    getLoginInfo
+    getLoginInfo,
+    changePwd
 }

@@ -2,7 +2,7 @@
 <GPage bg>
     <table-header>
         <template slot="right">
-            <Input v-model="regionName" placeholder="医保行政区划代码/名称" style="width: 200px" clearable></Input>
+            <Input v-model="region" placeholder="医保行政区划代码/名称" style="width: 200px" clearable></Input>
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
     </table-header>
@@ -12,14 +12,22 @@
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
     <Modal v-model="diaShow" :mask-closable="false" :closable="false" class-name="vertical-center-modal" :title="diaTitle" ref="modal">
-        <Form :model="newUser" :label-width="150"  :ref="formRef" class="new-user-form">
-            <FormItem  label="医保行政区划代码" >
-                <Input v-model.trim="newUser.regionNo" placeholder="请输入医保行政区划代码"></Input>
+        <Form  :label-width="100"  class="new-channel-form">
+            <FormItem prop="regionIdList" label="渠道名称" required>
+                <div style="position:relative">
+                    <Select v-model="channelList" :multiple="true" :filterable="true" :remote="true"
+                    :remote-method="searchchannelList" :loading="channelLoading" placeholder="请输入渠道名称">
+                        <Option v-for="item in channelName" :value="item.channelId+'$r$'+item.AAZ570" :key="item.AAZ570">{{item.AAZ571}}</Option>
+                    </Select>
+                    <Tooltip :content="channelHint" style="position:absolute; left:370px; top:2px" placement="top">
+                        <Icon type="information-circled" ></Icon>
+                    </Tooltip>
+                </div>
             </FormItem>
         </Form>
         <div slot="footer">
-            <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
-            <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
+            <Button type="ghost" @click="onCancelClick()">取消</Button>
+            <Button type="primary" :loading="modal_loading" @click="onSubmitClick()">提交</Button>
         </div>
     </Modal>
 </GPage>
@@ -33,23 +41,72 @@ export default {
     components: {TableHeader, TableFooter},
     data () {
         return {
-            regionName: '',
-            cardAuth: false,
-            noCardAuth: false,
+            region: '',
             columns: [
-                {type: 'index', title: '序号', align: 'center'},
-                {title: '医保行政区划代码', key: 'regionNo', align: 'center'},
-                {title: '医保行政区划名称', key: 'regionName', align: 'center'},
-                {title: '授权状态', key: 'nopswAmountLimit', align: 'center'},
+                {type: 'index', title: '序号', align: 'center', width: 60},
+                {title: '医保行政区划代码', key: 'regionNo', align: 'center', width: 150},
+                {title: '医保行政区划名称', key: 'regionName', align: 'center', width: 150},
+                {
+                    title: '授权状态',
+                    key: 'status',
+                    width: 120,
+                    render: (h, {row}) => {
+                        return h('iSwitch', {
+                            props: {
+                                trueValue: 1,
+                                falseValue: 0,
+                                value: row.regionStatus,
+                                size: 'large'
+                            },
+                            on: {
+                                'on-change': (val) => {
+                                    this.onStatusChange(row, val)
+                                }
+                            }
+                        }, [
+                            h('span', {
+                                slot: 'open'
+                            }, '开'),
+                            h('span', {
+                                slot: 'close'
+                            }, '关')
+                        ])
+                    }
+                },
                 {
                     title: '已授权渠道',
-                    key: 'cardAuth',
-                    align: 'center',
+                    key: 'roles',
                     render: (h, {column, index, row}) => {
-                        return this.getCellRender(h, [{
-                            tag: 'span',
-                            label: row.cardAuth === 1 ? '是' : '否'
-                        }])
+                        return h('div', [
+                            h('div', row.regionChannel.map(item => {
+                                return h('Button', {
+                                    props: {
+                                        type: 'default',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.onDeleteClick(row, item)
+                                        }
+                                    }
+                                }, item.aaz571 + '　×')
+                            }).concat([
+                                h('Button', {
+                                    props: {
+                                        type: 'dashed',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.addChannel(row)
+                                        }
+                                    }
+                                }, '＋ 添加授权渠道')
+                            ]))
+                        ])
                     }
                 }
             ],
@@ -60,8 +117,11 @@ export default {
             diaShow: false,
             diaTitle: '添加授权渠道',
             modal_loading: false,
-            formRef: 'adduser',
-            newUser: {}
+            issueInfo: {},
+            channelLoading: false,
+            channelList: [],
+            channelName: [],
+            channelHint: '输入名称进行模糊检索'
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -78,7 +138,7 @@ export default {
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         // 删除数据
-        onDeleteClick (row) {
+        onDeleteClick (row, item) {
             this.$Modal.confirm({
                 title: '删除信息确认',
                 content: `您是否确认删除选中的此条数据？`,
@@ -86,7 +146,7 @@ export default {
                 loading: true,
                 onOk: () => {
                     // TODO 刷新数据
-                    systemApi.deleteRegionInfo(row.regionId).then(({data: {result, resultCode, msg}}) => {
+                    systemApi.deleteIssueInfo(row.regionId, item.channelId).then(({data: {result, resultCode, msg}}) => {
                         this.$Modal.remove()
                         if (resultCode === '000000') {
                             this.$Message.success(msg)
@@ -111,72 +171,87 @@ export default {
             this.currentPage = v
             this.searchRegionList()
         },
-        // 编辑数据
-        onEditClick (row) {
-            this.formRef = 'edituser'
-            this.cardAuth = row.cardAuth === 1
-            this.noCardAuth = row.noCardAuth === 1
-            this.newUser = {...row}
-            this.newUser.nopswAmountLimit = String(this.newUser.nopswAmountLimit)
-            this.diaTitle = '修改医保行政区划'
-            this.diaShow = true
-        },
         // 弹出框-取消
-        onCancelClick (name) {
-            this.$refs[name].resetFields()
+        onCancelClick () {
+            this.channelList = []
             this.diaShow = false
-            this.diaTitle = '新增医保行政区划'
-            this.formRef = 'adduser'
         },
-        // 新增或编辑后提交数据
-        onSubmitClick (name) {
-            this.$refs[name].validate((valid) => {
-                if (valid) {
-                    let {regionId, regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg} = {
-                        ...this.newUser
-                    }
-                    console.log(this.newUser)
-                    this.modal_loading = true
-                    if (name === 'adduser') {
-                        systemApi.addRegionInfo(regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg).then(({data: {result, resultCode, msg}}) => {
-                            this.modal_loading = false
-                            if (resultCode === '000000') {
-                                this.$Message.success(msg)
-                                this.onCancelClick(name)
-                                this.currentPage = 1
-                                this.searchRegionList()
-                            } else {
-                                this.$Message.error(msg)
-                            }
-                        }).catch(() => {
-                            this.modal_loading = false
-                        })
-                    } else {
-                        systemApi.updateRegionInfo(regionId, regionNo, regionName, nopswAmountLimit, messageTips, cardAuth, noCardAuth, faceMsg).then(({data: {result, resultCode, msg}}) => {
-                            this.modal_loading = false
-                            if (resultCode === '000000') {
-                                this.$Message.success(msg)
-                                this.onCancelClick(name)
-                                this.searchRegionList()
-                            } else {
-                                this.$Message.error(msg)
-                            }
-                        }).catch(() => {
-                            this.modal_loading = false
-                        })
-                    }
+        // 更改授权状态
+        onStatusChange (row, val) {
+            let {regionId, regionNo} = {...row}
+            let authStatus = val
+            systemApi.changeIssueInfo(regionId, regionNo, authStatus).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.$Message.success(msg)
                 } else {
-                    this.$Message.error('校验失败!')
+                    this.$Message.error(msg)
+                    this.$nextTick(() => {
+                        row.regionStatus = val ? 0 : 1
+                    })
+                }
+            }).catch(() => {
+                this.$Modal.remove()
+                this.$nextTick(() => {
+                    row.regionStatus = val ? 0 : 1
+                })
+            })
+        },
+        // 添加授权渠道
+        addChannel (row) {
+            this.diaShow = true
+            this.issueInfo = row
+        },
+        // 模糊搜索渠道名称
+        searchchannelList (query) {
+            if (query !== '') {
+                this.channelLoading = true
+                systemApi.searchchannelList(query).then(({data: {result, resultCode, msg}}) => {
+                    if (resultCode === '000000') {
+                        this.channelLoading = false
+                        this.channelName = result
+                    } else {
+                        this.channelLoading = false
+                        this.$Message.error(msg)
+                    }
+                })
+            } else {
+                this.channelName = []
+            }
+        },
+        // 新增授权渠道
+        onSubmitClick () {
+            if (this.channelList.length < 1) {
+                this.$Message.error('请至少选择一个授权渠道')
+                return
+            }
+            let {regionId, regionNo} = {...this.issueInfo}
+            let channelList = this.channelList.map(el => {
+                let arr = el.split('$r$')
+                return {
+                    regionId: regionId,
+                    regionNo: regionNo,
+                    channelId: arr[0],
+                    aaz570: arr[1],
+                    authStatus: 1
+                }
+            })
+            systemApi.addIssueInfo(channelList).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.$Message.success(msg)
+                    this.onCancelClick()
+                    this.searchRegionList()
+                } else {
+                    this.$Message.error(msg)
                 }
             })
         },
         // 获取数据
         searchRegionList () {
             this.openLoading()
-            systemApi.searchRegionList(
+            systemApi.searchIssueList(
                 this.pageSize,
                 this.currentPage,
-                this.regionName
+                this.region
             ).then(({data: {result, resultCode, msg}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
