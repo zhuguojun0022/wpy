@@ -23,6 +23,7 @@ const channelInit = (channelId, signAlgorithm, channelAccessKey, channelSecretKe
 const updateChannelConfig = (channelId, signAlgorithm, channelAccessKey, channelSecretKey, checkSwitch) => http.post('/channel/config/update', {
     channelId, signAlgorithm, channelAccessKey, channelSecretKey, checkSwitch}, {mock: false})
 const updateChannelStatus = (channelId, active) => http.post('/channel/update', {channelId, active}, {mock: false})
+const updateEncryptKey = (channelId) => http.post('/channel/config/encryptKey/refresh', {channelId}, {mock: false})
 export default {
     searchChannelList,
     searchMerchantsList,
@@ -32,5 +33,6 @@ export default {
     channelInit,
     updateChannelConfig,
     updateChannelStatus,
-    updateChannel
+    updateChannel,
+    updateEncryptKey
 }

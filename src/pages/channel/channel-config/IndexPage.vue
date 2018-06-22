@@ -13,7 +13,6 @@
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
     </table-header>
-
     <Table :columns="columns" :data="tableData"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
@@ -21,7 +20,25 @@
     <Modal v-model="diaShowBaseInfo" :mask-closable="false" :closable="false" :title="diaTitleBaseInfo" ref="modal">
         <Form :model="channelItems" :label-width="100" :rules="ruleValidateBaseInfo" :ref="formRefBaseInfo" class="new-channel-form">
             <FormItem prop="AAZ570" label="渠道编码" required>
-                <Input v-model.trim="channelItems.AAZ570" placeholder="请输入渠道编码"></Input>
+                <div style="position:relative">
+                    <Input v-model.trim="channelItems.AAZ570" placeholder="请输入渠道编码"></Input>
+                    <Tooltip style="position:absolute; left:370px; top:2px;" placement="right">
+                        <div slot="content">
+                            <p>渠道编号编码规则：</p>
+                            <p>1.10位数字字符。</p>
+                            <p>2.地方APP（含地方人社、地方政府、地方部门、医院）：</p>
+                            <p>前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。</p>
+                            <p>3.全国统一的APP（如中央政府及政府各部门、银行总行、</p>
+                            <p>第三方可信渠道、第三方其他渠道APP）单独编码。</p>
+                            <p style="text-indent:20px">3.1 中央政府、政府各部门000001+4位序号（0001—9999）</p>
+                            <p style="text-indent:20px">3.2 银行类APP：9100**+4位序号（0001—9999）**为银行</p>
+                            <p style="text-indent:20px">大类；对于地方类银行，大类为地方商业银行</p>
+                            <p style="text-indent:20px">3.3 第三方可信渠道APP：9200+6位序号（000001—999999）</p>
+                            <p style="text-indent:20px">3.4 第三方其他渠道APP：9300+6位序号（000001—999999）</p>
+                        </div>
+                        <Icon type="information-circled" ></Icon>
+                    </Tooltip>
+                </div>
             </FormItem>
             <FormItem prop="AAZ571" label="渠道名称" required>
                 <Input v-model.trim="channelItems.AAZ571" placeholder="请输入渠道名称"></Input>
@@ -35,22 +52,6 @@
                 <Select v-model="channelItems.AAZ572">
                     <Option v-for="item in levelList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-            </FormItem>
-            <FormItem prop="accessType" label="渠道接入类型" required v-show="accessTypeVisibility">
-                <RadioGroup v-model="channelItems.accessType" @on-change="handleAccessTypeChange">
-                    <Radio v-for="item in accessTypeList" :label="item.value" :key="item.value">{{ item.label }}</Radio>
-                </RadioGroup>
-            </FormItem>
-            <FormItem prop="regionIdList" label="限定区划" required v-show="regionVisibility">
-                <div style="position:relative">
-                    <Select v-model="channelItems.regionIdList" :multiple="true" :filterable="true" :remote="true"
-                    :remote-method="searchRegionList" :loading="regionLoading">
-                        <Option v-for="item in regionList" :value="item.regionId" :key="item.regionId">{{ item.regionName }}</Option>
-                    </Select>
-                    <Tooltip :content="regionHint" style="position:absolute; left:370px; top:2px" placement="top">
-                        <Icon type="information-circled" ></Icon>
-                    </Tooltip>
-                </div>
             </FormItem>
             <FormItem prop="channelUser" label="联系人" required>
                 <Input v-model.trim="channelItems.channelUser" placeholder="请输入联系人"></Input>
@@ -80,7 +81,8 @@
             <FormItem prop="channelSecretKey" label="渠道SK" required>
                 <Input v-model.trim="channelItems.channelSecretKey" placeholder="请输入渠道SK"></Input>
             </FormItem>
-            <FormItem prop="checkSwitch" label="验签开关" required>
+            <!-- 延签开关隐藏，20180621汤老师提出 -->
+            <FormItem prop="checkSwitch" label="验签开关" required v-show="switchVisibility">
                 <iSwitch size="large" v-model="channelItems.checkSwitch" :true-value="1" :false-value="0" >
                     <span slot="open">开</span>
                     <span slot="close">关</span>
@@ -95,24 +97,22 @@
 </GPage>
 </template>
 <script>
-import {TableHeader, TableFooter} from '../../../components/table'
+import {TableHeader, TableFooter, Expand} from '../../../components/table'
 import {channelApi} from '../../../apis/'
 import {mapMutations} from 'vuex'
 
 export default {
-    components: {TableHeader, TableFooter},
+    components: {TableHeader, TableFooter, Expand},
     data () {
         return {
             filterName: '',
             filterCode: '',
             filterStatus: '',
-            regionVisibility: false,
-            accessTypeVisibility: true,
-            regionLoading: false,
-            regionHint: '输入名称进行模糊检索',
+            switchVisibility: false,
+            codehint: '渠道编号编码规则：\r\n 1.10位数字字符。\r 2.地方APP（含地方人社、地方政府、地方部门、医院）：前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。\r 3.全国统一的APP（如中央政府及政府各部门、银行总行、第三方可信渠道、第三方其他渠道APP）单独编码。\r 3.1 中央政府、政府各部门000001+4位序号（0001—9999）\r 3.2 银行类APP：9100**+4位序号（0001—9999）  **为银行大类；对于地方类银行，大类为地方商业银行\r 3.3 第三方可信渠道APP：9200+6位序号（000001—999999）\r 3.4 第三方其他渠道APP：9300+6位序号（000001—999999）\r',
             typeList: [{
                 value: 0,
-                label: '第三方人社'
+                label: '第三方'
             }, {
                 value: 1,
                 label: '地方人社'
@@ -142,23 +142,20 @@ export default {
             levelList: [{
                 value: 1,
                 label: '一级'
-            }, {
-                value: 2,
-                label: '二级'
-            }, {
-                value: 3,
-                label: '三级'
             }],
-            accessTypeList: [{
-                value: 0,
-                label: '非限定渠道'
-            }, {
-                value: 1,
-                label: '限定渠道'
-            }],
-            regionList: [],
             columns: [
-                {title: '渠道编号', key: 'AAZ570', width: 100},
+                {
+                    type: 'expand',
+                    width: 50,
+                    render: (h, params) => {
+                        return h(Expand, {
+                            props: {
+                                row: params.row
+                            }
+                        })
+                    }
+                },
+                {title: '渠道编号', key: 'AAZ570', width: 150},
                 {title: '渠道名称', key: 'AAZ571'},
                 {
                     title: '渠道类型',
@@ -179,23 +176,6 @@ export default {
                         return this.getCellRender(h, [{
                             tag: 'span',
                             label: this.channelLevel(row.AAZ572)
-                        }])
-                    }
-                },
-                {
-                    title: '渠道限定区划',
-                    key: 'regionList',
-                    render: (h, {column, index, row}) => {
-                        let regionStr = ''
-                        row.regionList.forEach(element => {
-                            regionStr = regionStr + element.regionName + '、'
-                        })
-                        return this.getCellRender(h, [{
-                            label: regionStr,
-                            type: 'primary',
-                            style: {
-                                color: '#000000'
-                            }
                         }])
                     }
                 },
@@ -242,11 +222,21 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    if (row.confStatus === 2) {
-                                        this.startUse(row)
-                                    } else if (row.confStatus === 1) {
-                                        this.stopUse(row)
-                                    }
+                                    this.$Modal.confirm({
+                                        title: '操作确认',
+                                        content: `您将${row.confStatus === 2 ? '启用' : '停用'}该渠道，是否继续?`,
+                                        closable: false,
+                                        loading: true,
+                                        onOk: () => {
+                                            this.$Modal.remove()
+                                            if (row.confStatus === 2) {
+                                                this.startUse(row)
+                                            } else if (row.confStatus === 1) {
+                                                this.stopUse(row)
+                                            }
+                                        },
+                                        onCancel: () => {}
+                                    })
                                 }
                             }
                         }])
@@ -261,19 +251,14 @@ export default {
             diaTitleBaseInfo: '新增渠道',
             modal_loading: false,
             formRefBaseInfo: 'addChannel',
-            regionId: '',
-            regionNo: '',
-            regionName: '',
             channelItems: {
                 channelId: '',
                 AAZ570: '',
                 AAZ571: '',
                 AAZ572: '',
                 AAZ573: '',
-                accessType: '',
                 channelUser: '',
-                channelUserMobile: '',
-                regionIdList: []
+                channelUserMobile: ''
             },
             diaShowConfigInfo: false,
             diaTitleConfigInfo: '新增渠道配置',
@@ -282,7 +267,7 @@ export default {
             ruleValidateBaseInfo: {
                 AAZ570: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
+                    {pattern: /^1\d+$/, message: '只能包含数字', trigger: 'blur'}
                 ],
                 AAZ571: [
                     {required: true, message: '必填项', trigger: 'blur'},
@@ -308,15 +293,15 @@ export default {
                 ]
             },
             signList: [{
-                value: 'RSA256',
-                label: 'RSA256'
+                value: 'DES3',
+                label: 'DES3'
             }]
         }
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: '渠道配置',
+                name: '渠道管理',
                 icon: 'icon-qudaoguanli'
             })
         })
@@ -362,18 +347,6 @@ export default {
         onEditChannelClick (row) {
             this.formRefBaseInfo = 'editChannel'
             this.channelItems = {...row}
-            if (this.channelItems.accessType === 1) {
-                this.regionVisibility = true
-            } else {
-                this.regionVisibility = false
-            }
-            this.accessTypeVisibility = false
-            this.regionList = row.regionList
-            let list = []
-            row.regionList.forEach(element => {
-                list.push(element.regionId)
-            })
-            this.channelItems.regionIdList = list
             this.diaTitleBaseInfo = '修改渠道基本信息'
             this.diaShowBaseInfo = true
         },
@@ -393,24 +366,22 @@ export default {
             this.$refs[name].resetFields()
             this.diaShowBaseInfo = false
             this.diaTitleBaseInfo = '新增渠道'
-            this.regionVisibility = false
-            this.accessTypeVisibility = true
         },
         // 新增渠道commit事件
         onSubmitBaseClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    let {AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile, accessType, regionIdList} = {
+                    let {AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile} = {
                         ...this.channelItems
                     }
                     this.modal_loading = true
                     if (name === 'addChannel') {
-                        channelApi.addChannel(AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile, accessType, regionIdList).then(
+                        channelApi.addChannel(AAZ570, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile).then(
                             ({data: {result, resultCode, msg}}) => {
                                 this.modal_loading = false
                                 if (resultCode === '000000') {
                                     this.$Message.success(msg)
-                                    this.onCancelConfigClick(name)
+                                    this.onCancelBaseClick(name)
                                     this.currentPage = 1
                                     this.searchChannelList()
                                 } else {
@@ -422,12 +393,12 @@ export default {
                         })
                     } else {
                         let channelId = this.channelItems.channelId
-                        channelApi.updateChannel(channelId, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile, regionIdList).then(
+                        channelApi.updateChannel(channelId, AAZ571, AAZ572, AAZ573, channelUser, channelUserMobile).then(
                             ({data: {result, resultCode, msg}}) => {
                                 this.modal_loading = false
                                 if (resultCode === '000000') {
                                     this.$Message.success(msg)
-                                    this.onCancelConfigClick(name)
+                                    this.onCancelBaseClick(name)
                                     this.currentPage = 1
                                     this.searchChannelList()
                                 } else {
@@ -438,7 +409,6 @@ export default {
                             this.modal_loading = false
                         })
                     }
-                    this.accessTypeVisibility = true
                 } else {
                     this.$Message.error('Fail!')
                 }
@@ -498,24 +468,6 @@ export default {
                 this.closeLoading()
             })
         },
-        handleAccessTypeChange (v) {
-            if (v === 1) {
-                this.regionVisibility = true
-            } else {
-                this.regionVisibility = false
-            }
-        },
-        searchRegionList (query) {
-            if (query !== '') {
-                this.regionLoading = true
-                channelApi.searchRegionList(this.regionId, this.regionNo, query).then(({data: {result, resultCode, msg}}) => {
-                    this.regionLoading = false
-                    this.regionList = result.list
-                })
-            } else {
-                this.regionList = []
-            }
-        },
         startUse (row) {
             this.channelItems = {...row}
             this.updateChannelStatus(true)
@@ -532,6 +484,18 @@ export default {
                     this.modal_loading = false
                     this.$Message.success(msg)
                     this.searchChannelList()
+                }
+            )
+        },
+        // 更新加密密钥方法
+        updateChannelEncryptKey: function (row) {
+            this.channelItems = {...row}
+            let {channelId} = {...this.channelItems}
+            this.modal_loading = true
+            channelApi.updateEncryptKey(channelId).then(
+                ({data: {result, resultCode, msg}}) => {
+                    // refresh encryptkey
+                    this.modal_loading = false
                 }
             )
         }

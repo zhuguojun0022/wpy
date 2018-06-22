@@ -69,7 +69,7 @@ export default {
                 {title: '角色名称', key: 'roleName'},
                 {title: '角色描述', key: 'roleRemark'},
                 {title: '角色ID', key: 'roleId', width: 100},
-                {title: '创建人', key: 'createUserNo', width: 100},
+                {title: '创建人', key: 'userAdminName', width: 100},
                 {
                     title: '创建时间',
                     key: 'createTime',
