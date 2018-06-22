@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import {Message} from 'iview'
-import router from '../router'
+import {appRouter} from '../main'
 import { getToken } from '../common/utils'
 
 Vue.prototype.$axios = axios
@@ -71,7 +71,7 @@ server.interceptors.response.use(response => {
             Message.error('服务器错误，错误码未知')
         }
     } else if (error.response && error.response.status === 401) {
-        router.replace('/login')
+        appRouter.replace('/login')
     } else if (error.response && error.response.status >= 400 && error.response.status < 500) {
         clientErrorProcess(error.response)
     } else {

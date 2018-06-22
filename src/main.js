@@ -18,7 +18,7 @@ Vue.use(Router)
 Vue.config.productionTip = false
 Vue.use(LoginUser)
 
-const appRouter = new Router({
+export const appRouter = new Router({
     mode: 'hash',
     routes: router
 })
