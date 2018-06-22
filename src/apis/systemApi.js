@@ -70,6 +70,24 @@ const updateRegionInfo = (regionId, regionNo, regionName, nopswAmountLimit, mess
 
 const deleteRegionInfo = (regionId) => http.post(`/region/delRegion`, {regionId})
 
+const searchIssueList = (pageSize, currentPage, region) => http.post(`/region/channel/query`, {
+    pageSize, currentPage, region
+})
+
+const addIssueInfo = (channelList) => http.post(`/region/channel/add`, {
+    channelList
+})
+
+const deleteIssueInfo = (regionId, channelId) => http.post(`/region/channel/delete`, {
+    regionId, channelId
+})
+
+const changeIssueInfo = (regionId, regionNo, authStatus) => http.post(`/region/channel/updateAuth`, {
+    regionId, regionNo, authStatus
+})
+
+const searchchannelList = (aaz571) => http.get('/channel/simple?AAZ571=' + aaz571)
+
 export default {
     searchUserList,
     searchDownRoleList,
@@ -95,5 +113,10 @@ export default {
     searchRegionList,
     addRegionInfo,
     updateRegionInfo,
-    deleteRegionInfo
+    deleteRegionInfo,
+    searchIssueList,
+    addIssueInfo,
+    deleteIssueInfo,
+    changeIssueInfo,
+    searchchannelList
 }
