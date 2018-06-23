@@ -53,18 +53,27 @@ export default {
     methods: {
         refresh (v) {
             if (this.isRun) return
-            this.isRun = true
-            this.refreshIcon = 'load-c'
-            let {channelId} = {...v}
-            channelApi.updateEncryptKey(channelId).then(
-                ({data: {result, resultCode, msg}}) => {
-                    this.isRun = false
-                    this.refreshIcon = 'refresh'
-                    v.encryptKey = result
+            this.$Modal.confirm({
+                title: '信息确认',
+                content: `您将切换数据密钥，是否继续？`,
+                closable: false,
+                loading: true,
+                onOk: () => {
+                    this.$Modal.remove()
+                    this.isRun = true
+                    this.refreshIcon = 'load-c'
+                    let {channelId} = {...v}
+                    channelApi.updateEncryptKey(channelId).then(
+                        ({data: {result, resultCode, msg}}) => {
+                            this.isRun = false
+                            this.refreshIcon = 'refresh'
+                            v.encryptKey = result
+                        }
+                    ).catch(() => {
+                        this.isRun = false
+                        this.refreshIcon = 'refresh'
+                    })
                 }
-            ).catch(() => {
-                this.isRun = false
-                this.refreshIcon = 'refresh'
             })
         }
     }
