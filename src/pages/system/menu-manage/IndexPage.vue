@@ -28,7 +28,7 @@
                         <FormItem prop="menuRouter" label="路由名称" :required="required">
                             <Input v-model.trim="menuItems.menuRouter" placeholder="请输入菜单路由"></Input>
                         </FormItem>
-                        <FormItem prop="menuRemark" label="菜单描述" required>
+                        <FormItem prop="menuRemark" label="菜单描述">
                             <Input v-model.trim="menuItems.menuRemark" type="textarea" placeholder="请输入描述信息"></Input>
                         </FormItem>
                         <FormItem>
@@ -52,7 +52,13 @@ export default {
             menuItems: {},
             selectNodeParentList: [],
             formRef: 'newform',
-            ruleValidate: {},
+            ruleValidate: {
+                menuTitle: [
+                    {required: true, message: '必填项', trigger: 'blur'},
+                    {max: 16, message: '长度不能超过16位', trigger: 'blur'},
+                    {pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '不能包含特殊字符', trigger: 'blur'}
+                ]
+            },
             modal_loading: false,
             disabled: false,
             required: true

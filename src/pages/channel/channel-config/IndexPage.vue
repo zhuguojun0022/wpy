@@ -21,7 +21,7 @@
         <Form :model="channelItems" :label-width="100" :rules="ruleValidateBaseInfo" :ref="formRefBaseInfo" class="new-channel-form">
             <FormItem prop="AAZ570" label="渠道编码" required>
                 <div style="position:relative">
-                    <Input v-model.trim="channelItems.AAZ570" placeholder="请输入渠道编码"></Input>
+                    <Input v-model.trim="channelItems.AAZ570" :maxlength="10" placeholder="请输入渠道编码"></Input>
                     <Tooltip style="position:absolute; left:370px; top:2px;" placement="right">
                         <div slot="content">
                             <p>渠道编号编码规则：</p>
@@ -41,7 +41,7 @@
                 </div>
             </FormItem>
             <FormItem prop="AAZ571" label="渠道名称" required>
-                <Input v-model.trim="channelItems.AAZ571" placeholder="请输入渠道名称"></Input>
+                <Input v-model.trim="channelItems.AAZ571" :maxlength="16" placeholder="请输入渠道名称"></Input>
             </FormItem>
             <FormItem prop="AAZ573" label="渠道类型" required>
                 <Select v-model="channelItems.AAZ573">
@@ -155,12 +155,12 @@ export default {
                         })
                     }
                 },
-                {title: '渠道编号', key: 'AAZ570', width: 150},
-                {title: '渠道名称', key: 'AAZ571'},
+                {title: '渠道编号', key: 'AAZ570', minWidth: 150},
+                {title: '渠道名称', key: 'AAZ571', minWidth: 250},
                 {
                     title: '渠道类型',
                     key: 'AAZ573',
-                    width: 100,
+                    minWidth: 100,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -171,7 +171,7 @@ export default {
                 {
                     title: '渠道等级',
                     key: 'AAZ572',
-                    width: 100,
+                    minWidth: 100,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -179,18 +179,23 @@ export default {
                         }])
                     }
                 },
-                {title: '联系人', key: 'channelUser'},
-                {title: '联系电话', key: 'channelUserMobile'},
+                {title: '联系人', key: 'channelUser', minWidth: 100},
+                {title: '联系电话', key: 'channelUserMobile', minWidth: 120},
                 {
                     title: '配置状态',
                     key: 'confStatus',
-                    width: 100,
+                    minWidth: 100,
                     render: (h, {column, index, row}) => {
+                        // return this.getCellRender(h, [{
+                        //     label: row.confStatus === 2 ? '已停用' : row.confStatus === 0 ? '待配置' : '已启用',
+                        //     style: {
+                        //         color: row.confStatus === 2 ? '#000000' : row.confStatus === 0 ? '#FF4949' : '#10AD57'
+                        //     }
+                        // }])
                         return this.getCellRender(h, [{
+                            tag: 'Tag',
                             label: row.confStatus === 2 ? '已停用' : row.confStatus === 0 ? '待配置' : '已启用',
-                            style: {
-                                color: row.confStatus === 2 ? '#000000' : row.confStatus === 0 ? '#FF4949' : '#10AD57'
-                            }
+                            color: row.confStatus === 2 ? 'grey' : row.confStatus === 0 ? 'red' : 'green'
                         }])
                     }
                 },
@@ -267,7 +272,7 @@ export default {
             ruleValidateBaseInfo: {
                 AAZ570: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^1\d+$/, message: '只能包含数字', trigger: 'blur'}
+                    {pattern: /^\d{10}$/, message: '渠道编码只能为10位数字编码', trigger: 'blur'}
                 ],
                 AAZ571: [
                     {required: true, message: '必填项', trigger: 'blur'},
@@ -279,17 +284,15 @@ export default {
                 ],
                 channelUserMobile: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^1\d{10}$/, message: '联系方式不正确', trigger: 'blur'}
+                    {pattern: /^1\d{10}$/, message: '联系方式为11位手机号码', trigger: 'blur'}
                 ]
             },
             ruleValidateConfigInfo: {
                 channelAccessKey: [
-                    {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
+                    {required: true, message: '必填项', trigger: 'blur'}
                 ],
                 channelSecretKey: [
-                    {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^\w+$/, message: '只能包含字母、数字、_', trigger: 'blur'}
+                    {required: true, message: '必填项', trigger: 'blur'}
                 ]
             },
             signList: [{
@@ -461,6 +464,10 @@ export default {
             ).then(({data: {result, resultCode, msg}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
+                    if (result.list.length > 0) {
+                        result.list[0]['_expanded'] = true
+                    }
+                    console.log(result.list)
                     this.tableData = result.list
                     this.totalNum = result.total
                 } else {
