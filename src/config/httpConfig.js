@@ -71,7 +71,11 @@ server.interceptors.response.use(response => {
             Message.error('服务器错误，错误码未知')
         }
     } else if (error.response && error.response.status === 401) {
-        appRouter.replace('/login')
+        Message.error('用户登录信息已过期，请重新登录')
+        window.localStorage.clear()
+        setTimeout(() => {
+            appRouter.replace('/login')
+        })
     } else if (error.response && error.response.status >= 400 && error.response.status < 500) {
         clientErrorProcess(error.response)
     } else {
