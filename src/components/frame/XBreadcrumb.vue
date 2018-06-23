@@ -46,8 +46,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .breadcrumb {
-    height: 32px;
-    line-height: 32px;
+    height: 44px;
+    line-height: 44px;
     padding: 1px 20px;
 
     a {

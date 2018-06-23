@@ -10,17 +10,17 @@
         </template>
     </table-header>
 
-    <Table :columns="columns" :data="tableData" no-data-text="暂无数据"></Table>
+    <Table :columns="columns" :data="tableData" no-data-text="暂无数据" :height="tableHeihgt"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
     <Modal v-model="diaShow" :mask-closable="false" :closable="false" class-name="vertical-center-modal" :title="diaTitle" ref="modal">
         <Form :model="newUser" :label-width="150" :rules="ruleValidate" :ref="formRef" class="new-user-form">
             <FormItem prop="regionNo" label="医保行政区划代码" required>
-                <Input v-model.trim="newUser.regionNo" placeholder="请输入医保行政区划代码"></Input>
+                <Input v-model.trim="newUser.regionNo" placeholder="请输入医保行政区划代码" :disabled="disabled"></Input>
             </FormItem>
             <FormItem prop="regionName" label="医保行政区划名称" required>
-                <Input v-model.trim="newUser.regionName" placeholder="请输入医保行政区划名称"></Input>
+                <Input v-model.trim="newUser.regionName" placeholder="请输入医保行政区划名称" :disabled="disabled"></Input>
             </FormItem>
             <FormItem  prop="nopswAmountLimit" label="免密支付额度" required>
                 <Input v-model.trim="newUser.nopswAmountLimit" placeholder="请输入免密支付额度"></Input>
@@ -64,14 +64,25 @@ export default {
             cardAuth: false,
             noCardAuth: false,
             columns: [
-                {type: 'index', title: '序号', align: 'center'},
-                {title: '医保行政区划代码', key: 'regionNo', align: 'center'},
-                {title: '医保行政区划名称', key: 'regionName', align: 'center'},
-                {title: '免密支付额度', key: 'nopswAmountLimit', align: 'center'},
+                {
+                    title: '序号',
+                    align: 'center',
+                    width: 60,
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: (this.currentPage - 1) * 20 + index + 1
+                        }])
+                    }
+                },
+                {title: '医保行政区划代码', key: 'regionNo', align: 'center', width: 100},
+                {title: '医保行政区划名称', key: 'regionName', align: 'center', width: 100},
+                {title: '免密支付额度', key: 'nopswAmountLimit', align: 'center', width: 90},
                 {
                     title: '有银行卡未激活可换新卡开通缴费支付功能',
                     key: 'cardAuth',
                     align: 'center',
+                    width: 160,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -83,6 +94,7 @@ export default {
                     title: '无银行卡可换新卡开通缴费支付功能',
                     key: 'noCardAuth',
                     align: 'center',
+                    width: 140,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -95,6 +107,7 @@ export default {
                 {
                     title: '操作',
                     align: 'center',
+                    width: 130,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             label: '编辑',
@@ -143,7 +156,9 @@ export default {
                 faceMsg: [
                     {required: true, message: '必填项', trigger: 'blur'}
                 ]
-            }
+            },
+            tableHeihgt: '',
+            disabled: false
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -156,6 +171,7 @@ export default {
     },
     created () {
         this.searchRegionList()
+        this.tableHeihgt = window.innerHeight - 224
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
@@ -165,6 +181,7 @@ export default {
             this.noCardAuth = false
             this.newUser.cardAuth = 0
             this.newUser.noCardAuth = 0
+            this.disabled = false
         },
         // 删除数据
         onDeleteClick (row) {
@@ -193,7 +210,12 @@ export default {
         },
         // 查询数据
         onSearchClick () {
-            this.searchRegionList()
+            if (this.regionName) {
+                this.currentPage = 1
+                this.searchRegionList()
+            } else {
+                this.$Message.error('请输入查询数据')
+            }
         },
         // 页数查询
         handleCurrentChange (v) {
@@ -209,6 +231,7 @@ export default {
             this.newUser.nopswAmountLimit = String(this.newUser.nopswAmountLimit)
             this.diaTitle = '修改医保行政区划'
             this.diaShow = true
+            this.disabled = true
         },
         // 弹出框-取消
         onCancelClick (name) {

@@ -17,14 +17,14 @@
         </template>
     </table-header>
 
-    <Table :columns="columns" :data="tableData" @on-selection-change="onSelectionChange"></Table>
+    <Table :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" :height="tableHeihgt"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
     <Modal v-model="diaShow" :mask-closable="false" :closable="false" :title="diaTitle" ref="modal">
         <Form :model="newUser" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-user-form">
             <FormItem prop="userAdminName" label="用户名" required>
-                <Input v-model.trim="newUser.userAdminName" placeholder="请输入用户名"></Input>
+                <Input v-model.trim="newUser.userAdminName" placeholder="请输入用户名" :disabled="disabled" ></Input>
             </FormItem>
             <FormItem label="角色" prop="roleIds" required>
                 <Select v-model="newUser.roleIds" :multiple="true">
@@ -74,9 +74,9 @@ export default {
                 label: '停用'
             }],
             columns: [
-                {type: 'selection', width: 60, align: 'center'},
+                {type: 'selection', width: 50, align: 'center'},
                 {title: '用户名', key: 'userAdminName'},
-                {title: '手机号', key: 'userAdminMobile'},
+                {title: '手机号', key: 'userAdminMobile', width: 120},
                 {title: '邮箱', key: 'userAdminEmail'},
                 {
                     title: '角色',
@@ -103,6 +103,7 @@ export default {
                 {
                     title: '状态',
                     key: 'userAdminStatus',
+                    width: 100,
                     render: (h, {row}) => {
                         return h('iSwitch', {
                             props: {
@@ -128,6 +129,7 @@ export default {
                 },
                 {
                     title: '操作',
+                    width: 150,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             label: '编辑',
@@ -166,7 +168,7 @@ export default {
             ruleValidate: {
                 userAdminName: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^([a-zA-Z0-9_]{1,65})$/, message: '只能包含字母、数字、_，长度不能超过65位', trigger: 'blur'}
+                    {pattern: /^([a-zA-Z0-9_]{1,16})$/, message: '只能包含大小写字母、数字和下划线_，且长度不能超过16位', trigger: 'blur'}
                 ],
                 userAdminMobile: [
                     {pattern: /^1\d{10}$/, message: '手机号码不正确', trigger: 'blur'}
@@ -177,7 +179,9 @@ export default {
                 roleIds: [{required: true, type: 'array', message: '必填项', trigger: 'change'}]
             },
             userStatus: userStatus,
-            selectedRows: []
+            selectedRows: [],
+            tableHeihgt: '',
+            disabled: false
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -191,11 +195,13 @@ export default {
     created () {
         this.searchUserList()
         this.searchDownRoleList()
+        this.tableHeihgt = window.innerHeight - 224
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onCreateNewUser () {
             this.diaShow = true
+            this.disabled = false
         },
         onDeleteClick () {
             if (this.selectedRows.length === 0) {
@@ -282,6 +288,7 @@ export default {
             this.newUser.userAdminId = row.userAdminId
             this.diaTitle = '修改用户'
             this.diaShow = true
+            this.disabled = true
         },
         onResetPasswordClick (row) {
             this.$Modal.confirm({

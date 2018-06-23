@@ -6,7 +6,8 @@ const path = require('path')
 // const host = "localhost:18080"
  
 // const host = "11.240.240.47:8091"
-const host = "11.240.240.145:8091"
+// const host = "11.240.240.145:8091"
+const host = "39.107.82.211:8080"
 // const host = "11.240.240.184:8080"
 
 // const host = 'localhost:8080'

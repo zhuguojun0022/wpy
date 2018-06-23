@@ -4,10 +4,9 @@ import AdminIndexPage from '../pages/dashboard/AdminIndexPage'
 import SystemManagePage from './system.route'
 import ChannelManagePage from './channel.route'
 import BillManagePage from './bill.route'
-
 export default [{
     path: '/',
-    redirect: '/index/sys/user'
+    redirect: '/index/home'
 }, {
     path: '/login',
     name: 'login',
@@ -16,7 +15,7 @@ export default [{
     path: '/index',
     component: App,
     children: [{
-        path: '',
+        path: '/index/home',
         name: 'home',
         meta: {
             menuCode: 'HOME'
