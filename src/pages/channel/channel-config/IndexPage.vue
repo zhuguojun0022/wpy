@@ -467,7 +467,6 @@ export default {
                     if (result.list.length > 0) {
                         result.list[0]['_expanded'] = true
                     }
-                    console.log(result.list)
                     this.tableData = result.list
                     this.totalNum = result.total
                 } else {

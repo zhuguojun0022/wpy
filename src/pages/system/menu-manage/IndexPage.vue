@@ -160,7 +160,6 @@ export default {
             this.formRef = 'newform'
         },
         onSubmitClick (name) {
-            console.log(this.menuItems)
             this.$refs[name].validate((valid) => {
                 if (valid) {
                     this.modal_loading = true
