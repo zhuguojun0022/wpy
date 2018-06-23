@@ -7,7 +7,7 @@
     </table-header>
     <Row :gutter="16">
         <Col span="19">
-            <Table highlight-row :columns="columns" :data="tableData" @on-row-dblclick="singleClick"></Table>
+            <Table highlight-row :columns="columns" :data="tableData" @on-row-dblclick="singleClick" :height="tableHeihgt"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
         <Col span="5" class="authorize">
@@ -190,7 +190,8 @@ export default {
                         }])
                     }
                 }
-            ]
+            ],
+            tableHeihgt: ''
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -203,6 +204,7 @@ export default {
     },
     created () {
         this.searchRoleList()
+        this.tableHeihgt = window.innerHeight - 224
         // this.searchRoleList()
     },
     methods: {

@@ -1,7 +1,7 @@
 <template>
     <div class="app layout">
         <Layout>
-            <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" v-model="isCollapsed">
+            <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" width="240" v-model="isCollapsed">
                 <div class="logo">
                     <h1><i class="iconfont icon-shebao"></i>社保卡线上平台</h1>
                 </div>
@@ -104,13 +104,14 @@ export default {
             position: relative;
             color: #fff;
             font-size: 20px;
-            padding-left: 44px;
+            padding-left: 20px;
+            text-align: center;
             line-height: 64px;
 
             i {
                 font-size: 36px;
                 position: absolute;
-                left: 5px;
+                left: 20px;
             }
         }
     }

@@ -13,7 +13,7 @@
             <Button type="primary" @click="onSearchClick">查询</Button>
         </template>
     </table-header>
-    <Table :columns="columns" :data="tableData"></Table>
+    <Table :columns="columns" :data="tableData" :height="tableHeihgt"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
@@ -109,7 +109,7 @@ export default {
             filterCode: '',
             filterStatus: '',
             switchVisibility: false,
-            codehint: '渠道编号编码规则：\r\n 1.10位数字字符。\r 2.地方APP（含地方人社、地方政府、地方部门、医院）：前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。\r 3.全国统一的APP（如中央政府及政府各部门、银行总行、第三方可信渠道、第三方其他渠道APP）单独编码。\r 3.1 中央政府、政府各部门000001+4位序号（0001—9999）\r 3.2 银行类APP：9100**+4位序号（0001—9999）  **为银行大类；对于地方类银行，大类为地方商业银行\r 3.3 第三方可信渠道APP：9200+6位序号（000001—999999）\r 3.4 第三方其他渠道APP：9300+6位序号（000001—999999）\r',
+            codehint: '渠道编号编码规则：\r\n 1.10位数字字符。\r 2.地方APP（含地方人社、地方政府、地方部门、医院）：前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。\r 3.全国统一的APP（如中央政府及政府各部门、银行总行、第三方可信渠道、第三方其他渠道APP）单独编码。\r 3.1 中央政府、政府各部门000001+4位序号（0001—9999）。\r 3.2 银行类APP：91***+后5位，***为银行行别代码（参见《银行机构代码信息管理规定》）。针对全国性商业银行，后5位为00000。针对地方性商业银行，后5位规则为，5位中前2位为行政区划代码的前2位（即代表省份），后3位为序号。\r 3.3 第三方可信渠道APP：9200+6位序号（000001—999999）。\r 3.4 第三方其他渠道APP：9300+6位序号（000001—999999）。\r',
             typeList: [{
                 value: 0,
                 label: '第三方'
@@ -295,7 +295,8 @@ export default {
             signList: [{
                 value: 'DES3',
                 label: 'DES3'
-            }]
+            }],
+            tableHeihgt: ''
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -308,6 +309,7 @@ export default {
     },
     created () {
         this.searchChannelList()
+        this.tableHeihgt = window.innerHeight - 224
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),

@@ -152,7 +152,7 @@ export default {
                 font-size: 14px;
 
                 .menu-title {
-                    width: 200px;
+                    width: 240px;
                     padding: 10px 20px;
 
                     &:hover {
@@ -185,7 +185,8 @@ export default {
 
                     .normal-c-li {
                         .menu-title {
-                            padding: 7px 0 7px 49px;
+                            padding: 10px 0 10px 49px;
+                            line-height: 24px;
                             font-size: 14px;
                         }
 

@@ -7,7 +7,7 @@
         </template>
     </table-header>
 
-    <Table :columns="columns" :data="tableData" no-data-text="暂无数据"></Table>
+    <Table :columns="columns" :data="tableData" no-data-text="暂无数据" :height="tableHeihgt"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
@@ -16,11 +16,11 @@
             <FormItem prop="regionIdList" label="渠道名称" required>
                 <div style="position:relative">
                     <Select v-model="channelList" :multiple="true" :filterable="true" :remote="true"
-                    :remote-method="searchchannelList" :loading="channelLoading" placeholder="请输入渠道名称">
+                    :remote-method="searchchannelList" :loading="channelLoading" placeholder="请输入渠道名称" style="line-height: 24px">
                         <Option v-for="item in channelName" :value="item.channelId+'$r$'+item.AAZ570" :key="item.AAZ570">{{item.AAZ571}}</Option>
                     </Select>
                     <Tooltip :content="channelHint" style="position:absolute; left:370px; top:2px" placement="top">
-                        <Icon type="information-circled" ></Icon>
+                        <Icon type="search" size="16"></Icon>
                     </Tooltip>
                 </div>
             </FormItem>
@@ -43,7 +43,17 @@ export default {
         return {
             region: '',
             columns: [
-                {type: 'index', title: '序号', align: 'center', width: 60},
+                {
+                    title: '序号',
+                    align: 'center',
+                    width: 60,
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: (this.currentPage - 1) * 20 + index + 1
+                        }])
+                    }
+                },
                 {title: '医保行政区划代码', key: 'regionNo', align: 'center', width: 150},
                 {title: '医保行政区划名称', key: 'regionName', align: 'center', width: 150},
                 {
@@ -121,7 +131,8 @@ export default {
             channelLoading: false,
             channelList: [],
             channelName: [],
-            channelHint: '输入名称进行模糊检索'
+            channelHint: '输入名称进行模糊检索',
+            tableHeihgt: ''
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -134,6 +145,7 @@ export default {
     },
     created () {
         this.searchRegionList()
+        this.tableHeihgt = window.innerHeight - 224
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
@@ -164,7 +176,12 @@ export default {
         },
         // 查询数据
         onSearchClick () {
-            this.searchRegionList()
+            if (this.region) {
+                this.currentPage = 1
+                this.searchRegionList()
+            } else {
+                this.$Message.error('请输入查询数据')
+            }
         },
         // 页数查询
         handleCurrentChange (v) {
@@ -279,5 +296,8 @@ export default {
     .ivu-modal{
         top: 0;
     }
+}
+.ivu-select-multiple .ivu-select-input {
+    line-height: 24px;
 }
 </style>

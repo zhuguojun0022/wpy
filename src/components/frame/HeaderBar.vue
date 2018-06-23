@@ -10,22 +10,22 @@
             </DropdownMenu>
         </Dropdown>
         <Modal v-model="diaShow" :mask-closable="false" :closable="false" class-name="vertical-center-modal" :title="diaTitle" ref="modal">
-            <Form :model="password" :label-width="90" :rules="ruleValidate" :ref="formRef" class="new-user-form">
-                <FormItem prop="userAdminPwdOld" label="旧密码" required>
-                    <Input v-model.trim="password.userAdminPwdOld" placeholder="请输入旧密码" clearable></Input>
-                </FormItem>
-                <FormItem prop="userAdminPwd" label="新密码" required>
-                    <Input v-model.trim="password.userAdminPwd" placeholder="请输入新密码" clearable></Input>
-                </FormItem>
-                <FormItem  prop="userAdminPwdAgain" label="新密码确认" required>
-                    <Input v-model.trim="password.userAdminPwdAgain" placeholder="请再次输入新密码" clearable></Input>
-                </FormItem>
-            </Form>
-            <div slot="footer">
-                <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
-                <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
-            </div>
-        </Modal>
+        <Form :model="password" :label-width="90" :rules="ruleValidate" :ref="formRef" class="new-user-form">
+            <FormItem prop="userAdminPwdOld" label="旧密码" required>
+                <Input v-model.trim="password.userAdminPwdOld" placeholder="请输入旧密码" type="password" clearable></Input>
+            </FormItem>
+            <FormItem prop="userAdminPwd" label="新密码" required>
+                <Input v-model.trim="password.userAdminPwd" placeholder="请输入新密码" type="password" clearable></Input>
+            </FormItem>
+            <FormItem  prop="userAdminPwdAgain" label="新密码确认" required>
+                <Input v-model.trim="password.userAdminPwdAgain" placeholder="请再次输入新密码" type="password" clearable></Input>
+            </FormItem>
+        </Form>
+        <div slot="footer">
+            <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
+            <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
+        </div>
+    </Modal>
     </div>
 </div>
 </template>
