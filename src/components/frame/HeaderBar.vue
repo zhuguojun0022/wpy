@@ -45,7 +45,8 @@ export default {
             userAdminName: window.sessionStorage.getItem('USERNAME'),
             ruleValidate: {
                 userAdminPwdOld: [
-                    {required: true, message: '必填项', trigger: 'blur'}
+                    {required: true, message: '必填项', trigger: 'blur'},
+                    {pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,16}$/, message: '旧密码错误', trigger: 'blur'}
                 ],
                 userAdminPwd: [
                     {required: true, message: '必填项', trigger: 'blur'},

@@ -112,19 +112,19 @@ export default {
             codehint: '渠道编号编码规则：\r\n 1.10位数字字符。\r 2.地方APP（含地方人社、地方政府、地方部门、医院）：前6位为行政区划代码，后4位为序号，顺序分配（0001—9999）。\r 3.全国统一的APP（如中央政府及政府各部门、银行总行、第三方可信渠道、第三方其他渠道APP）单独编码。\r 3.1 中央政府、政府各部门000001+4位序号（0001—9999）。\r 3.2 银行类APP：91***+后5位，***为银行行别代码（参见《银行机构代码信息管理规定》）。针对全国性商业银行，后5位为00000。针对地方性商业银行，后5位规则为，5位中前2位为行政区划代码的前2位（即代表省份），后3位为序号。\r 3.3 第三方可信渠道APP：9200+6位序号（000001—999999）。\r 3.4 第三方其他渠道APP：9300+6位序号（000001—999999）。\r',
             typeList: [{
                 value: 0,
-                label: '第三方'
+                label: '地方渠道'
             }, {
                 value: 1,
-                label: '地方人社'
+                label: '地中央政府或部门'
             }, {
                 value: 2,
                 label: '银行'
             }, {
                 value: 3,
-                label: '政府'
+                label: '第三方可信渠道'
             }, {
                 value: 4,
-                label: '部平台'
+                label: '第三方其他渠道'
             }],
             statusList: [{
                 value: -1,
@@ -160,7 +160,7 @@ export default {
                 {
                     title: '渠道类型',
                     key: 'AAZ573',
-                    minWidth: 100,
+                    minWidth: 130,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -201,7 +201,7 @@ export default {
                 },
                 {
                     title: '操作',
-                    width: 300,
+                    width: 200,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             type: 'primary',
@@ -289,15 +289,17 @@ export default {
             },
             ruleValidateConfigInfo: {
                 channelAccessKey: [
-                    {required: true, message: '必填项', trigger: 'blur'}
+                    {required: true, message: '必填项', trigger: 'blur'},
+                    {pattern: /^([\s\S]{1,32})$/, message: '长度不能超过32位', trigger: 'blur'}
                 ],
                 channelSecretKey: [
-                    {required: true, message: '必填项', trigger: 'blur'}
+                    {required: true, message: '必填项', trigger: 'blur'},
+                    {pattern: /^([\s\S]{1,32})$/, message: '长度不能超过32位', trigger: 'blur'}
                 ]
             },
             signList: [{
-                value: 'DES3',
-                label: 'DES3'
+                value: 'AES128',
+                label: 'AES128'
             }],
             tableHeihgt: ''
         }
@@ -318,15 +320,15 @@ export default {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         channelType (type) {
             if (type === 0) {
-                return '第三方人社'
+                return '地方渠道'
             } else if (type === 1) {
-                return '地方人社'
+                return '中央政府或部门'
             } else if (type === 2) {
                 return '银行'
             } else if (type === 3) {
-                return '政府'
+                return '第三方可信渠道'
             } else if (type === 4) {
-                return '部平台'
+                return '第三方其他渠道'
             }
         },
         channelLevel (level) {
@@ -422,6 +424,7 @@ export default {
         onCancelConfigClick (name) {
             this.formRefConfigInfo = 'addChannelConfig'
             this.$refs[name].resetFields()
+            this.channelItems = {}
             this.diaShowConfigInfo = false
             this.diaTitleConfigInfo = '新增渠道配置'
         },
