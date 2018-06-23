@@ -394,4 +394,7 @@ export default {
 .new-user-form {
     margin-right: 40px;
 }
+.ivu-select-input {
+    line-height: 24px !important;
+}
 </style>
