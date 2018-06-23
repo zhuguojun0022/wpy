@@ -17,7 +17,7 @@
         </template>
     </table-header>
 
-    <Table :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" :height="tableHeihgt"></Table>
+    <Table :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
@@ -202,6 +202,7 @@ export default {
         onCreateNewUser () {
             this.diaShow = true
             this.disabled = false
+            this.$refs.selection.selectAll(false)
         },
         onDeleteClick () {
             if (this.selectedRows.length === 0) {
@@ -234,6 +235,7 @@ export default {
                 },
                 onCancel: () => {
                     this.selectedRows = []
+                    this.$refs.selection.selectAll(false)
                 }
             })
         },
@@ -245,7 +247,6 @@ export default {
             this.searchUserList()
         },
         onSelectionChange (selection) {
-            console.log(selection)
             this.selectedRows = selection
         },
         onStatusChange (row, val) {

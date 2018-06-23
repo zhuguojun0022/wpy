@@ -76,7 +76,7 @@ export default {
                     }
                 },
                 {title: '医保行政区划代码', key: 'regionNo', align: 'center', width: 100},
-                {title: '医保行政区划名称', key: 'regionName', align: 'center', width: 100},
+                {title: '医保行政区划名称', key: 'regionName', align: 'center', width: 140},
                 {title: '免密支付额度', key: 'nopswAmountLimit', align: 'center', width: 90},
                 {
                     title: '有银行卡未激活可换新卡开通缴费支付功能',
