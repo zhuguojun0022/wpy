@@ -245,6 +245,7 @@ export default {
             this.searchUserList()
         },
         onSelectionChange (selection) {
+            console.log(selection)
             this.selectedRows = selection
         },
         onStatusChange (row, val) {

@@ -67,7 +67,7 @@ export default {
                 {
                     title: '序号',
                     align: 'center',
-                    width: 60,
+                    width: 70,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -210,12 +210,8 @@ export default {
         },
         // 查询数据
         onSearchClick () {
-            if (this.regionName) {
-                this.currentPage = 1
-                this.searchRegionList()
-            } else {
-                this.$Message.error('请输入查询数据')
-            }
+            this.currentPage = 1
+            this.searchRegionList()
         },
         // 页数查询
         handleCurrentChange (v) {
