@@ -159,8 +159,7 @@ export default {
                     {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]{1,64}$/, message: '只能包含中文、字母、数字、_，且长度不能超过64位', trigger: 'blur'}
                 ],
                 roleRemark: [
-                    {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]{1,64}$/, message: '只能包含中文、字母、数字、_，且长度不能超过64位', trigger: 'blur'}
+                    {required: true, message: '必填项', trigger: 'blur'}
                 ]
             },
             authorizedUserShow: false,
