@@ -1,14 +1,14 @@
 <template>
     <div>
         <Row class="expand-row">
-            <Col span="8">
+            <Col span="7">
                 <label class="expand-key">渠道AK
                     <Tooltip content="渠道后台系统调用部平台接口的接入用户名" placement="top-start">
                         <Icon class="info" type="information-circled"></Icon>
                     </Tooltip>: </label>
                 <span class="expand-value">{{ row.channelAccessKey }}</span>
             </Col>
-            <Col span="8">
+            <Col span="7">
                 <label class="expand-key">渠道SK
                     <Tooltip content="渠道后台系统调用部平台接口的接入密钥" placement="top-start">
                         <Icon class="info" type="information-circled"></Icon>
@@ -17,14 +17,14 @@
             </Col>
         </Row>
         <Row>
-            <Col span="8">
+            <Col span="7">
                 <label class="expand-key">签名算法
                     <Tooltip content="渠道APP与部平台H5页面交互时的算法" placement="top-start">
                         <Icon class="info" type="information-circled"></Icon>
                     </Tooltip>: </label>
                 <span class="expand-value">{{ row.signAlgorithm }}</span>
             </Col>
-            <Col span="8">
+            <Col span="7">
                 <label class="expand-key">数据密钥
                     <Tooltip content="渠道APP与部平台H5页面交互时的密钥" placement="top-start">
                         <Icon class="info" type="information-circled"></Icon>
@@ -53,18 +53,27 @@ export default {
     methods: {
         refresh (v) {
             if (this.isRun) return
-            this.isRun = true
-            this.refreshIcon = 'load-c'
-            let {channelId} = {...v}
-            channelApi.updateEncryptKey(channelId).then(
-                ({data: {result, resultCode, msg}}) => {
-                    this.isRun = false
-                    this.refreshIcon = 'refresh'
-                    v.encryptKey = result
+            this.$Modal.confirm({
+                title: '信息确认',
+                content: `您将切换数据密钥，是否继续？`,
+                closable: false,
+                loading: true,
+                onOk: () => {
+                    this.$Modal.remove()
+                    this.isRun = true
+                    this.refreshIcon = 'load-c'
+                    let {channelId} = {...v}
+                    channelApi.updateEncryptKey(channelId).then(
+                        ({data: {result, resultCode, msg}}) => {
+                            this.isRun = false
+                            this.refreshIcon = 'refresh'
+                            v.encryptKey = result
+                        }
+                    ).catch(() => {
+                        this.isRun = false
+                        this.refreshIcon = 'refresh'
+                    })
                 }
-            ).catch(() => {
-                this.isRun = false
-                this.refreshIcon = 'refresh'
             })
         }
     }

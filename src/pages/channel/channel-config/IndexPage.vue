@@ -155,8 +155,8 @@ export default {
                         })
                     }
                 },
-                {title: '渠道编号', key: 'AAZ570', minWidth: 150},
-                {title: '渠道名称', key: 'AAZ571', minWidth: 250},
+                {title: '渠道编号', key: 'AAZ570', minWidth: 110},
+                {title: '渠道名称', key: 'AAZ571', minWidth: 180},
                 {
                     title: '渠道类型',
                     key: 'AAZ573',
@@ -171,7 +171,7 @@ export default {
                 {
                     title: '渠道等级',
                     key: 'AAZ572',
-                    minWidth: 100,
+                    minWidth: 90,
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
@@ -179,8 +179,8 @@ export default {
                         }])
                     }
                 },
-                {title: '联系人', key: 'channelUser', minWidth: 100},
-                {title: '联系电话', key: 'channelUserMobile', minWidth: 120},
+                {title: '联系人', key: 'channelUser', minWidth: 90},
+                {title: '联系电话', key: 'channelUserMobile', minWidth: 110},
                 {
                     title: '配置状态',
                     key: 'confStatus',
@@ -470,7 +470,6 @@ export default {
                     if (result.list.length > 0) {
                         result.list[0]['_expanded'] = true
                     }
-                    console.log(result.list)
                     this.tableData = result.list
                     this.totalNum = result.total
                 } else {

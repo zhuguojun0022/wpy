@@ -164,7 +164,7 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: '区划管理',
+                name: '区划配置',
                 icon: 'icon-xitongguanli'
             })
         })

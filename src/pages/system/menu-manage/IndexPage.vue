@@ -14,18 +14,18 @@
                         <FormItem prop="menuTitle" label="菜单标题" required>
                             <Input v-model.trim="menuItems.menuTitle" placeholder="请输入标题名称"></Input>
                         </FormItem>
-                        <FormItem prop="menuPid" label="所属父级菜单" required>
+                        <FormItem prop="menuPid" label="所属父级菜单">
                             <Select v-model="menuItems.menuPid" :disabled="disabled">
                                 <Option v-for="item in selectNodeParentList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                             </Select>
                         </FormItem>
-                        <FormItem prop="menuIcon" label="菜单图标">
+                        <FormItem prop="menuIcon" label="菜单图标" required>
                             <Input v-model.trim="menuItems.menuIcon" placeholder="请输入图标类名"></Input>
                         </FormItem>
-                        <FormItem prop="menuOrder" label="菜单序号" required>
-                            <Input v-model.trim="menuItems.menuOrder" :number="true" placeholder="请输入菜单序号"></Input>
+                        <FormItem prop="menuOrder" label="菜单序号">
+                            <Input v-model="menuItems.menuOrder" :number="true" placeholder="请输入菜单序号"></Input>
                         </FormItem>
-                        <FormItem prop="menuRouter" label="路由名称" :required="required">
+                        <FormItem prop="menuRouter" label="路由名称" required>
                             <Input v-model.trim="menuItems.menuRouter" placeholder="请输入菜单路由"></Input>
                         </FormItem>
                         <FormItem prop="menuRemark" label="菜单描述">
@@ -57,6 +57,18 @@ export default {
                     {required: true, message: '必填项', trigger: 'blur'},
                     {max: 16, message: '长度不能超过16位', trigger: 'blur'},
                     {pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '不能包含特殊字符', trigger: 'blur'}
+                ],
+                menuPid: [
+                    {required: true, type: 'number', message: '必选项', trigger: 'blur'}
+                ],
+                menuOrder: [
+                    {required: true, type: 'number', message: '必填项,且为数字', trigger: 'blur'}
+                ],
+                menuIcon: [
+                    {required: true, message: '必填项', trigger: 'blur'}
+                ],
+                menuRouter: [
+                    {required: true, message: '必填项', trigger: 'blur'}
                 ]
             },
             modal_loading: false,

@@ -14,6 +14,9 @@ export default {
         resetBreadcrumb (state, item) {
             state.breadcrumb = [item]
         },
+        clearBreadcrumb (state) {
+            state.breadcrumb = []
+        },
         openLoading (state) {
             state.showLoading = true
         },

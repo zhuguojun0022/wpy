@@ -36,6 +36,7 @@
 import {TableHeader, TableFooter} from '../../../components/table'
 import {systemApi} from '../../../apis/'
 import {mapMutations} from 'vuex'
+import {debounce} from 'underscore'
 
 export default {
     components: {TableHeader, TableFooter},
@@ -138,7 +139,7 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: '签发授权管理',
+                name: '签发授权',
                 icon: 'icon-xitongguanli'
             })
         })
@@ -216,20 +217,23 @@ export default {
         },
         // 模糊搜索渠道名称
         searchchannelList (query) {
-            if (query !== '') {
-                this.channelLoading = true
-                systemApi.searchchannelList(query).then(({data: {result, resultCode, msg}}) => {
-                    if (resultCode === '000000') {
-                        this.channelLoading = false
-                        this.channelName = result
-                    } else {
-                        this.channelLoading = false
-                        this.$Message.error(msg)
-                    }
-                })
-            } else {
-                this.channelName = []
-            }
+            let debounceFun = debounce(() => {
+                if (query !== '') {
+                    this.channelLoading = true
+                    systemApi.searchchannelList(query).then(({data: {result, resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            this.channelLoading = false
+                            this.channelName = result
+                        } else {
+                            this.channelLoading = false
+                            this.$Message.error(msg)
+                        }
+                    })
+                } else {
+                    this.channelName = []
+                }
+            }, 1000)
+            debounceFun()
         },
         // 新增授权渠道
         onSubmitClick () {
