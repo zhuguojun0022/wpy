@@ -5,8 +5,8 @@
             <a class="name"><Icon type="person"></Icon>{{userAdminName}}</a>
             <Icon type="arrow-down-b"></Icon>
             <DropdownMenu slot="list">
-                <DropdownItem @click.native="onLogout"><Icon type="android-exit"></Icon>退出</DropdownItem>
                 <DropdownItem @click.native="changePwd"><Icon type="android-settings"></Icon>修改密码</DropdownItem>
+                <DropdownItem @click.native="onLogout"><Icon type="android-exit"></Icon>退出登录</DropdownItem>
             </DropdownMenu>
         </Dropdown>
         <Modal v-model="diaShow" :mask-closable="false" :closable="false" class-name="vertical-center-modal" :title="diaTitle" ref="modal">
