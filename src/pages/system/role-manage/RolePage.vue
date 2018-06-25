@@ -19,10 +19,10 @@
     <Modal v-model="newRoleShow" :title="newRoleTitle" ref="modal">
         <Form :model="newRole" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-role-form">
             <FormItem prop="roleName" label="角色名称" required>
-                <Input v-model.trim="newRole.roleName" placeholder="请输入角色名称"></Input>
+                <Input v-model.trim="newRole.roleName" :maxlength="64" placeholder="请输入角色名称"></Input>
             </FormItem>
             <FormItem prop="roleRemark" label="角色描述" required>
-                <Input v-model.trim="newRole.roleRemark" type="textarea" placeholder="请输入角色描述"></Input>
+                <Input v-model.trim="newRole.roleRemark" :maxlength="64" type="textarea" placeholder="请输入角色描述"></Input>
             </FormItem>
         </Form>
         <div slot="footer">
@@ -156,11 +156,11 @@ export default {
             ruleValidate: {
                 roleName: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^([a-zA-Z0-9_]{1,64})$/, message: '只能包含大小写字母、数字和下划线_，且长度不能超过64位', trigger: 'blur'}
+                    {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]{1,64}$/, message: '只能包含中文、字母、数字、_，且长度不能超过64位', trigger: 'blur'}
                 ],
                 roleRemark: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/, message: '只能包含中文、字母、数字、_', trigger: 'blur'}
+                    {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9_]{1,64}$/, message: '只能包含中文、字母、数字、_，且长度不能超过64位', trigger: 'blur'}
                 ]
             },
             authorizedUserShow: false,
