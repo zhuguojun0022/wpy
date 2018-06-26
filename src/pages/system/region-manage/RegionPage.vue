@@ -1,5 +1,5 @@
 <template>
-<GPage bg>
+<GPage bg class="region_page">
     <table-header>
         <template slot="left">
             <Button type="primary" @click="onCreateNewRegion">新增医保行政区划</Button>
@@ -102,8 +102,38 @@ export default {
                         }])
                     }
                 },
-                {title: '签发异常提示语', key: 'messageTips'},
-                {title: '人脸失败提示语', key: 'faceMsg'},
+                {
+                    title: '签发异常提示语',
+                    key: 'messageTips',
+                    render: (h, {column, index, row}) => {
+                        if (row.messageTips.length > 20) {
+                            return h('Tooltip', {
+                                props: {
+                                    placement: 'right',
+                                    content: row.messageTips
+                                }
+                            }, row.messageTips)
+                        } else {
+                            return h('div', {}, row.messageTips)
+                        }
+                    }
+                },
+                {
+                    title: '人脸失败提示语',
+                    key: 'faceMsg',
+                    render: (h, {column, index, row}) => {
+                        if (row.faceMsg.length > 20) {
+                            return h('Tooltip', {
+                                props: {
+                                    placement: 'right',
+                                    content: row.faceMsg
+                                }
+                            }, row.faceMsg)
+                        } else {
+                            return h('div', {}, row.faceMsg)
+                        }
+                    }
+                },
                 {
                     title: '操作',
                     align: 'center',
@@ -327,6 +357,21 @@ export default {
 
     .ivu-modal{
         top: 0;
+    }
+}
+.region_page  {
+    .ivu-tooltip-inner {
+        width: 150px;
+        white-space: normal;
+    }
+    .ivu-tooltip-rel {
+        display: -webkit-box;
+        overflow: hidden;
+        white-space: normal;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
     }
 }
 </style>

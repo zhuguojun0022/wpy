@@ -119,7 +119,7 @@ export default {
                             }).concat([
                                 h('Button', {
                                     props: {
-                                        type: 'dashed',
+                                        type: 'info',
                                         size: 'small'
                                     },
                                     on: {
@@ -127,7 +127,7 @@ export default {
                                             this.addChannel(row)
                                         }
                                     }
-                                }, '＋ 添加授权渠道')
+                                }, '＋ 添加')
                             ]))
                         ])
                     }
