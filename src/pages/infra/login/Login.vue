@@ -7,7 +7,7 @@
     </header> -->
     <main class="content">
         <div class="main">
-            <h1><i class="iconfont icon-shebao"></i> 社保卡线上平台</h1>
+            <h1><i class="iconfont icon-shebao"></i> 电子社保卡管理平台</h1>
             <div class="login">
                 <h2>登录</h2>
                 <Form :label-width="0" :model="form">
@@ -134,7 +134,7 @@ export default {
             position: relative;
             i {
                 position: absolute;
-                left: 50px;
+                left: 30px;
                 top: 10px;
                 font-size: 60px;
             }

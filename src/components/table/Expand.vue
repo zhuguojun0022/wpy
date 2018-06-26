@@ -31,7 +31,7 @@
                     </Tooltip>: </label>
                 <span class="expand-value">{{ row.encryptKey }}</span>
                 <Tooltip content="切换数据密钥" placement="top-start">
-                    <Icon class="expend-icon" :class="{'run': isRun}" :type="refreshIcon" @click.native="refresh(row)"></Icon>
+                    <Icon class="expend-icon" :class="{'run': isRun}" :type="refreshIcon" @click.native="refresh(row)" v-show="canRefresh"></Icon>
                 </Tooltip>
             </Col>
         </Row>
@@ -47,7 +47,8 @@ export default {
     data () {
         return {
             isRun: false,
-            refreshIcon: 'refresh'
+            refreshIcon: 'refresh',
+            canRefresh: this.row.confStatus === 1
         }
     },
     methods: {
