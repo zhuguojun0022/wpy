@@ -3,7 +3,7 @@
         <Layout>
             <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" width="240" v-model="isCollapsed">
                 <div class="logo">
-                    <h1><i class="iconfont icon-shebao"></i>社保卡线上平台</h1>
+                    <h1><i class="iconfont icon-shebao"></i>电子社保卡管理平台</h1>
                 </div>
                 <Menu></Menu>
             </Sider>
@@ -103,15 +103,15 @@ export default {
             width: 100%;
             position: relative;
             color: #fff;
-            font-size: 20px;
+            font-size: 18px;
             padding-left: 20px;
             text-align: center;
             line-height: 64px;
 
             i {
-                font-size: 36px;
+                font-size: 32px;
                 position: absolute;
-                left: 20px;
+                left: 8px;
             }
         }
     }
