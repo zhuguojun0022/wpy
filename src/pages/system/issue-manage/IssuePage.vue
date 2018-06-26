@@ -107,15 +107,15 @@ export default {
                             }).concat([
                                 h('Button', {
                                     props: {
-                                        type: 'dashed',
-                                        size: 'small'
+                                        type: 'info',
+                                        size: 'small',
                                     },
                                     on: {
                                         click: () => {
                                             this.addChannel(row)
                                         }
                                     }
-                                }, '＋ 添加授权渠道')
+                                }, '＋ 添加')
                             ]))
                         ])
                     }
