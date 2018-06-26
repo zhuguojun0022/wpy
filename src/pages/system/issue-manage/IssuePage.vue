@@ -108,7 +108,7 @@ export default {
                                 h('Button', {
                                     props: {
                                         type: 'info',
-                                        size: 'small',
+                                        size: 'small'
                                     },
                                     on: {
                                         click: () => {
