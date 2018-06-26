@@ -2,7 +2,7 @@
     <div class="main">
         <div class="content">
             <div class="icon"><i class="iconfont icon-shebao"></i></div>
-            <div class="title">欢迎进入电子社保卡线上平台</div>
+            <div class="title">欢迎进入电子社保卡管理平台</div>
             <div class="img">
                 <img src="../../../static/mapbg2.png" alt="暂无图片" >
             </div>
