@@ -240,6 +240,7 @@ export default {
             })
         },
         onSearchClick () {
+            this.currentPage = 1
             this.searchUserList()
         },
         handleCurrentChange (v) {

@@ -38,6 +38,18 @@ import {systemApi} from '../../../apis/'
 import {mapMutations} from 'vuex'
 import {debounce} from 'underscore'
 
+// let debounce = function (idle, action) {
+//     var last
+//     return function () {
+//         let ctx = this
+//         let args = arguments
+//         clearTimeout(last)
+//         last = setTimeout(function () {
+//             action.apply(ctx, args)
+//         }, idle)
+//     }
+// }
+
 export default {
     components: {TableHeader, TableFooter},
     data () {
@@ -133,7 +145,8 @@ export default {
             channelList: [],
             channelName: [],
             channelHint: '输入名称进行模糊检索',
-            tableHeihgt: ''
+            tableHeihgt: '',
+            debounceFun: null
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -212,28 +225,33 @@ export default {
         },
         // 添加授权渠道
         addChannel (row) {
+            this.channelName = []
             this.diaShow = true
             this.issueInfo = row
+            this.debounceFun = debounce((query) => {
+                this.searchchannel(query)
+            }, 1000)
         },
         // 模糊搜索渠道名称
+        searchchannel (query) {
+            if (query !== '') {
+                this.channelLoading = true
+                systemApi.searchchannelList(query).then(({data: {result, resultCode, msg}}) => {
+                    if (resultCode === '000000') {
+                        this.channelLoading = false
+                        this.channelName = result
+                    } else {
+                        this.channelLoading = false
+                        this.$Message.error(msg)
+                    }
+                })
+            } else {
+                this.channelName = []
+            }
+        },
+        // 模糊搜索渠道名称   出发事件
         searchchannelList (query) {
-            let debounceFun = debounce(() => {
-                if (query !== '') {
-                    this.channelLoading = true
-                    systemApi.searchchannelList(query).then(({data: {result, resultCode, msg}}) => {
-                        if (resultCode === '000000') {
-                            this.channelLoading = false
-                            this.channelName = result
-                        } else {
-                            this.channelLoading = false
-                            this.$Message.error(msg)
-                        }
-                    })
-                } else {
-                    this.channelName = []
-                }
-            }, 1000)
-            debounceFun()
+            this.debounceFun(query)
         },
         // 新增授权渠道
         onSubmitClick () {

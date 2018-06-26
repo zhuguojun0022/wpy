@@ -86,7 +86,9 @@ const changeIssueInfo = (regionId, regionNo, authStatus) => http.post(`/region/c
     regionId, regionNo, authStatus
 })
 
-const searchchannelList = (aaz571) => http.get('/channel/simple?AAZ571=' + aaz571)
+const searchchannelList = (aaz571) => http.post('/channel/simple', {
+    aaz571
+})
 
 export default {
     searchUserList,
