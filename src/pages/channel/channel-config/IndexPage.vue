@@ -19,9 +19,9 @@
 
     <Modal v-model="diaShowBaseInfo" :mask-closable="false" :closable="false" :title="diaTitleBaseInfo" ref="modal">
         <Form :model="channelItems" :label-width="100" :rules="ruleValidateBaseInfo" :ref="formRefBaseInfo" class="new-channel-form">
-            <FormItem prop="AAZ570" label="渠道编码" required>
+            <FormItem prop="AAZ570" label="渠道编号" required>
                 <div style="position:relative">
-                    <Input v-model.trim="channelItems.AAZ570" :maxlength="10" placeholder="请输入渠道编码"></Input>
+                    <Input v-model.trim="channelItems.AAZ570" :maxlength="10" placeholder="请输入渠道编号"></Input>
                     <Tooltip style="position:absolute; left:370px; top:2px;" placement="right">
                         <div slot="content">
                             <p>渠道编号编码规则：</p>
@@ -271,7 +271,7 @@ export default {
             ruleValidateBaseInfo: {
                 AAZ570: [
                     {required: true, message: '必填项', trigger: 'blur'},
-                    {pattern: /^\d{10}$/, message: '渠道编码只能为10位数字编码', trigger: 'blur'}
+                    {pattern: /^\d{10}$/, message: '渠道编号只能为10位数字编码', trigger: 'blur'}
                 ],
                 AAZ571: [
                     {required: true, message: '必填项', trigger: 'blur'},
