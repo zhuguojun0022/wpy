@@ -120,10 +120,10 @@ export default {
                         }, [
                             h('span', {
                                 slot: 'open'
-                            }, '开启'),
+                            }),
                             h('span', {
                                 slot: 'close'
-                            }, '停用')
+                            })
                         ])
                     }
                 },

@@ -89,10 +89,10 @@ export default {
                         }, [
                             h('span', {
                                 slot: 'open'
-                            }, '开'),
+                            }),
                             h('span', {
                                 slot: 'close'
-                            }, '关')
+                            })
                         ])
                     }
                 },
