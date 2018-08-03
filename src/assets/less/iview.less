@@ -17,6 +17,11 @@
         &:hover {
             color: darken(@primary, 10%);
         }
+        &[disabled] {
+            color: #bbbec4;
+            background-color: transparent;
+            border-color: #dddee1;
+        }
     }
     .ivu-btn-success {
         color: @success;
@@ -26,6 +31,11 @@
 
         &:hover {
             color: darken(@success, 10%);
+        }
+        &[disabled] {
+            color: #bbbec4;
+            background-color: transparent;
+            border-color: #dddee1;
         }
     }
     .ivu-btn-error {
@@ -37,6 +47,11 @@
         &:hover {
             color: darken(@error, 10%);
         }
+        &[disabled] {
+            color: #bbbec4;
+            background-color: transparent;
+            border-color: #dddee1;
+        }
     }
     .ivu-btn-warning {
         color: @warning;
@@ -46,6 +61,11 @@
 
         &:hover {
             color: darken(@warning, 10%);
+        }
+        &[disabled] {
+            color: #bbbec4;
+            background-color: transparent;
+            border-color: #dddee1;
         }
     }
 }
@@ -59,4 +79,8 @@ td.ivu-table-expanded-cell {
 
 textarea.ivu-input {
     font-size: 12px;
+}
+
+.ivu-btn-text:focus {
+    box-shadow: none;
 }

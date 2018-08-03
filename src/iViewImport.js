@@ -19,7 +19,7 @@ import {
     Row,
     Col,
     Modal,
-    // Card,
+    Card,
     Tag,
     RadioGroup,
     Radio,
@@ -31,7 +31,8 @@ import {
     CheckboxGroup,
     Checkbox,
     AutoComplete,
-    Spin
+    Spin,
+    InputNumber
 } from 'iview'
 Vue.component('Button', Button)
 Vue.component('Icon', Icon)
@@ -49,7 +50,7 @@ Vue.component('Option', Option)
 Vue.component('Row', Row)
 Vue.component('Col', Col)
 Vue.component('Modal', Modal)
-// Vue.component('Card', Card)
+Vue.component('Card', Card)
 Vue.component('Tag', Tag)
 // Vue.component('Cascader', Cascader)
 Vue.component('RadioGroup', RadioGroup)
@@ -63,6 +64,7 @@ Vue.component('Checkbox', Checkbox)
 Vue.component('Spin', Spin)
 Vue.component('DatePicker', DatePicker)
 Vue.component('AutoComplete', AutoComplete)
+Vue.component('InputNumber', InputNumber)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal

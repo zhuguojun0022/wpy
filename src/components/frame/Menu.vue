@@ -104,7 +104,7 @@ export default {
             this.menuList = menuList
         },
         firstLevalClick (pItem) {
-            if (pItem.leaf) {
+            if (pItem.children.length === 0) {
                 this.clickedMenuId = pItem.menuId
                 this.pActiveLeafId = this.clickedMenuId
             }
@@ -113,7 +113,7 @@ export default {
                 this.openedMenuId = null
                 return
             }
-            if (pItem.leaf) {
+            if (pItem.children.length === 0) {
                 this.$router.push({
                     name: pItem.menuRouter
                 })

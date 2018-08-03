@@ -3,6 +3,7 @@
         <RadioGroup type="button" v-model="currentValue" @on-change="onChange">
             <Radio v-for="item in options" :key="item.value" :label="item.value">{{item.label}}</Radio>
         </RadioGroup>
+        <slot></slot>
     </div>
 </template>
 <script>

@@ -4,6 +4,7 @@ import AdminIndexPage from '../pages/dashboard/AdminIndexPage'
 import SystemManagePage from './system.route'
 import ChannelManagePage from './channel.route'
 import BillManagePage from './bill.route'
+import ServiceManage from './service.route'
 export default [{
     path: '/',
     redirect: '/index/home'
@@ -24,5 +25,6 @@ export default [{
     },
     ...SystemManagePage,
     ...ChannelManagePage,
-    ...BillManagePage]
+    ...BillManagePage,
+    ...ServiceManage]
 }]
