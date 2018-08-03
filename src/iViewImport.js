@@ -31,7 +31,14 @@ import {
     CheckboxGroup,
     Checkbox,
     AutoComplete,
-    Spin
+    Spin,
+    Step,
+    Steps,
+    InputNumber,
+    Alert,
+    Avatar,
+    Tabs,
+    TabPane
 } from 'iview'
 Vue.component('Button', Button)
 Vue.component('Icon', Icon)
@@ -63,6 +70,13 @@ Vue.component('Checkbox', Checkbox)
 Vue.component('Spin', Spin)
 Vue.component('DatePicker', DatePicker)
 Vue.component('AutoComplete', AutoComplete)
+Vue.component('Steps', Steps)
+Vue.component('Step', Step)
+Vue.component('InputNumber', InputNumber)
+Vue.component('Alert', Alert)
+Vue.component('Avatar', Avatar)
+Vue.component('Tabs', Tabs)
+Vue.component('TabPane', TabPane)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal
