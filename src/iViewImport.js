@@ -36,9 +36,7 @@ import {
     Steps,
     InputNumber,
     Alert,
-    Avatar,
-    Tabs,
-    TabPane
+    Avatar
 } from 'iview'
 Vue.component('Button', Button)
 Vue.component('Icon', Icon)
@@ -75,8 +73,6 @@ Vue.component('Step', Step)
 Vue.component('InputNumber', InputNumber)
 Vue.component('Alert', Alert)
 Vue.component('Avatar', Avatar)
-Vue.component('Tabs', Tabs)
-Vue.component('TabPane', TabPane)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal

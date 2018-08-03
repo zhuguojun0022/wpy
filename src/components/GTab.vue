@@ -33,6 +33,9 @@ export default {
         onChange (v) {
             this.$emit('input', v)
         }
+    },
+    mounted () {
+        console.log('in')
     }
 }
 </script>
