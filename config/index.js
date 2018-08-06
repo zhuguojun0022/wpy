@@ -8,8 +8,11 @@ const path = require('path')
 // const host = "11.240.240.47:8091"
 // const host = "11.240.240.145:8091"
 // const host = "11.240.240.184:8080"
-// const host = "39.107.82.211:8080"
-const host = "11.240.240.206:8080"
+const host = "39.107.82.211:8080"
+// const host = "11.240.240.206:8080"`
+// const host = "127.0.0.1:8088"
+// const host = "192.168.10.180:8080"
+
 
 
 module.exports = {
@@ -39,7 +42,7 @@ module.exports = {
     // Use Eslint Loader?
     // If true, your code will be linted during bundling and
     // linting errors and warnings will be shown in the console.
-    useEslint: true,
+    useEslint: false,
     // If true, eslint errors and warnings will also be shown in the error overlay
     // in the browser.
     showEslintErrorsInOverlay: false,

@@ -1,5 +1,6 @@
 import http from '../config/httpConfig'
 
+
 const mock = false
 
 function test (userAdminName) {
@@ -20,7 +21,13 @@ const login = function (username, password, cid = '', code = '') {
 const getMenu = function () {
     return http.get('/menu/myTree')
 }
-
+const dapingAll = (aab301) => http.post('/count/all?aab301='+aab301, {mock: mock})
+const dapingMoth = (aab301) => http.post('/count/month?aab301='+aab301, {mock: mock})
+const dapingCity = (aab301) => http.post('/count/city?aab301='+aab301, {mock: mock})
+const dapingChannel = (aab301) => http.post('/count/channel?aab301='+aab301, {mock: mock})
+// const dapingData = params =>{
+//     return http.get('/count/all')
+// }
 const getLoginInfo = function () {
     return http.get('/getLoginInfo', {mock: mock})
 }
@@ -40,5 +47,9 @@ export default {
     login,
     getMenu,
     getLoginInfo,
-    changePwd
+    changePwd,
+   dapingAll,
+   dapingMoth,
+   dapingCity,
+   dapingChannel
 }
