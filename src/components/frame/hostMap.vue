@@ -1,6 +1,6 @@
 
 <template>
-  <div id="myChart" :style="{width: '100%', height: '550px'}"></div>
+  <div id="myChart" :style="{width: '100%', height: '580px'}"></div>
 </template>
  
 <script>
@@ -29,7 +29,6 @@ export default {
     handleAllCitySuees(res) {
       // console.log(res.data.result[0].regionName)
       var cityData = res.data.result;
-      console.log(cityData,"city")
       var i = 0;
       if (cityData) {
         for (i in cityData) {
@@ -39,8 +38,6 @@ export default {
          this.weiData.push([Number(cityData[i].longitude),Number(cityData[i].latitude)]);
           this.mapData[cityData[i].regionName.slice(0,2)] = this.weiData[i];
         }
-          console.log(this.mapData,"经纬度")
-          console.log(this.data,"数据")
           this.drawLine();
       }
     //   conl
@@ -71,7 +68,6 @@ export default {
         var res = [];
         for (var i = 0; i < data.length; i++) {
           var geoCoord = geoCoordMap[data[i].name];
-          console.log(geoCoord);
           if (geoCoord) {
             res.push({
               name: data[i].name,
@@ -79,7 +75,6 @@ export default {
             });
           }
         }
-        console.log(res,"qqw");
         return res;
       };
 
@@ -107,7 +102,6 @@ export default {
               "</li><li>" +
               params.data.level2 +
               "</li></ul>";
-            console.log(params);
             return html;
           }
         },

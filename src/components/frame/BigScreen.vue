@@ -57,8 +57,8 @@ export default {
       time: "",
       date: "",
       xzhedata: ["9月", "10月", "11月"],
-      yzheFdata: ["0"],
-      yzheSdata: ["0"],
+      yzheFdata: [],
+      yzheSdata: [],
       tiaoData: [],
       zhuData: [],
       allSign: "",
@@ -121,7 +121,6 @@ export default {
           this.yzheSdata.push(cityData[i].ecardTwoCount);
         }
       }
-      console.log(this.yzheSdata,"00")
       this.drawLine(
         this.xzhedata,
         this.yzheFdata,
