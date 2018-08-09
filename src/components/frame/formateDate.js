@@ -11,8 +11,7 @@ export const formatDate =function formatDate (date, fmt) {
     };
     for (let k in o) {
         if (new RegExp(`(${k})`).test(fmt)) {
-            let str = o[k] + '';
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : (str));
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)))
         }
     }
     return fmt;
