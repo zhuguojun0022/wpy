@@ -4,10 +4,9 @@ import AdminIndexPage from '../pages/dashboard/AdminIndexPage'
 import SystemManagePage from './system.route'
 import ChannelManagePage from './channel.route'
 import BillManagePage from './bill.route'
-// import BigScreen from '../components/frame/bigTop'
-import BigScreen from '../components/frame/BigScreen'
+import BigScreen from '../pages/BigScreen/BigScreen'
+// import BigScreen from '../components/frame/BigScreen'
 export default [{
-// export default [{
     path: '/',
     redirect: '/index/home'
 }, {

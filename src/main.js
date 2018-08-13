@@ -14,7 +14,7 @@ import store from './store'
 import { getToken } from './common/utils'
 import echarts from 'echarts'
 
-Vue.prototype.$echarts = echarts 
+Vue.prototype.$echarts = echarts
 
 Vue.use(Router)
 

@@ -121,6 +121,5 @@ export default {
     addIssueInfo,
     deleteIssueInfo,
     changeIssueInfo,
-    searchchannelList,
-    // dapingData
+    searchchannelList
 }
