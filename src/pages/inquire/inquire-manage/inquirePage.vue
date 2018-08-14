@@ -1,5 +1,5 @@
 <template>
-   <div>
+   <GPage bg>
       <span>省份</span>
       <select v-model="addDetail.REGIONPROVINCE" name="REGION_PROVINCE" @change="handleMockdel">
           <option v-for="item of prov" :key="item.id" :value="item.REGIONPROVINCE">{{item.REGIONPROVINCE}}</option>
@@ -8,18 +8,18 @@
       <select v-model="addDetail.REGIONNAME" name="REGION_NAME" @change="handleMockdele">
           <option v-for="item of city" :value="item.REGIONNAME" :key="item.id">{{item.REGIONNAME}}</option>
       </select>
-      <span>经度</span>
-      <input type="text" @input="handleChangeInput" value="val" v-model="addDetail.longitude" placeholder="请输入正确的坐标系">
+       <span>经度</span>
+      <input type="text" @input="handleChangeInput" value="val" v-model="addDetail.longitude">
        <span>纬度</span>
-      <input type="text" @input="handleChangeInputow" value="val" v-model="addDetail.latitude" placeholder="请输入正确的坐标系">
+      <input type="text" @input="handleChangeInputow" value="val" v-model="addDetail.latitude">
       <button @click="handleBtn">保存</button>
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
                 <td>省份</td>
                 <td>城市</td>
-                <td>经度</td>
                 <td>纬度</td>
+                <td>经度</td>
                 <td>操作</td>
             </tr>
         </thead>
@@ -29,7 +29,7 @@
                 <td width="10%">{{item.REGIONNAME}}</td>
                 <td width="10%">{{item.LATITUDE}}</td>
                 <td width="10%">{{item.LONGITUDE}}</td>
-                <td width="5%">
+                <td width="5%" class="edits">
                     <em class="edit" @click="edit(item)">编辑</em>
                     <em class="delete" @click="handleDelete(item.REGIONID)">删除</em>
                 </td>
@@ -45,19 +45,26 @@
                 </span>
             </div>
             <div class="content">
+                <div>
                 <span>经度</span>
-                <input type="text" @input="handleChangeInputow" value="val" v-model="addDetail.longitude" placeholder="请输入正确的坐标系">
+                <input type="text" @input="handleChangeInput" value="val" v-model="addDetail.longitude">
+                </div>
+                <div>
                 <span>纬度</span>
-                <input type="text" @input="handleChangeInput" value="val" v-model="addDetail.latitude" placeholder="请输入正确的坐标系">
+                <input type="text" @input="handleChangeInputow" value="val" v-model="addDetail.latitude">
+                </div>
+                <div id="btn">
                 <button @click="update" class="update">更新</button>
                 <button @click="editlist=false" class="editle">取消</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</GPage>
 </template>
 
 <script>
+// import {TableHeader, TableFooter} from '../../../components/table'
 import {infraApi} from '../../../apis'
 export default {
     data () {
@@ -86,8 +93,6 @@ export default {
     },
     methods: {
         handleMockdel (val) {
-            // console.log(this.addDetail.REGIONPROVINCE)
-            // console.log(this.prov.length)
             for (let i = 0; i < this.prov.length; i++) {
                 if (this.prov[i].REGIONPROVINCE === this.addDetail.REGIONPROVINCE) {
                     console.log(this.prov[i].REGIONNO)
@@ -121,11 +126,13 @@ export default {
                     console.log(res)
                     if (res.status === 200) {
                         infraApi.getList().then((res) => {
-                            // console.log(res)
                             const data = res.data
                             this.newsList = data.result
-                            // console.log()
                         })
+                        this.addDetail.REGIONPROVINCE = ''
+                        this.addDetail.REGIONNAME = ''
+                        this.addDetail.longitude = ''
+                        this.addDetail.latitude = ''
                     } else {
                         this.$Message.warning(res.data.msg)
                     }
@@ -171,21 +178,23 @@ export default {
         update () {
             if (!this.longitude) {
                 this.$Message.warning('请输入正确的经度')
-            }
-            if (!this.latitude) {
+            } else if (!this.latitude) {
                 console.log(!this.latitude)
                 this.$Message.warning('请输入正确的纬度')
+            } else {
+                infraApi.Change(this.addDetail.REGIONNO, this.addDetail.longitude, this.addDetail.latitude, sessionStorage.getItem('USERID'))
+                    .then((res) => {
+                        if (res.data.resultCode === '000000') {
+                            this.editlist = false
+                            infraApi.getList().then((res) => {
+                                const data = res.data
+                                this.newsList = data.result
+                            })
+                            this.addDetail.longitude = ''
+                            this.addDetail.latitude = ''
+                        }
+                    })
             }
-            infraApi.Change(this.addDetail.REGIONNO, this.addDetail.longitude, this.addDetail.latitude, sessionStorage.getItem('USERID'))
-                .then((res) => {
-                    if (res.data.resultCode === '000000') {
-                        this.editlist = false
-                        infraApi.getList().then((res) => {
-                            const data = res.data
-                            this.newsList = data.result
-                        })
-                    }
-                })
         }
     }
 }
@@ -201,13 +210,17 @@ export default {
     }
     select{
         width: 200px;
+        height: 30px;
         font-size: 14px;
+        margin-bottom: 10px;
         text-align: center;
         border-radius: 3px;
         border: 1px solid #ccc;
     }
     input{
         text-align: center;
+        width: 180px;
+        height: 30px;
         font-size: 14px;
         border: 1px solid #ccc;
         border-radius: 3px;
@@ -227,22 +240,24 @@ export default {
         border: 1px solid #eee;
     }
     table thead tr {
+        width: 120px;
+        height: 40px;
         background: #f5f5f5;
         padding: 10px;
         text-align: left
     }
     table tbody td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    border-right: 1px solid #eee;
+        width: 120px;
+        height: 48px;
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
 }
     em{
         font-style: normal;
         margin: 0 10px;
         cursor: pointer;
         text-align: center;
-        float: left;
     }
     td{
         text-align: center;
@@ -263,9 +278,9 @@ export default {
         left: 0;
     }
     .mask{
-        width: 300px;
-        height: 200px;
-        background: #ccc;
+        width: 500px;
+        height: 317px;
+        background: #fff;
         position: absolute;
         left: 0;
         top: 0;
@@ -300,8 +315,7 @@ export default {
         padding: 4px 15px;
         border-radius: 3px;
         color: #fff;
-        margin-left: 10px;
-        margin-right: 10px;
+        float: left;
     }
     .editle{
         background: #008cd5;
@@ -310,5 +324,20 @@ export default {
         border-radius: 3px;
         color: #fff;
         float: right;
+    }
+    .edits{
+        height: 48px;
+       -webkit-box-sizing: border-box;
+       box-sizing: border-box;
+       text-align: center;
+       text-overflow: ellipsis;
+       vertical-align: middle;
+       border-bottom: 1px solid #e9eaec
+    }
+    #btn{
+        display: flex;
+        justify-content: flex-end;
+        width: 485px;
+        height:32px;
     }
 </style>
