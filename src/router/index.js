@@ -5,6 +5,8 @@ import SystemManagePage from './system.route'
 import ChannelManagePage from './channel.route'
 import BillManagePage from './bill.route'
 import InquirePage from './inquire.route'
+import BigScreen from '../pages/BigScreen/BigScreen'
+// import BigScreen from '../components/frame/BigScreen'
 export default [{
     path: '/',
     redirect: '/index/home'
@@ -12,6 +14,10 @@ export default [{
     path: '/login',
     name: 'login',
     component: Login
+}, {
+    path: '/bigscreen',
+    name: 'bigscreen',
+    component: BigScreen
 }, {
     path: '/index',
     component: App,

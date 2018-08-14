@@ -5,6 +5,7 @@ const searchUserList = (pageSize, currentPage, userAdminName, roleId, userAdminS
 })
 
 const searchDownRoleList = () => http.get('/useradmin/queryUserNoAuthRoles')
+// const dapingData = () => http.get('/useradmin/count/all')
 
 const addUserInfo = (userAdminName, userAdminEmail, userAdminMobile, roleIds) => http.post('/useradmin/add', {
     userAdminName, userAdminEmail, userAdminMobile, roleIds

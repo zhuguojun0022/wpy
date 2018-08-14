@@ -160,7 +160,12 @@ export default {
         handleDelete (REGIONID) {
             console.log(this.addDetail.REGIONNO)
             infraApi.Delete(REGIONID).then((res) => {
-                console.log(res)
+                if (res.data.resultCode === '000000') {
+                    infraApi.getList().then((res) => {
+                        const data = res.data
+                        this.newsList = data.result
+                    })
+                }
             })
         },
         update () {
