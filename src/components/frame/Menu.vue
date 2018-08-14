@@ -54,6 +54,7 @@ export default {
     props: {},
     data () {
         infraApi.getMenu().then(({data: {result}}) => {
+            // console.log(infraApi.getMenu())
             this.init(result.children)
         })
         return {

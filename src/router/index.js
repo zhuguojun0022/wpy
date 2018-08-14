@@ -9,6 +9,8 @@ import BigScreen from '../pages/bigScreen/BigScreen'
 import ProvinceScreen from '../pages/bigScreen/provinceScreen'
 import CityScreen from '../pages/bigScreen/cityScreen'
 // import CityScreen from '../pages/bigScreen/cityMap'
+import InquirePage from './inquire.route'
+
 export default [{
     path: '/',
     redirect: '/index/home'
@@ -43,5 +45,6 @@ export default [{
     },
     ...SystemManagePage,
     ...ChannelManagePage,
-    ...BillManagePage]
+    ...BillManagePage,
+    ...InquirePage]
 }]

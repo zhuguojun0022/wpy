@@ -38,15 +38,61 @@ const changePwd = function (userAdminId, userAdminPwdOld, userAdminPwd) {
     })
 }
 
+const getInquire = function () {
+    return http.post('/geoCoord/getProvince')
+}
+
+const getCity = function (regionNo) {
+    return http.post('/geoCoord/getCity?regionNo=' + regionNo, {mock: mock})
+}
+
+const Save = function (regionId, regionProvince, regionName, longitude, latitude, createUserNo) {
+    return http.post('/geoCoord/insert', {
+        regionId,
+        regionProvince,
+        regionName,
+        longitude,
+        latitude,
+        createUserNo
+    }, {
+        mock: mock
+    })
+}
+
+const getList = function () {
+    return http.post('/geoCoord/query')
+}
+
+const Delete = function (regionId) {
+    return http.post('/geoCoord/delete?regionId=' + regionId, {mock: mock})
+}
+
+const Change = function (regionId, longitude, latitude, createUserNo) {
+    return http.post('/geoCoord/update', {
+        regionId,
+        longitude,
+        latitude,
+        createUserNo
+    }, {
+        mock: mock
+    })
+}
 export default {
     test,
     login,
     getMenu,
     getLoginInfo,
     changePwd,
+    getInquire,
+    getCity,
+    Save,
+    getList,
+    Delete,
+    Change,
     dapingAll,
     dapingMoth,
     dapingCity,
     dapingChannel,
     dapingAllCity
+
 }
