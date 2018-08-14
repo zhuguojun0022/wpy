@@ -10,6 +10,8 @@ import './assets/less/utils.less'
 import './assets/less/iview.less'
 import './assets/iconfont/iconfont.css'
 import LoginUser from './common/loginUser'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
 import { getToken } from './common/utils'
 
@@ -17,6 +19,7 @@ Vue.use(Router)
 
 Vue.config.productionTip = false
 Vue.use(LoginUser)
+Vue.use(ElementUI)
 
 export const appRouter = new Router({
     mode: 'hash',
