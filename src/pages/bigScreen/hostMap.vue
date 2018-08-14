@@ -1,5 +1,5 @@
 <template>
-<div id="myChart" :style="{width: '100%', height: '590px'}"></div>
+<div id="myChart" :style="{width: '100%', height: '100%'}"></div>
 </template>
 <script>
 import { infraApi } from '../../apis'
@@ -9,10 +9,16 @@ export default {
         return {
             data: [],
             weiData: [],
-            mapData: {}
+            mapData: {},
+            areaBig: '',
+            areaBlog: 'china'
         }
     },
     mounted () {
+        // let provinceBig = window.sessionStorage.getItem("provinceId")
+        // this.areaBlog = provinceBig
+        // let regionBig = window.sessionStorage.getItem('regionId')
+        // this.areaBig = regionBig
         infraApi.dapingAllCity('').then(this.handleAllCitySuees.bind(this))
     },
     methods: {
@@ -21,7 +27,7 @@ export default {
             let i = 0
             if (cityData) {
                 for (i in cityData) {
-                    this.data.push({ name: cityData[i].regionName.slice(0, 2), value: Number(cityData[i].ecardCount), level1: Number(cityData[i].ecardOneCount), level2: Number(cityData[i].ecardTwoCount) })
+                    this.data.push({ name: cityData[i].regionName.slice(0, 2), value: Number(cityData[i].ecardCount), level1: Number(cityData[i].ecardOneCount), level2: Number(cityData[i].ecardTwoCount), regionNo: cityData[i].regionNo })
                     this.weiData.push([Number(cityData[i].longitude), Number(cityData[i].latitude)])
                     this.mapData[cityData[i].regionName.slice(0, 2)] = this.weiData[i]
                 }
@@ -30,7 +36,7 @@ export default {
         },
         drawLine () {
             // 基于准备好的dom，初始化echarts实例
-            // let that = this
+            let that = this
             let myChart = this.$echarts.init(document.getElementById('myChart'))
             let data = this.data
             let geoCoordMap = this.mapData
@@ -55,6 +61,7 @@ export default {
                         type: 'shadow'
                     },
                     formatter: function (params, ticket, callback) {
+                        // console.log("chuancan", params.data.regionNo.slice(0, 3))
                         let html = '<div class=\'wpypop_title\'>' + params.data.name + '</div>' + '<ul class=\'wpypop_ul pop_font1\'><li>签发数</li><li>一级签发</li><li>二级签发</li></ul>' + '<ul class=\'wpypop_ul pop_font2\'><li>' + params.data.value + '</li><li>' + params.data.level1 + '</li><li>' + params.data.level2 + '</li></ul>'
                         return html
                     }
@@ -119,7 +126,21 @@ export default {
                         visualMap: false,
                         coordinateSystem: 'geo',
                         data: convertData(data.sort(function (a, b) { return b.value - a.value }).slice(0)),
-                        symbolSize: function (val) { return val[2] / 100 + 4 },
+                        symbolSize: function (val) {
+                            console.log(val[2], '涟漪')
+                            let wave = 5
+                            if (val[2] <= 100) {
+                                wave = 5
+                            } else if (val[2] <= 500) {
+                                wave = 7
+                            } else if (val[2] <= 1000) {
+                                wave = 9
+                            } else {
+                                wave = 11
+                            }
+                            // return val[2] / 100 + 4
+                            return wave
+                        },
                         showEffectOn: 'render',
                         rippleEffect: {
                             brushType: 'stroke'
@@ -149,11 +170,15 @@ export default {
                 ]
             }
             myChart.setOption(option)
-            // myChart.on('click', function (params) {
-            //     console.log(params.data.name,"wpy")
-            //     that.$router.push('/hi2')
-            //     window.sessionStorage.setItem("provinceId",params.data.name)
-            // })
+            myChart.on('click', function (params) {
+                // console.log(params.data.name,"wpy")
+                //  console.log(params.data.regionNo.slice(0,3),'liaoning')
+                that.$router.push('/provinceScreen')
+                window.sessionStorage.setItem('provinceId', params.data.name)
+                window.sessionStorage.setItem('regionId', params.data.regionNo.slice(0, 3))
+                window.sessionStorage.setItem('regionTopId', params.data.regionNo.slice(0, 3))
+                // window.sessionStorage.setItem("regionId",params.data.regionNo.slice(0,3))
+            })
         }
     }
 }

@@ -62,7 +62,8 @@ export default {
                 decimal: '.',
                 prefix: '',
                 suffix: '',
-                areaBig: ''
+                areaBig: '',
+                timer: ''
             }
         }
     },
@@ -70,7 +71,8 @@ export default {
         // let regionBig = window.sessionStorage.getItem('regionId')
         // this.areaBig = regionBig
         let that = this
-        setInterval(function () { infraApi.dapingAll(that.areaBig).then(that.handleAllSuees.bind(that)) }, 5000)
+        infraApi.dapingAll('').then(that.handleAllSuees.bind(that))
+        this.timer = setInterval(function () { infraApi.dapingAll('').then(that.handleAllSuees.bind(that)) }, 5000)
         // sessionStorage.removeItem('regionId')
     },
     methods: {
@@ -81,10 +83,10 @@ export default {
             this.cardCity = res.data.result.cityCount
             this.cardchannel = res.data.result.channelCount
         }
+    },
+    beforeDestroy () {
+        clearInterval(this.timer)
     }
-    // destroyed () {
-    //   sessionStorage.clear()
-    // }
 }
 </script>
 <style scoped>

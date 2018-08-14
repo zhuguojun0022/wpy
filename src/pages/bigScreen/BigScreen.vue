@@ -17,11 +17,11 @@
        <div class="schart">
             <div>
                 <div class="subtitle">电子社保卡签发统计</div>
-                <div id="openZhe" :style="{width: '100%',height: '250%'}" ></div>
+                <div id="openZhe" :style="{width: '100%',height: '100%'}" ></div>
             </div>
             <div>
                 <div class="subtitle">今日流量统计</div>
-                <div id="openLiu" :style="{width: '100%',height: '250%'}">
+                <div id="openLiu" :style="{width: '100%',height: '100%'}">
                   <Bigliu></Bigliu>
                 </div>
             </div>
@@ -32,11 +32,11 @@
         <div class="schart">
             <div>
                 <div class="subtitle">各地区电子社保卡开通张数TOP5</div>
-                <div id="openNum" :style="{width: '100%',height: '250%'}"></div>
+                <div id="openNum" :style="{width: '100%',height: '100%'}"></div>
             </div>
             <div>
                 <div class="subtitle">各渠道开通电子社保卡情况</div>
-                <div id="openChannel" :style="{width: '100%',height: '250%'}"></div>
+                <div id="openChannel" :style="{width: '100%',height: '100%'}"></div>
             </div>
         </div>
     </div>
@@ -105,7 +105,6 @@ export default {
         },
         handleCitySuees (res) {
             this.zhuData = res.data.result
-            console.log(this.zhuData, 'wpy')
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
         },
         handleChannelSuees (res) {
