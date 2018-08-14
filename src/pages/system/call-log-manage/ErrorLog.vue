@@ -2,7 +2,7 @@
     <section>
         <Form :model="searchValue" inline>
             <FormItem prop="startTime" class="m-x-r search-condition">
-                <label class="required-search m-x-r">开始时间:</label>
+                <label class="required-search m-x-r m-x-l">开始时间:</label>
                 <Date-picker transfer :clearable="false" confirm v-model="searchValue.startTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择开始时间" style="width: 216px"></Date-picker>
             </FormItem>
             <FormItem v-if="isCustomized" prop="endTime" class="m-x-r search-condition">
@@ -87,9 +87,22 @@ export default {
     data () {
         return {
             findLoading: false,
-            searchValue: {},
+            searchValue: {
+                startTime: '',
+                endTime: '',
+                apiSelected: '',
+                caller: '',
+                returnCode: '2',
+                timeFrame: 3600000 * 24
+            },
             isCustomized: true,
-            timeFrameList: [],
+            timeFrameList: [
+                { label: '1小时', value: 60 * 60 * 1000 },
+                { label: '3小时', value: 3 * 60 * 60 * 1000 },
+                { label: '12小时', value: 12 * 60 * 60 * 1000 },
+                { label: '24小时', value: 24 * 60 * 60 * 1000 },
+                { label: '48小时', value: 48 * 60 * 60 * 1000 }
+            ],
             applySelect: '',
             isAdmin: false,
             applyData: [],
@@ -127,17 +140,76 @@ export default {
             }, {
                 title: '时间',
                 key: 'starttime'
+            }, {
+                title: '返回码',
+                render: (h, {column, index, row}) => {
+                    return h('div', [
+                        h('Button', {props: {type: 'primary'}}, [
+                            h('Tooltip', {
+                                props: {
+                                    content: '返回信息: ' + (row.error || '无'),
+                                    placement: 'top'
+                                }
+                            }, row.code)
+                        ])
+                    ])
+                }
+            }, {
+                title: '后端返回码',
+                key: 'httpStatus'
             }]
         }
     },
     methods: {
         searchClick () {
-
+            this.reqLogList()
         },
         matchAppEvent (name) {
             if (name.length < 1) {
                 return false
             }
+        },
+        getCodeList () {
+            this.codeList = [
+                { msg: '4002 (没有有效的订阅)', code: '4002' },
+                { msg: '4003 (没有订阅该API)', code: '4003' },
+                { msg: '4004 (服务没有找到)', code: '4004' }
+            ]
+        },
+        reqLogList () {
+            let start = this.searchValue.startTime - 0
+            let end = this.searchValue.endTime - 0
+            if (!this.isCustomized) {
+                end = start + this.searchValue.timeFrame
+            }
+            if (!(end && start)) {
+                this.$Message.warning({
+                    content: '时间不可以为空',
+                    duration: 2
+                })
+                return false
+            } else if (end - start < 0) {
+                this.$Message.warning({
+                    content: '结束时间需要大于开始时间',
+                    duration: 2
+                })
+                return false
+            }
+        }
+    },
+    mounted () {
+        this.getCodeList()
+        let routeWay = this.$route.params.dashboard
+        let nowDate = new Date()
+        let date = nowDate.getDate()
+        let month = nowDate.getMonth() + 1
+        let year = nowDate.getFullYear()
+        if (routeWay) {
+            let str = nowDate - 3600000 * 24
+            this.searchValue.startTime = new Date(str)
+        } else {
+            let strDate = `${year}/${month}/${date} 00:00:00`
+            this.searchValue.startTime = new Date(strDate)
         }
     }
 }

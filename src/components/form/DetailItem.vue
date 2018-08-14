@@ -11,7 +11,7 @@
             <Button class="submit-btn" size="small" type="primary" @click="submit">保存</Button>
             <Button class="cancel-btn" size="small" type="default" @click="cancel">取消</Button>
         </span>
-        <Button type="ghost" size="small" v-show="!isEdit" class="edit-btn" icon="edit" @click="edit"></Button>
+        <Button type="ghost" size="small" v-if="isCanEdit" v-show="!isEdit" class="edit-btn" icon="edit" @click="edit"></Button>
     </div>
 </template>
 <script>
@@ -33,6 +33,10 @@ export default {
         paramKey: {
             type: String,
             default: ''
+        },
+        isCanEdit: {
+            type: Boolean,
+            default: true
         }
     },
     data () {
@@ -69,6 +73,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+    .diec-fixed-desc {
+        font-size: 14px;
+        min-width: 120px;
+        text-align: right;
+    }
     .can-edit-detail {
         display: inline-block;
     }

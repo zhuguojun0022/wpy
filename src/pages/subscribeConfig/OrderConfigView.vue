@@ -6,15 +6,17 @@
             <Button type="primary" @click="addOrder">新增订阅</Button>
         </div>
         <div slot="right">
-            <RadioGroup type="button" v-model="activeType">
-                <Radio :label="1">全部</Radio>
-                <Radio :label="2">已过期</Radio>
-            </RadioGroup>
+            <Input v-model="APIName" placeholder="API名称" style="width: 200px" clearable></Input>
+            <Input v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable></Input>
+            <Select v-model="status" style="width: 200px" placeholder="状态">
+                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <Button type="primary" @click="onSearchClick">查询</Button>
         </div>
     </table-header>
     <Row :gutter="16">
         <Col span="24">
-            <Table highlight-row :columns="columns" :data="tableData" :height="tableHeihgt"></Table>
+            <Table :columns="columns" :data="tableData" :height="tableHeihgt"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
     </Row>
@@ -78,9 +80,8 @@ export default {
                         }])
                     }
                 },
+                {title: '渠道名称', key: 'channelName'},
                 {title: 'API描述', key: 'apiComments'},
-                {title: '生效时间', key: 'activeTime'},
-                {title: '有效时间至', key: 'endTime'},
                 {
                     title: '状态',
                     fixed: 'center',
@@ -89,12 +90,7 @@ export default {
                         return this.getCellRender(h, [{
                             label: filter(serverTime, row).label,
                             color: filter(serverTime, row).color,
-                            tag: 'Tag',
-                            on: {
-                                click: () => {
-                                    this.watchNameClick(row)
-                                }
-                            }
+                            tag: 'Tag'
                         }])
                     }
                 },
@@ -115,15 +111,12 @@ export default {
                                 }
                             }
                         }, {
-                            label: '复制',
+                            label: '——',
                             type: 'primary',
                             style: {
-                                marginRight: '5px'
-                            },
-                            on: {
-                                click: (e) => {
-                                    this.copyApiClick(row)
-                                }
+                                marginRight: '5px',
+                                display: !row.active && filter(serverTime, row).label !== '已过期' ? 'none' : 'inline-block',
+                                color: '#cccccc'
                             }
                         }])
                     }
@@ -134,7 +127,17 @@ export default {
             totalNum: 0,
             tableHeihgt: '',
             serverTime: 0,
-            activeType: 1
+            activeType: 1,
+            APIName: '',
+            channelName: '',
+            status: '',
+            statusList: [{
+                value: 0,
+                label: '全部'
+            }, {
+                value: 1,
+                label: '已过期'
+            }]
         }
     },
     created () {
@@ -147,9 +150,9 @@ export default {
             name: '订阅配置',
             icon: 'icon-fuwuguanli'
         })
-        this.pushBreadcrumb({
-            name: this.$route.params.callerName
-        })
+        // this.pushBreadcrumb({
+        //     name: this.$route.params.callerName
+        // })
         this.appId = this.$route.params.appId
         this.getOrderApi(this.callerId)
     },
@@ -164,9 +167,9 @@ export default {
             this.$router.push({
                 name: 'addOrder',
                 params: {
-                    appId: this.appId,
-                    callerId: this.callerId,
-                    callerName: this.$route.params.callerName
+                    appId: '123',
+                    callerId: '123456',
+                    callerName: 'admin'
                 }
             })
         },
@@ -187,9 +190,10 @@ export default {
                     activeType: 0,
                     antiReplayAttack: false,
                     apiAuthRequired: true,
-                    apiComments: '',
+                    apiComments: '12345',
                     apiId: '01490ea66942000',
                     apiName: '人员管理',
+                    channelName: '渠道名称1',
                     apiPath: '/user',
                     apiSignFailure: null,
                     bgPath: null,
@@ -212,6 +216,7 @@ export default {
                     apiComments: '这是一条测试数据',
                     apiId: '01490ea66942000',
                     apiName: '测试数据',
+                    channelName: '渠道名称2',
                     apiPath: '/user/23123sao',
                     apiSignFailure: null,
                     bgPath: null,
@@ -235,10 +240,10 @@ export default {
                 name: 'subDetails',
                 params: {
                     orderId: row.id,
-                    appId: this.appId,
+                    appId: row.appId,
                     way: 'edit',
                     serverTime: this.serverTime,
-                    callerName: this.$route.params.callerName,
+                    callerName: 'admin',
                     apiName: row.apiName
                 }
             })
@@ -271,6 +276,8 @@ export default {
                     callerId: this.callerId
                 }
             })
+        },
+        onSearchClick () {
         }
     },
     computed: {},

@@ -8,17 +8,20 @@
                 <caller-log></caller-log>
             </TabPane>
         </Tabs> -->
-        <GTab :options="options" :value="'error'"></GTab>
+        <GTab :options="options" :value="'error'" @input="getCurrentTab"></GTab>
         <div class="m-y-t-2">
-            <caller-log></caller-log>
+            <error-log v-show="logType === 'error'"></error-log>
+            <normal-log v-show="logType === 'normal'"></normal-log>
         </div>
-        <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
     </GPage>
 </template>
 <script>
 import GTab from '../../../components/GTab'
 import {TableFooter} from '../../../components/table'
-import callerLog from './CallerLog'
+import ErrorLog from './ErrorLog'
+import NormalLog from './NormalLog'
+import {mapMutations} from 'vuex'
+
 export default {
     data () {
         return {
@@ -31,17 +34,30 @@ export default {
             }, {
                 label: '普通日志',
                 value: 'normal'
-            }]
+            }],
+            logType: 'error'
         }
     },
     components: {
         tableFooter: TableFooter,
-        callerLog: callerLog,
+        errorLog: ErrorLog,
+        normalLog: NormalLog,
         GTab: GTab
     },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            vm.resetBreadcrumb({
+                name: '调用日志'
+            })
+        })
+    },
     methods: {
+        ...mapMutations(['resetBreadcrumb']),
         handleMainChange () {
 
+        },
+        getCurrentTab (value) {
+            this.logType = value
         }
     }
 }

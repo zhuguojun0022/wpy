@@ -6,48 +6,49 @@
                     <h4>基础信息</h4>
                     <section class="detail-info">
                         <label class="detail-info-desc">API名称:</label>
-                        <div class="detail-info-val">test</div>
+                        <div class="detail-info-val">{{baseInfo.apiName}}</div>
                     </section>
                     <section class="detail-info">
                         <label class="detail-info-desc">服务类型:</label>
-                        <div class="detail-info-val">真实服务</div>
+                        <div class="detail-info-val">{{serverTypeDisplayValue}}</div>
                     </section>
-                    <section class="detail-info">
+                    <section class="detail-info" v-if="baseInfo.type !== 1">
                         <label class="detail-info-desc">路径:</label>
-                        <div class="detail-info-val">/test</div>
+                        <div class="detail-info-val">{{baseInfo.apiPath}}</div>
                     </section>
-                    <section class="detail-info">
+                    <section class="detail-info" v-if="baseInfo.type !== 1">
                         <label class="detail-info-desc">后端路径:</label>
-                        <div class="detail-info-val">/test/in/on</div>
+                        <div class="detail-info-val">{{baseInfo.bgPath}}</div>
                     </section>
-                    <section class="detail-info">
+                    <section class="detail-info" v-if="baseInfo.type !== 1">
                         <label class="detail-info-desc">请求路径:</label>
-                        <div class="detail-info-val">/test/in</div>
+                        <div class="detail-info-val">{{baseInfo.requestPath || '暂无'}}</div>
                     </section>
                     <section class="detail-info">
                         <label class="detail-info-desc">请求方式:</label>
-                        <div class="detail-info-val">GET</div>
+                        <div class="detail-info-val">{{baseInfo.method}}</div>
                     </section>
                     <section class="detail-info">
                         <label class="detail-info-desc">所属服务组:</label>
-                        <div class="detail-info-val">portal-local</div>
+                        <div class="detail-info-val">{{baseInfo.groupName}}</div>
                     </section>
                     <section class="detail-info">
                         <label class="detail-info-desc">API描述:</label>
-                        <div class="detail-info-val">描述</div>
+                        <div class="detail-info-val">{{baseInfo.apiComments}}</div>
                     </section>
                 </div>
                 <div class="subscription-policy p-x-l-1">
                     <h4>订阅策略</h4>
                     <h5 class="service-control p-x-r-5">服务控制</h5>
-                    <section class="detail-info">
+                    <!-- <section class="detail-info">
                         <label class="detail-info-desc">验签</label>
                         <detail-item-edit
+                            :isCanEdit="!isVirtual && !isForWatchOrderInfo"
                             :valueObject="editInfo"
                             :valueFields="['verifySign']"
                             paramKey="verifySign"
                             @submit="submit">
-                            <span slot="displayValue">不验签</span>
+                            <span slot="displayValue">{{verifySignDisplayValue}}</span>
                             <RadioGroup slot="editOption" size="small" type="button" v-model="editInfo.verifySign">
                                 <Radio :label="0">
                                     <span>不验签</span>
@@ -64,11 +65,12 @@
                     <section class="detail-info">
                         <label class="detail-info-desc">加密</label>
                         <detail-item-edit
+                            :isCanEdit="!isVirtual || !isForWatchOrderInfo"
                             :valueObject="editInfo"
                             :valueFields="['encryption']"
                             paramKey="encryption"
                             @submit="submit">
-                            <span slot="displayValue">开</span>
+                            <span slot="displayValue">{{encryptionDisplayValue}}</span>
                             <i-switch slot="editOption" v-model="editInfo.encryption" size="large">
                                 <span slot="open">开</span>
                                 <span slot="close">关</span>
@@ -79,66 +81,115 @@
                         <label class="detail-info-desc">防重放攻击</label>
                         <detail-item-edit
                             :valueObject="editInfo"
+                            :isCanEdit="!isVirtual && !isForWatchOrderInfo"
                             :valueFields="['antiReplayAttack']"
                             paramKey="antiReplayAttack"
                             @submit="submit">
-                            <span slot="displayValue">开</span>
+                            <span slot="displayValue">{{antiReplayAttackDisplayValue}}</span>
                             <i-switch slot="editOption" v-model="editInfo.antiReplayAttack" size="large">
                                 <span slot="open">开</span>
                                 <span slot="close">关</span>
                             </i-switch>
                         </detail-item-edit>
-                    </section>
+                    </section> -->
                     <section class="detail-info">
-                        <label class="detail-info-desc">并发控制</label>
+                        <label class="detail-info-desc">并发限制</label>
                         <detail-item-edit
                             :valueObject="editInfo"
+                            :isCanEdit="!isForWatchOrderInfo"
                             :valueFields="['concurrentLimit']"
                             paramKey="concurrentLimit"
+                            @edit="editClick"
+                            @cancel="cancelClick"
                             @submit="submit">
-                            <span slot="displayValue">不限</span>
+                            <span slot="displayValue">{{concurrentLimitDisplayValue}}</span>
                             <div slot="editOption">
-                                <i-switch v-model="editInfo.concurrentLimit" size="large">
+                                <i-switch v-model="concurrentLimitJudge" class="m-x-r" size="large" @on-change="concurrentLimitEvent">
                                     <span slot="open">限制</span>
                                     <span slot="close">不限</span>
                                 </i-switch>
-                                <InputNumber :precision="0" :max="9999" :min="0" :step="1" size="small" v-model="editInfo.concurrentLimit"></InputNumber>
+                                <InputNumber
+                                    :precision="0"
+                                    :max="9999"
+                                    :min="0"
+                                    :step="1"
+                                    size="small"
+                                    v-if="concurrentLimitJudge"
+                                    v-model="editInfo.concurrentLimit"
+                                    class="m-x-r-2"
+                                    @on-change="concurrentLimitEvent">
+                                </InputNumber>
                             </div>
                         </detail-item-edit>
                     </section>
-                    <section class="detail-info">
+                    <!-- <section class="detail-info">
                         <label class="detail-info-desc">调用总数限制</label>
                         <detail-item-edit
                             :valueObject="editInfo"
+                            :isCanEdit="!isVirtual && !isForWatchOrderInfo"
                             :valueFields="['totalRequestsLimit']"
                             paramKey="totalRequestsLimit"
+                            @edit="editClick"
+                            @cancel="cancelClick"
                             @submit="submit">
-                            <span slot="displayValue">不限</span>
+                            <span slot="displayValue">{{totalRequestsLimitDisplayValue}}</span>
                             <div slot="editOption">
-                                <i-switch v-model="editInfo.totalRequestsLimit" size="large">
+                                <i-switch v-model="editInfo.totalRequestsLimit" size="large" @on-change="totalRequestsLimitEvent">
                                     <span slot="open">限制</span>
                                     <span slot="close">不限</span>
                                 </i-switch>
-                                <InputNumber :precision="0" :max="9999" :min="0" :step="1" size="small" v-model="editInfo.totalRequestsLimit"></InputNumber>
+                                <InputNumber
+                                    :precision="0"
+                                    :max="9999999"
+                                    :min="0"
+                                    :step="1"
+                                    size="small"
+                                    v-model="editInfo.totalRequestsLimit"
+                                    v-if="totalRequestsLimitJudge"
+                                    @on-change="totalRequestsLimitEvent">
+                                </InputNumber>
+                            </div>
+                        </detail-item-edit>
+                    </section> -->
+                    <!-- <h5 class="service-control p-x-r-5">时效策略</h5>
+                    <section class="detail-info">
+                        <label class="detail-info-desc">生效时间</label>
+                        <detail-item-edit
+                            :valueObject="editInfo"
+                            :isCanEdit="isCanEdit && !isForWatchOrderInfo"
+                            :valueFields="['subscribeBegin']"
+                            paramKey="subscribeBegin"
+                            @submit="submit">
+                            <span slot="displayValue">{{subscribeBeginDisplayValue}}</span>
+                            <Date-picker slot="editOption" :clearable="false" @on-change="datePickerEvent" size="small" type="date" :value="editInfo.subscribeBegin" v-model="editInfo.subscribeBegin" class="m-x-l-2" style="width: 300px;" placeholder="选择日期"></Date-picker>
+                        </detail-item-edit>
+                    </section>
+                    <section class="detail-info">
+                        <label class="detail-info-desc">有效期</label>
+                        <detail-item-edit
+                            :valueObject="editInfo"
+                            :isCanEdit="isCanEdit && !isForWatchOrderInfo"
+                            :valueFields="['subscribeDuration']"
+                            paramKey="subscribeDuration"
+                            @submit="submit">
+                            <span slot="displayValue">{{subscribeDurationDisplayValue}}</span>
+                            <div slot="editOption">
+                                <Input-number class="m-x-l-2" @on-change="sliderEvent" :precision="0" :max="60" :step="1" :min="1" size="small" v-model="editInfo.subscribeDuration" style="width: 50px;"></Input-number>
                             </div>
                         </detail-item-edit>
                     </section>
-                    <h5 class="service-control p-x-r-5">时效策略</h5>
-                    <section class="detail-info">
-                        <label class="detail-info-desc">生效时间:</label>
-                        <div class="detail-info-val">2018-09-27</div>
-                    </section>
-                    <section class="detail-info">
-                        <label class="detail-info-desc">有效期:</label>
-                        <div class="detail-info-val">1个月</div>
-                    </section>
                     <section class="detail-info">
                         <label class="detail-info-desc">失效时间:</label>
-                        <div class="detail-info-val">2018-10-31</div>
-                    </section>
-                    <h5 class="service-control p-x-r-5">
+                        <div class="detail-info-val">{{endTime}}</div>
+                    </section> -->
+                    <!-- <h5 class="service-control p-x-r-5">
                         计费策略
-                        <i-switch class="m-x-l-2" v-model="isfree" size="large">
+                        <i-switch
+                            class="m-x-l-2"
+                            v-model="isfree"
+                            size="large"
+                            :disabled="!(!isForWatchOrderInfo && isCanEdit)"
+                            @on-change="isfreeEvent">
                             <span slot="open">免费</span>
                             <span slot="close">付费</span>
                         </i-switch>
@@ -147,11 +198,12 @@
                         <section class="detail-info">
                             <label class="detail-info-desc">计费类型</label>
                             <detail-item-edit
+                                :isCanEdit="isCanEdit && !isForWatchOrderInfo"
                                 :valueObject="editInfo"
                                 :valueFields="['strategyType']"
                                 paramKey="strategyType"
                                 @submit="submit">
-                                <Tag slot="displayValue" type="border" color="green">收费</Tag>
+                                <Tag slot="displayValue" type="border" color="green">{{strategyTypeDisplayValue}}</Tag>
                                 <Select slot="editOption" :transfer="true" size="small" v-model="editInfo.strategyType" style="width: 300px;">
                                     <Option v-for="item in typeList" :value="item.value" :key="item.value">
                                         {{ item.label }}
@@ -162,20 +214,24 @@
                         <section class="detail-info">
                             <label class="detail-info-desc">基础付费</label>
                             <detail-item-edit
+                                :isCanEdit="isCanEdit && !isForWatchOrderInfo"
                                 :valueObject="editInfo"
                                 :valueFields="['strategyBase']"
                                 paramKey="strategyBase"
                                 @submit="submit">
-                                <span slot="displayValue">1000</span>
+                                <span slot="displayValue">{{strategyBaseDisplayValue}}</span>
                                 <InputNumber slot="editOption" :precision="0" :min="1" :step="1" size="small" v-model="editInfo.strategyBase"></InputNumber>
                             </detail-item-edit>
                         </section>
                         <section class="detail-info">
                             <label class="detail-info-desc">计费段</label>
                             <detail-item-edit
+                                :isCanEdit="isCanEdit && !isForWatchOrderInfo"
                                 :valueObject="editInfo"
                                 :valueFields="['priceRanges']"
                                 paramKey="priceRanges"
+                                @edit="editClick"
+                                @cancel="cancelClick"
                                 @submit="submit">
                                 <div slot="displayValue" class="price-display-box">
                                     <Row v-for="(item, index) in editInfo.priceRanges" :key="index">
@@ -197,18 +253,18 @@
                                         <Col span="24">
                                             <Input size="small" style="width: 80px;" readonly type="text" v-model="item.start" placeholder="请输入..." :number="true" :maxlength="10"></Input>
                                             ~
-                                            <Input size="small" style="width: 80px;" type="text" v-model="item.end" placeholder="请输入..." :number="true" :maxlength="10"></Input>
+                                            <Input size="small" style="width: 80px;" type="text" v-model="item.end" placeholder="请输入..." :number="true" :maxlength="10" @on-change="inputAuto(index)"></Input>
                                             <span class="seg-unit">{{ unit }}</span>
                                             <b>，费用：每</b>
                                             <span class="seg-unit">{{ unit }}</span>
                                             <Input size="small" style="width: 80px;" type="text" v-model="item.price" placeholder="请输入..." :number="true" :maxlength="10"></Input>
                                             分
-                                            <Button v-show="editInfo.priceRanges.length === index + 1 && editInfo.priceRanges.length !== 1" size="small" type="error" class="del-btn m-x" icon="trash-b"></Button>
+                                            <Button v-show="editInfo.priceRanges.length === index + 1 && editInfo.priceRanges.length !== 1" size="small" type="error" class="del-btn m-x" icon="trash-b" @click="handleRemove(index)"></Button>
                                         </Col>
                                     </Row>
                                     <Row class="p-y-t">
                                         <Col span="24">
-                                            <Button type="dashed" long class="add-btn" style="width: 400px;" icon="plus-round">新增</Button>
+                                            <Button type="dashed" long class="add-btn" style="width: 400px;" icon="plus-round" @click="handleAdd">新增</Button>
                                             <Alert show-icon style="width: 400px; margin-bottom: 0;" class="m-y-t-5">
                                                 计费段 末尾值为 -1 ，代表无穷大
                                             </Alert>
@@ -220,33 +276,37 @@
                         <section class="detail-info">
                             <label class="detail-info-desc">备注</label>
                             <detail-item-edit
+                                :isCanEdit="isCanEdit && !isForWatchOrderInfo"
                                 :valueObject="editInfo"
                                 :valueFields="['strategyComment']"
                                 paramKey="strategyComment"
                                 @submit="submit">
-                                <span slot="displayValue">备注123备注</span>
+                                <span slot="displayValue">{{strategyCommentDisplayValue}}</span>
                                 <Input slot="editOption" type="textarea" :autosize="{minRows: 2}" size="small" v-model="editInfo.strategyComment"></Input>
                             </detail-item-edit>
                         </section>
-                    </div>
+                    </div> -->
                 </div>
             </Col>
-            <Col span="8">
+            <!-- <Col span="8">
                 <h4>操作日志</h4>
                 <timeline-com :showway="false" :logList="logList"></timeline-com>
                 <Button type="text" v-show="true">加载更多</Button>
-            </Col>
+            </Col> -->
         </Row>
     </GPage>
 </template>
 <script>
 import DetailItem from '../../components/form/DetailItem'
-import TimelineCom from '../../components/log/TimeLine'
+// import TimelineCom from '../../components/log/TimeLine'
 import {mapMutations} from 'vuex'
+// import subconfig from '../../store/modules/subconfig'
+import { subconfigApi } from '../../apis'
 export default {
     data () {
         return {
             isfree: false,
+            baseInfo: {},
             editInfo: {
                 verifySign: 0,
                 priceRanges: [],
@@ -297,17 +357,80 @@ export default {
                         pass: true
                     }
                 }
-            }
+            },
+            isCanEdit: false,
+            defaultPrice: [],
+            totalRequestsLimitJudge: false,
+            concurrentLimitJudge: false,
+            endTime: '',
+            isForWatchOrderInfo: false
         }
     },
     computed: {
         unit () {
             return this.editInfo.strategyType === 1 ? '次' : '月'
+        },
+        isVirtual () {
+            return this.baseInfo.type === 1
+        },
+        serverTypeDisplayValue () {
+            let type = this.baseInfo.type
+            if (type === 0) {
+                return '真实服务'
+            } else if (type === 1) {
+                return '虚拟服务'
+            } else if (type === 2) {
+                return '静态资源'
+            }
+        },
+        verifySignDisplayValue () {
+            let verifySign = this.editInfo.verifySign
+            if (verifySign === 0) {
+                return '不验签'
+            } else if (verifySign === 1) {
+                return '强验签'
+            } else if (verifySign === 2) {
+                return '弱验签'
+            }
+        },
+        encryptionDisplayValue () {
+            return this.editInfo.encryption ? '是' : '否'
+        },
+        antiReplayAttackDisplayValue () {
+            return this.editInfo.antiReplayAttack ? '是' : '否'
+        },
+        concurrentLimitDisplayValue () {
+            return this.editInfo.concurrentLimit > -1 ? this.editInfo.concurrentLimit : '不限'
+        },
+        totalRequestsLimitDisplayValue () {
+            return this.editInfo.totalRequestsLimit > -1 ? this.editInfo.totalRequestsLimit : '不限'
+        },
+        subscribeBeginDisplayValue () {
+            let date = new Date(this.editInfo.subscribeBegin)
+            return date.getFullYear() + '-' + `${(date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : `0${(date.getMonth() + 1)}`}` + '-' + `${(date.getMonth()) > 9 ? (date.getDate()) : `0${(date.getDate())}`}`
+        },
+        subscribeDurationDisplayValue () {
+            return this.editInfo.subscribeDuration + '个月'
+        },
+        strategyTypeDisplayValue () {
+            let label = ''
+            this.typeList.forEach(e => {
+                if (this.editInfo.strategyType === e.value) {
+                    label = e.label
+                }
+            })
+            return label
+        },
+        strategyBaseDisplayValue () {
+            return (this.editInfo.strategyBase) + '元'
+        },
+        strategyCommentDisplayValue () {
+            return this.editInfo.strategyComment
         }
     },
     components: {
-        detailItemEdit: DetailItem,
-        timelineCom: TimelineCom
+        detailItemEdit: DetailItem
+        // timelineCom: TimelineCom
     },
     methods: {
         ...mapMutations(['pushBreadcrumb', 'clearBreadcrumb']),
@@ -335,15 +458,187 @@ export default {
                 value = value * 100
             }
             params[key] = value
-            // subconfigApi.updateOrderedAPI(params).then(({body: {result, code, msg}}) => {
-
-            // })
+            subconfigApi.updateOrderedAPI(params).then(({body: {result, code, msg}}) => {
+            })
             val.onSuccess()
             this.$Message.success({
                 content: 'success',
                 duration: 5
             })
+        },
+        editClick (key) {
+            if (key === 'priceRanges') {
+                this.defaultPrice = this.editInfo.priceRanges ? [...this.editInfo.priceRanges] : []
+            }
+            if (key === 'concurrentLimit') {
+                this.concurrentLimitJudge = this.editInfo.concurrentLimit !== -1
+            }
+            if (key === 'totalRequestsLimit') {
+                this.totalRequestsLimitJudge = this.editInfo.totalRequestsLimit !== -1
+            }
+        },
+        cancelClick (key) {
+            if (key === 'concurrentLimit' || key === 'totalRequestsLimit') {
+                if (this.editInfo.concurrentLimit === -1) {
+                    this.concurrentLimitJudge = false
+                }
+                if (this.editInfo.totalRequestsLimit === -1) {
+                    this.totalRequestsLimitJudge = false
+                }
+            }
+            if (key === 'priceRanges') {
+                while (this.editInfo.priceRanges.length > 0) {
+                    this.editInfo.priceRanges.shift()
+                }
+                this.defaultPrice.forEach(i => this.editInfo.priceRanges.push(i))
+            }
+        },
+        getInfoById () {
+            let orderId = this.$route.params.orderId
+            subconfigApi.getOrderedDetailAPI({
+                orderId: orderId
+            }).then()
+            this.isCanEdit = true
+            let result = {
+                apiName: 'test api name',
+                groupName: 'test groupname',
+                apiPath: '/build/build.js',
+                apiComments: 'test comments',
+                type: 1,
+                bgPath: '/config/prod.env.js',
+                requestPath: '/doc/constraint.md',
+                method: 'get'
+            }
+            this.baseInfo = result
+            this.editInfo = {
+                verifySign: result.verifySign,
+                encryption: result.encryption,
+                antiReplayAttack: result.antiReplayAttack,
+                concurrentLimit: result.concurrentLimit,
+                totalRequestsLimit: result.totalRequestsLimit,
+                subscribeBegin: result.subscribeBegin,
+                subscribeDuration: result.subscribeDuration,
+                strategyType: result.strategyType,
+                strategyBase: result.strategyBase,
+                priceRanges: result.priceRanges ? result.priceRanges : [{
+                    start: 1,
+                    end: -1,
+                    price: 0
+                }],
+                strategyComment: result.strategyComment
+            }
+            this.isfree = result.free
+            let date = new Date(result.subscribeExpire)
+            let endtime = date.setMonth(date.getMonth() + 0)
+            endtime = new Date(endtime)
+            endtime = endtime.setDate(endtime.getDate() - 1)
+            let endTime = new Date(endtime)
+            this.endTime = endTime.getFullYear() + '-' + (endTime.getMonth() + 1) + '-' + endTime.getDate()
+        },
+        handleRemove (index) {
+            this.editInfo.priceRanges.splice(index, 1)
+        },
+        inputAuto (index) {
+            if (this.editInfo.priceRanges.length === index + 1) return
+            let now = this.editInfo.priceRanges[index].end
+            this.editInfo.priceRanges[index + 1].start = now + 1
+        },
+        handleAdd () {
+            let len = this.editInfo.priceRanges.length
+            if (this.editInfo.priceRanges[len - 1].end === -1) {
+                this.$Message.warning({
+                    content: '您输入的值中包含无穷大标识符 -1，不可新增计费段',
+                    duration: 5
+                })
+                return false
+            }
+            let nowIndex = this.editInfo.priceRanges.length - 1
+            if (typeof this.editInfo.priceRanges[nowIndex].end !== 'number') {
+                this.$Message.warning({
+                    content: '您输入的计费段末尾内容为非正整数，请重新输入',
+                    duration: 5
+                })
+                return false
+            }
+            if (!this.editInfo.priceRanges[nowIndex].end) {
+                this.editInfo.priceRanges.push({
+                    start: '',
+                    end: '',
+                    price: ''
+                })
+            } else {
+                this.editInfo.priceRanges.push({
+                    start: this.editInfo.priceRanges[nowIndex].end + 1,
+                    end: '',
+                    price: ''
+                })
+            }
+        },
+        isfreeEvent (val) {
+            this.editInfo.strategyType = 2
+            this.editInfo.strategyBase = 0
+            this.editInfo.priceRanges = [{
+                start: 1,
+                end: -1,
+                price: 0
+            }]
+            this.editInfo.strategyComment = ''
+            let params = {
+                id: this.$route.params.orderId,
+                free: val,
+                strategyType: 2,
+                strategyBase: 0,
+                priceRanges: [{
+                    start: 1,
+                    end: -1,
+                    price: 0
+                }],
+                strategyComment: ''
+            }
+            subconfigApi.updateOrderedAPI(params).then()
+            console.log(params)
+        },
+        sliderEvent (val) {
+            let date = new Date(this.editInfo.subscribeBegin)
+            let endtime = date.setMonth(date.getMonth() + val)
+            endtime = new Date(endtime)
+            endtime = endtime.setDate(endtime.getDate() - 1)
+            let endTime = new Date(endtime)
+            this.endTime = endTime.getFullYear() + '-' + (endTime.getMonth() + 1) + '-' + endTime.getDate()
+        },
+        datePickerEvent (val) {
+            let date = new Date(val)
+            let endtime = date.setMonth(date.getMonth() + this.editInfo.subscribeDuration)
+            endtime = new Date(endtime)
+            endtime = endtime.setDate(endtime.getDate() - 1)
+            let endTime = new Date(endtime)
+            this.endTime = endTime.getFullYear() + '-' + (endTime.getMonth() + 1) + '-' + endTime.getDate()
+        },
+        totalRequestsLimitEvent (val) {
+            if (typeof val !== 'number') {
+                if (val === false) {
+                    this.editInfo.totalRequestsLimit = -1
+                } else {
+                    this.editInfo.totalRequestsLimit = 1000
+                }
+            }
+        },
+        concurrentLimitEvent (val) {
+            if (typeof val !== 'number') {
+                if (val === false) {
+                    this.editInfo.concurrentLimit = -1
+                } else {
+                    this.editInfo.concurrentLimit = 5
+                }
+            }
         }
+    },
+    beforeRouteEnter: (to, from, next) => {
+        next(vm => {
+            if (to.params.way === 'info') {
+                vm.isForWatchOrderInfo = true
+            }
+        })
     },
     mounted () {
         if (this.$route.params.way === 'api') {
@@ -369,36 +664,7 @@ export default {
                 name: this.$route.params.apiName
             }])
         }
-        this.logList = [{
-            dailyLogs: [
-                {
-                    action: 3,
-                    avatar: '',
-                    avatarId: '123123',
-                    avatarType: 2,
-                    createBy: 'carrot',
-                    createDate: '2018-07-26 15:30:29',
-                    desc: '订阅启用',
-                    entityId: '2310009123jjw',
-                    feature: 'SubMgr',
-                    id: '9919230213kkda',
-                    time: '15:30:29'
-                }, {
-                    action: 1,
-                    avatar: '',
-                    avatarId: '123123',
-                    avatarType: 2,
-                    createBy: 'carrot',
-                    createDate: '2018-09-02 03:30:29',
-                    desc: '订阅服务',
-                    entityId: '2310009123jjw',
-                    feature: 'SubMgr',
-                    id: '9919230213kkda',
-                    time: '15:30:29'
-                }
-            ],
-            day: '2018年07月26日'
-        }]
+        this.getInfoById()
     }
 }
 </script>

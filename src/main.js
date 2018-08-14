@@ -11,7 +11,7 @@ import './assets/less/iview.less'
 import './assets/iconfont/iconfont.css'
 import LoginUser from './common/loginUser'
 import store from './store'
-import { getToken } from './common/utils'
+// import { getToken } from './common/utils'
 
 Vue.use(Router)
 
@@ -23,21 +23,21 @@ export const appRouter = new Router({
     routes: router
 })
 
-appRouter.beforeEach((to, from, next) => {
-    if (to.path === '/login') {
-        if (getToken()) {
-            next({ path: '/' })
-        } else {
-            next()
-        }
-    } else {
-        if (getToken()) {
-            next()
-        } else {
-            next({ path: '/login' })
-        }
-    }
-})
+// appRouter.beforeEach((to, from, next) => {
+//     if (to.path === '/login') {
+//         if (getToken()) {
+//             next({ path: '/' })
+//         } else {
+//             next()
+//         }
+//     } else {
+//         if (getToken()) {
+//             next()
+//         } else {
+//             next({ path: '/login' })
+//         }
+//     }
+// })
 
 /* eslint-disable no-new */
 new Vue({

@@ -3,17 +3,17 @@
 <GPage bg>
     <table-header>
         <div slot="left">
-            <Input v-model="orderApiName" size="small" style="width: 200px;" type="text" placeholder="请输入API名称" auto-complete="off"></Input>
+            <Input v-model="orderApiName" size="small" style="width: 200px;" type="text" placeholder="请输入渠道名称" auto-complete="off"></Input>
             <Button size="small" icon="search" @click="searchClick">查询</Button>
         </div>
         <div slot="right">
             <Button size="small" type="primary" @click="nextStep">下一步</Button>
-            <Button size="small" style="min-width: 52px;" @click="back">取消</Button>
+            <Button size="small" style="min-width: 52px;" @click="back">上一步</Button>
         </div>
     </table-header>
     <Row :gutter="16">
         <Col span="24">
-            <Table highlight-row :columns="columns" :data="notOrderedCallerList" :height="tableHeihgt" @on-current-change="onCurrentChange"></Table>
+            <Table highlight-row :columns="columns" :data="notOrderedCallerList" :height="tableHeihgt" @on-selection-change="onSelectionChange"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
     </Row>
@@ -34,22 +34,32 @@ export default {
             notOrderedCallerList: [],
             columns: [
                 {
-                    title: 'API名称',
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {title: '渠道编号', key: 'AAZ570'},
+                {title: '渠道名称', key: 'AAZ571'},
+                {
+                    title: '渠道类型',
+                    key: 'AAZ573',
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             tag: 'span',
-                            label: row.name,
-                            style: {
-                                marginRight: '10px',
-                                lineHeight: '28px',
-                                display: 'block',
-                                float: 'left'
-                            }
+                            label: this.channelType(row.AAZ573)
                         }])
                     }
                 },
-                {title: '描述', key: 'comments'},
-                {title: '服务组', key: 'groupName'}
+                {
+                    title: '渠道等级',
+                    key: 'AAZ572',
+                    render: (h, {column, index, row}) => {
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: this.channelLevel(row.AAZ572)
+                        }])
+                    }
+                }
             ],
             currentPage: 1,
             pageSize: 20,
@@ -73,7 +83,29 @@ export default {
         this.getOrderApi()
     },
     methods: {
-        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'setApiInfo']),
+        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'setApiInfo', 'setChannelInfo', 'gobackStep']),
+        channelType (type) {
+            if (type === 0) {
+                return '地方渠道'
+            } else if (type === 1) {
+                return '中央政府或部门'
+            } else if (type === 2) {
+                return '银行'
+            } else if (type === 3) {
+                return '第三方可信渠道'
+            } else if (type === 4) {
+                return '第三方其他渠道'
+            }
+        },
+        channelLevel (level) {
+            if (level === 1) {
+                return '一级'
+            } else if (level === 2) {
+                return '二级'
+            } else if (level === 3) {
+                return '三级'
+            }
+        },
         handleMainChange (v) {
             this.currentPage = v
             this.getOrderApi()
@@ -89,34 +121,29 @@ export default {
             }).then(() => {})
             this.notOrderedCallerList = [
                 {
-                    groupName: 'helloworld',
-                    comments: 'this is a describe',
-                    id: '01490ea66942000',
-                    name: '人员管理',
-                    path: '/user',
-                    serviceGroupId: '012345',
-                    virtual: false
+                    AAZ570: '9131337001',
+                    AAZ571: '06青岛银行APP',
+                    AAZ572: 1,
+                    AAZ573: 0
                 }, {
-                    groupName: 'wohaoea',
-                    comments: 'this is a describe123',
-                    id: '01490ea0-942000',
-                    name: '天气预报',
-                    path: '/user',
-                    serviceGroupId: '701223',
-                    virtual: true
+                    AAZ570: '9131337003',
+                    AAZ571: '01银行APP',
+                    AAZ572: 2,
+                    AAZ573: 2
                 }
             ]
             this.serverTime = 1532499166598
             this.totalNum = this.notOrderedCallerList.length
         },
-        onCurrentChange (currentRow, oldRow) {
+        onSelectionChange (currentRow) {
             // console.log(currentRow)
-            this.setApiInfo(currentRow)
+            this.setChannelInfo(currentRow)
+            // this.setApiInfo(currentRow)
         },
         nextStep () {
-            if (Object.keys(this.apiInfo).length < 1) {
+            if (Object.keys(this.channelInfo).length < 1) {
                 this.$Message.warning({
-                    content: '您还未选择API，请选择',
+                    content: '您还未选择渠道，请选择',
                     duration: 3
                 })
                 return false
@@ -127,15 +154,16 @@ export default {
             this.getOrderApi()
         },
         back () {
-            this.$router.push({
-                name: 'orderConfig'
-            })
+            this.setApiInfo({})
+            this.setChannelInfo([])
+            this.gobackStep()
         }
     },
     computed: {
         ...mapGetters({
             getStep: 'getStep',
-            apiInfo: 'apiInfo'
+            apiInfo: 'apiInfo',
+            channelInfo: 'channelInfo'
         })
     },
     watch: {

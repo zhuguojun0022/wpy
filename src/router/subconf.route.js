@@ -11,8 +11,8 @@ export default [
         component: orderedCaller
     },
     {
-        path: 'orderConfig/:callerId/:callerName',
-        name: 'OrderConfig',
+        path: 'orderConfig',
+        name: 'orderConfig',
         component: orderConfig
     },
     {
