@@ -1,5 +1,5 @@
 <template>
-<div id="myChart" :style="{width: '100%', height: '590px'}"></div>
+<div id="myChart" :style="{width: '100%', height: '100%'}"></div>
 </template>
 <script>
 import { infraApi } from '../../apis'
@@ -53,13 +53,11 @@ export default {
         this.areaBlog = provinceBig
         let regionBig = window.sessionStorage.getItem('regionId')
         this.areaBig = regionBig
-        // console.log(this.areaBig, 'Id')
         infraApi.dapingAllCity(this.areaBig).then(this.handleAllCitySuees.bind(this))
     },
     methods: {
         handleAllCitySuees (res) {
             let cityData = res.data.result
-            console.log(cityData, this.areaBlog, this.areaBig, '地图')
             let i = 0
             if (cityData) {
                 for (i in cityData) {
@@ -158,10 +156,24 @@ export default {
                         name: 'Top 5',
                         tooltip: { show: false },
                         type: 'effectScatter',
+                        clickable: false,
                         visualMap: false,
                         coordinateSystem: 'geo',
                         data: convertData(data.sort(function (a, b) { return b.value - a.value }).slice(0)),
-                        symbolSize: function (val) { return val[2] / 100 + 5 },
+                        symbolSize: function (val) {
+                            let wave = 5
+                            if (val[2] <= 100) {
+                                wave = 5
+                            } else if (val[2] <= 500) {
+                                wave = 7
+                            } else if (val[2] <= 1000) {
+                                wave = 9
+                            } else {
+                                wave = 11
+                            }
+                            // return val[2] / 100 + 4
+                            return wave
+                        },
                         showEffectOn: 'render',
                         rippleEffect: {
                             brushType: 'stroke'
@@ -192,11 +204,12 @@ export default {
             }
             myChart.setOption(option)
             myChart.on('click', function (params) {
-                window.sessionStorage.setItem('cityId', params.data.name)
-                window.sessionStorage.setItem('cityNumId', params.data.regionNo)
-                window.sessionStorage.setItem('cityTopId', params.data.regionNo)
-                that.$router.push('/cityScreen')
-                // window.sessionStorage.setItem("regionId",params.data.regionNo.slice(0,3))
+                if (params.data.regionNo) {
+                    window.sessionStorage.setItem('cityId', params.data.name)
+                    window.sessionStorage.setItem('cityNumId', params.data.regionNo)
+                    window.sessionStorage.setItem('cityTopId', params.data.regionNo)
+                    that.$router.push('/cityScreen')
+                }
             })
         }
     }

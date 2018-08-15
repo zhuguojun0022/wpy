@@ -73,7 +73,6 @@ export default {
         let regionBig = window.sessionStorage.getItem('regionId')
         this.areaBig = provinceBig
         this.areaBlog = regionBig
-        console.log(this.areaBlog, 'wpy1')
         // this.drawLine(provinceBig);
         let that = this
         let week = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
@@ -98,7 +97,6 @@ export default {
     methods: {
         handleMothSuees (res) {
             let cityData = res.data.result
-            console.log(cityData, 'wpymon')
             let i = 0
             if (cityData) {
                 for (i in cityData) {

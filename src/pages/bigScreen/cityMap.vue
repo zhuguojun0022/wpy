@@ -31,7 +31,6 @@ export default {
         this.cityBlog = provinceBig
         let regionBig = window.sessionStorage.getItem('cityNumId')
         this.cityBig = regionBig
-        console.log(this.cityBlog, this.cityBig, '地图')
         let that = this
         import(`./cityEcharts/${that.cityBig}.json`).then((res) => {
             echarts.registerMap(that.cityBlog, res)
@@ -52,10 +51,6 @@ export default {
             }
         },
         drawLine (areaBlog) {
-            // import chengduJson from './cityEcharts/510100.json'
-            // 基于准备好的dom，初始化echarts实例
-            // echarts.registerMap('成都市', chengduJson)
-            console.log(areaBlog, '市')
             let myChart = this.$echarts.init(document.getElementById('myChart'))
             let data = this.data
             let geoCoordMap = this.mapData
@@ -175,15 +170,6 @@ export default {
             }
             myChart.setOption(option)
         }
-    },
-    beforeMount () {
-        // let regionBig = window.sessionStorage.getItem('cityNumId')
-        // let provinceBig = window.sessionStorage.getItem('cityId')
-        // console.log('asd', regionBig)
-        // // import chengduJson from `@/cityEcharts/${regionBig}.json`
-        // import(`./cityEcharts/${regionBig}.json`).then((res) => {
-        //     echarts.registerMap(provinceBig, res)
-        // })
     }
 }
 </script>

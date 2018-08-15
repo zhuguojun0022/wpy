@@ -72,7 +72,6 @@ export default {
         this.areaBig = regionBig
         let that = this
         if (this.areaBig == null) {
-            console.log('wpy')
             let regionBig = window.sessionStorage.getItem('cityTopId')
             this.areaBig = regionBig
         }
@@ -82,7 +81,6 @@ export default {
     },
     methods: {
         handleAllSuees (res) {
-            console.log(this.areaBig, 'yy')
             this.allEndVal = Number(res.data.result.ecardCount)
             this.firstEndVal = Number(res.data.result.ecardOneCount)
             this.secondEndVal = Number(res.data.result.ecardTwoCount)

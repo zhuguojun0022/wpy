@@ -72,7 +72,6 @@ export default {
         this.areaBig = regionBig
         let that = this
         if (this.areaBig == null) {
-            console.log('wpy')
             this.areaBig = ''
         }
         infraApi.dapingAll(that.areaBig).then(that.handleAllSuees.bind(that))
@@ -81,7 +80,6 @@ export default {
     },
     methods: {
         handleAllSuees (res) {
-            console.log(this.areaBig, 'yy')
             this.allEndVal = Number(res.data.result.ecardCount)
             this.firstEndVal = Number(res.data.result.ecardOneCount)
             this.secondEndVal = Number(res.data.result.ecardTwoCount)

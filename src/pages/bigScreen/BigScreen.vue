@@ -4,7 +4,7 @@
         <ul>
           <li class="top_time">{{date}} {{time}}</li>
             <li class="top_title" >电子社保卡签发情况</li>
-            <li><span class="sign_out">退出登录</span></li>
+            <li><span class="sign_out" @click="goback">返回</span></li>
         </ul>
     </div>
     <div class="data_show">
@@ -110,6 +110,9 @@ export default {
         handleChannelSuees (res) {
             this.sanData = res.data.result
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
+        },
+        goback () {
+            this.$router.go(-1)
         },
         drawLine (xzhedata, yzheFdata, yzheSdata, tiaoData, zhuData, sanData) {
             let myChartZhe = echarts.init(document.getElementById('openZhe'))

@@ -98,7 +98,6 @@ export default {
     methods: {
         handleMothSuees (res) {
             let cityData = res.data.result
-            console.log(cityData, 'wpymon')
             let i = 0
             if (cityData) {
                 for (i in cityData) {
@@ -112,7 +111,6 @@ export default {
         },
         handleCitySuees (res) {
             this.zhuData = res.data.result
-            console.log(this.zhuData, 'wpy')
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
         },
         handleChannelSuees (res) {

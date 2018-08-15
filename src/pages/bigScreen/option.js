@@ -90,7 +90,7 @@ export const setOptionPie = function setOptionBar (datas) {
                 type: 'shadow'
             },
             formatter: function (params, ticket, callback) {
-                let html = '<div class=\'wpypop_title\'>' + datas[params[0].dataIndex].regionName + '</div>' + '<ul class=\'wpypop_ul pop_font1\'><li>签发数</li><li>一级签发</li><li>二级签发</li></ul>' + '<ul class=\'wpypop_ul pop_font2\'><li>' + datas[params[0].dataIndex].ecardCount + '</li><li>' + datas[params[0].dataIndex].ecardOneCount + '</li><li>' + datas[params[0].dataIndex].ecardTwoCount + '</li></ul>'
+                let html = '<div class=\'wpypop_title\'>' + datas[params.dataIndex].channelName + '</div>' + '<ul class=\'wpypop_ul pop_font1\'><li>签发数</li><li>一级签发</li><li>二级签发</li></ul>' + '<ul class=\'wpypop_ul pop_font2\'><li>' + datas[params.dataIndex].ecardCount + '</li><li>' + datas[params.dataIndex].ecardOneCount + '</li><li>' + datas[params.dataIndex].ecardTwoCount + '</li></ul>'
                 return html
             }
         },

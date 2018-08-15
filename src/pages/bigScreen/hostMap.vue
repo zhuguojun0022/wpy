@@ -127,7 +127,6 @@ export default {
                         coordinateSystem: 'geo',
                         data: convertData(data.sort(function (a, b) { return b.value - a.value }).slice(0)),
                         symbolSize: function (val) {
-                            console.log(val[2], '涟漪')
                             let wave = 5
                             if (val[2] <= 100) {
                                 wave = 5
@@ -171,12 +170,13 @@ export default {
             }
             myChart.setOption(option)
             myChart.on('click', function (params) {
-                // console.log(params.data.name,"wpy")
                 //  console.log(params.data.regionNo.slice(0,3),'liaoning')
-                that.$router.push('/provinceScreen')
-                window.sessionStorage.setItem('provinceId', params.data.name)
-                window.sessionStorage.setItem('regionId', params.data.regionNo.slice(0, 3))
-                window.sessionStorage.setItem('regionTopId', params.data.regionNo.slice(0, 3))
+                if (params.data.regionNo) {
+                    that.$router.push('/provinceScreen')
+                    window.sessionStorage.setItem('provinceId', params.data.name)
+                    window.sessionStorage.setItem('regionId', params.data.regionNo.slice(0, 3))
+                    window.sessionStorage.setItem('regionTopId', params.data.regionNo.slice(0, 3))
+                }
                 // window.sessionStorage.setItem("regionId",params.data.regionNo.slice(0,3))
             })
         }
