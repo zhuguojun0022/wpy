@@ -18,8 +18,8 @@
             <tr>
                 <td>省份</td>
                 <td>城市</td>
-                <td>纬度</td>
                 <td>经度</td>
+                <td>纬度</td>
                 <td>操作</td>
             </tr>
         </thead>
@@ -27,8 +27,8 @@
             <tr v-for="item of newsList" :key="item.id">
                 <td width="10%">{{item.REGIONPROVINCE}}</td>
                 <td width="10%">{{item.REGIONNAME}}</td>
-                <td width="10%">{{item.LATITUDE}}</td>
                 <td width="10%">{{item.LONGITUDE}}</td>
+                <td width="10%">{{item.LATITUDE}}</td>
                 <td width="5%" class="edits">
                     <em class="edit" @click="edit(item)">编辑</em>
                     <em class="delete" @click="handleDelete(item.REGIONID)">删除</em>
@@ -64,7 +64,6 @@
 </template>
 
 <script>
-// import {TableHeader, TableFooter} from '../../../components/table'
 import {infraApi} from '../../../apis'
 export default {
     data () {
