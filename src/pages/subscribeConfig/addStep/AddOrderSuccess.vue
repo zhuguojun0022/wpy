@@ -1,10 +1,8 @@
 <template>
     <div class="done-com bg-white">
         <div class="text-center p-y-2">
-            <p class="text-center">
-                <i class="iconfont icon-success icon"></i>
-            </p>
-            <p class="text-center lab">
+            <Icon type="ios-checkmark" size="50" color="#00C957"></Icon>
+            <p class="text-center lab m-y-t-1">
                 <span>完成</span>
             </p>
             <p class="text-center z">{{ c }}秒后将自动返回首页...</p>
@@ -30,7 +28,7 @@ export default {
     methods: {
         done () {
             this.$router.push({
-                name: 'OrderConfig',
+                name: 'orderConfig',
                 params: {
                     callerId: this.$route.params.callerId,
                     appId: this.$route.params.appId

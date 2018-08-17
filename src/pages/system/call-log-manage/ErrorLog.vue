@@ -9,18 +9,9 @@
                 <label class="required-search m-x-r">结束时间:</label>
                 <Date-picker transfer :clearable="false" confirm v-model="searchValue.endTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择结束时间" style="width: 216px"></Date-picker>
             </FormItem>
-            <FormItem v-if="!isCustomized" prop="endTime" class="m-x-r search-condition">
-                <label class="required-search m-x-r">有效时间:</label>
-                <Select v-model="searchValue.timeFrame" transfer class="m-x" placeholder="请选择有效时间" size="small" clearable style="width: 216px">
-                    <Option v-for="item in timeFrameList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>
-            </FormItem>
-            <FormItem class="search-condition">
-                <Checkbox v-model="isCustomized">自定义结束时间</Checkbox>
-            </FormItem>
             <FormItem prop="apiName" class="m-x search-condition">
                 <label class="search-title m-x-r">API名称:</label>
-                <Select
+                <!-- <Select
                     v-if="isAdmin"
                     v-model="applySelect"
                     placeholder="请搜索应用"
@@ -32,10 +23,10 @@
                     :transfer="true"
                     :remote-method="matchAppEvent"
                     :loading="findLoading">
-                    <Option v-for="item in applyData" :value="item.appId" :key="item.appId">{{item.appName}}</Option>
-                </Select>
+                    <Option v-for="item in applyData" :value="item.id" :key="item.id">{{item.name}}</Option>
+                </Select> -->
                 <Select v-model="searchValue.apiSelected" placeholder="请选择api" size="small" clearable style="width: 200px">
-                    <Option v-for="item in apiData" :value="item.apiId" :key="item.apiId">{{ item.apiName }}</Option>
+                    <Option v-for="item in apiData" :value="item.id" :key="item.id">{{ item.name }}</Option>
                 </Select>
             </FormItem>
             <FormItem prop="caller" class="m-x-r-2 search-condition" v-if="publish">
@@ -47,7 +38,7 @@
                     size="small"
                     clearable
                     transfer>
-                    <Option v-for="(item) in filterCallerListData" :value="item.appKey" :key="item.appKey">{{item.name}}</Option>
+                    <Option v-for="(item) in filterCallerListData" :value="item.channelId" :key="item.channelId">{{item.AAZ571}}</Option>
                 </Select>
                 <Select
                     v-if="isAdmin"
@@ -80,13 +71,23 @@
             </FormItem>
         </Form>
         <Table size="small" :columns="columns" :data="tableData" style="width: 100%"></Table>
+        <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleCurrentChange"></table-footer>
     </section>
 </template>
 <script>
+import {monitorApi, subconfigApi} from '../../../apis'
+import {TableFooter} from '../../../components/table'
+
 export default {
+    components: {
+        TableFooter: TableFooter
+    },
     data () {
         return {
             findLoading: false,
+            totalNum: 0,
+            currentPage: 1,
+            pageSize: 20,
             searchValue: {
                 startTime: '',
                 endTime: '',
@@ -164,17 +165,32 @@ export default {
         searchClick () {
             this.reqLogList()
         },
-        matchAppEvent (name) {
-            if (name.length < 1) {
-                return false
-            }
+        handleCurrentChange (val) {
+            this.currentPage = val
+            this.reqLogList()
         },
-        getCodeList () {
-            this.codeList = [
-                { msg: '4002 (没有有效的订阅)', code: '4002' },
-                { msg: '4003 (没有订阅该API)', code: '4003' },
-                { msg: '4004 (服务没有找到)', code: '4004' }
-            ]
+        // 查询应用的方法
+        getAppList (name) {
+            monitorApi.getApp({
+                name: name,
+                publish: true
+            }).then(({body: {result, code, msg}}) => {})
+        },
+        // 查询api接口
+        getApiList (appId) {
+            subconfigApi.getApiList({
+                name: null
+            }).then(({data: {result, resultCode, msg}}) => {
+                this.apiData = result
+            })
+        },
+        // 调用者接口查询
+        getCallerList (name) {
+            subconfigApi.getChannelInfo({
+                name: ''
+            }).then(({data: {result, resultCode, msg}}) => {
+                this.filterCallerListData = result
+            })
         },
         reqLogList () {
             let start = this.searchValue.startTime - 0
@@ -195,10 +211,47 @@ export default {
                 })
                 return false
             }
+            let params = {
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+                callerId: this.searchValue.caller,
+                apiId: this.searchValue.apiSelected,
+                code: this.searchValue.returnCode,
+                start: this.searchValue.startTime,
+                end: this.searchValue.endTime
+            }
+            monitorApi.oldReqLogs(params).then(({body: {result, code, msg}}) => {})
+        },
+        matchAppEvent (name) {
+            if (name.length < 1) {
+                return false
+            }
+            this.getAppList(name)
+        },
+        matchCallerEvent () {
+            if (name.length < 1) {
+                return false
+            }
+            this.getCallerList(name)
+        },
+        getCodeList () {
+            this.codeList = [
+                { msg: '4002 (没有有效的订阅)', code: '4002' },
+                { msg: '4003 (没有订阅该API)', code: '4003' },
+                { msg: '4004 (服务没有找到)', code: '4004' }
+            ]
+        }
+    },
+    watch: {
+        applySelect (val, old) {
+            if (!val) return false
+            this.getApiList(val)
         }
     },
     mounted () {
         this.getCodeList()
+        this.getCallerList()
+        this.getApiList()
         let routeWay = this.$route.params.dashboard
         let nowDate = new Date()
         let date = nowDate.getDate()

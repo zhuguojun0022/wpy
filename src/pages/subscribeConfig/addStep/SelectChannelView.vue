@@ -3,7 +3,7 @@
 <GPage bg>
     <table-header>
         <div slot="left">
-            <Input v-model="orderApiName" size="small" style="width: 200px;" type="text" placeholder="请输入渠道名称" auto-complete="off"></Input>
+            <Input v-model="channelName" size="small" style="width: 200px;" type="text" placeholder="请输入渠道名称" auto-complete="off"></Input>
             <Button size="small" icon="search" @click="searchClick">查询</Button>
         </div>
         <div slot="right">
@@ -14,7 +14,6 @@
     <Row :gutter="16">
         <Col span="24">
             <Table highlight-row :columns="columns" :data="notOrderedCallerList" :height="tableHeihgt" @on-selection-change="onSelectionChange"></Table>
-            <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
     </Row>
 </GPage>
@@ -30,7 +29,7 @@ export default {
     components: {TableHeader, TableFooter},
     data () {
         return {
-            orderApiName: '',
+            channelName: '',
             notOrderedCallerList: [],
             columns: [
                 {
@@ -38,7 +37,7 @@ export default {
                     width: 60,
                     align: 'center'
                 },
-                {title: '渠道编号', key: 'AAZ570'},
+                {title: '渠道编号', key: 'channelId'},
                 {title: '渠道名称', key: 'AAZ571'},
                 {
                     title: '渠道类型',
@@ -61,9 +60,6 @@ export default {
                     }
                 }
             ],
-            currentPage: 1,
-            pageSize: 20,
-            totalNum: 0,
             tableHeihgt: '',
             serverTime: 0,
             activeType: 1
@@ -80,7 +76,8 @@ export default {
         this.tableHeihgt = window.innerHeight - 284
     },
     mounted () {
-        this.getOrderApi()
+        this.setChannelInfo([])
+        this.getChannelInfo()
     },
     methods: {
         ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'setApiInfo', 'setChannelInfo', 'gobackStep']),
@@ -106,34 +103,21 @@ export default {
                 return '三级'
             }
         },
-        handleMainChange (v) {
-            this.currentPage = v
-            this.getOrderApi()
-        },
-        getOrderApi () {
+        getChannelInfo (type) {
+            let name = ''
+            if (type === 'search') {
+                name = this.channelName
+            }
             console.log(this.$route.params.callerId)
-            let callerId = this.$route.params.callerId
             this.openLoading()
             this.closeLoading()
-            subconfigApi.getNoOrderedAPI({
-                callerId: callerId,
-                name: this.orderApiName
-            }).then(() => {})
-            this.notOrderedCallerList = [
-                {
-                    AAZ570: '9131337001',
-                    AAZ571: '06青岛银行APP',
-                    AAZ572: 1,
-                    AAZ573: 0
-                }, {
-                    AAZ570: '9131337003',
-                    AAZ571: '01银行APP',
-                    AAZ572: 2,
-                    AAZ573: 2
+            subconfigApi.getChannelInfo({
+                name: name
+            }).then(({data: {resultCode, result, msg}}) => {
+                if (resultCode === '000000') {
+                    this.notOrderedCallerList = result
                 }
-            ]
-            this.serverTime = 1532499166598
-            this.totalNum = this.notOrderedCallerList.length
+            })
         },
         onSelectionChange (currentRow) {
             // console.log(currentRow)
@@ -151,7 +135,7 @@ export default {
             this.setStep()
         },
         searchClick () {
-            this.getOrderApi()
+            this.getChannelInfo('search')
         },
         back () {
             this.setApiInfo({})

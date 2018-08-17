@@ -61,8 +61,6 @@ export default {
             icon: 'icon-fuwuguanli'
         })
         this.pushBreadcrumb([{
-            name: this.$route.params.callerName
-        }, {
             name: '新增订阅'
         }])
     },

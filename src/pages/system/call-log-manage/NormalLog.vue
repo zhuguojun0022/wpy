@@ -64,12 +64,17 @@
             </FormItem>
         </Form>
         <Table size="small" :columns="columns" :data="tableData" style="width: 100%"></Table>
-        <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
+        <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleCurrentChange"></table-footer>
     </section>
 </template>
 <script>
 import {monitorApi} from '../../../apis'
+import {TableFooter} from '../../../components/table'
+
 export default {
+    components: {
+        TableFooter: TableFooter
+    },
     data () {
         return {
             findLoading: false,
@@ -228,13 +233,29 @@ export default {
         },
         getAppList (name) {
             this.findLoading = true
+            monitorApi.getApp({
+                name: name,
+                publish: true
+            }).then()
         },
         getApiList (appId) {
+            monitorApi.getApiList({
+                appId: appId,
+                publish: this.publish
+            }).then()
         },
         getCallerList (name) {
             this.findLoading = true
+            monitorApi.getApp({
+                name: name,
+                publish: false
+            }).then()
         },
-        getfilterCallerList (appId) {
+        getfilterCallerList (apiId) {
+            monitorApi.getfilterCallerList({
+                appId: this.appId,
+                apiId: apiId
+            }).then()
         },
         reqLogList () {
             this.prePageDisable = true
@@ -264,7 +285,18 @@ export default {
                 return false
             }
             this.currentPage = this.currentPage - 1
-            monitorApi.reqLogList(this.applySelect, this.pageSize, this.currentPage, this.searchValue.caller, this.searchValue.apiSelected, this.searchValue.returnCode, this.searchValue.startTime, this.searchValue.endTime).then(({body: {result, code, msg}}) => {
+            monitorApi.reqLogs({
+                appId: this.applySelect,
+                pageSize: this.pageSize,
+                currentPage: this.currentPage,
+                appKey: this.searchValue.caller,
+                apiId: this.searchValue.apiSelected,
+                code: this.searchValue.returnCode,
+                startTime: this.searchValue.startTime,
+                endTime: this.searchValue.endTime,
+                lastRowKey: undefined,
+                beginRowKey: this.preBeginRowKey
+            }).then(({body: {result, code, msg}}) => {
                 if (code === '2000') {
                     this.tableData = result.reqLogs
                     this.preBeginRowKey = result.reqLogs[0].rowKey
@@ -286,7 +318,17 @@ export default {
                 return false
             }
             this.currentPage = this.currentPage + 1
-            monitorApi.reqLogList(this.applySelect, this.pageSize, this.currentPage, this.searchValue.caller, this.searchValue.apiSelected, this.searchValue.returnCode, this.searchValue.startTime, this.searchValue.endTime).then(({body: {result, code, msg}}) => {
+            monitorApi.reqLogs({
+                appId: this.applySelect,
+                pageSize: this.pageSize,
+                currentPage: this.currentPage,
+                appKey: this.searchValue.caller,
+                apiId: this.searchValue.apiSelected,
+                code: this.searchValue.returnCode,
+                startTime: this.searchValue.startTime,
+                endTime: this.searchValue.endTime,
+                lastRowKey: this.lastRowKey
+            }).then(({body: {result, code, msg}}) => {
                 if (code === '2000') {
                     if (result.reqLogs.length > 0) {
                         this.tableData = result.reqLogs

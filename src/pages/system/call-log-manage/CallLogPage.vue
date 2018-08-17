@@ -11,15 +11,13 @@
         <GTab :options="options" :value="'error'" @input="getCurrentTab"></GTab>
         <div class="m-y-t-2">
             <error-log v-show="logType === 'error'"></error-log>
-            <normal-log v-show="logType === 'normal'"></normal-log>
         </div>
     </GPage>
 </template>
 <script>
 import GTab from '../../../components/GTab'
-import {TableFooter} from '../../../components/table'
 import ErrorLog from './ErrorLog'
-import NormalLog from './NormalLog'
+// import NormalLog from './NormalLog'
 import {mapMutations} from 'vuex'
 
 export default {
@@ -31,17 +29,13 @@ export default {
             options: [{
                 label: '错误日志',
                 value: 'error'
-            }, {
-                label: '普通日志',
-                value: 'normal'
             }],
             logType: 'error'
         }
     },
     components: {
-        tableFooter: TableFooter,
         errorLog: ErrorLog,
-        normalLog: NormalLog,
+        // normalLog: NormalLog,
         GTab: GTab
     },
     beforeRouteEnter (to, from, next) {

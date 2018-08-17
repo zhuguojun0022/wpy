@@ -3,7 +3,9 @@
 <GPage bg>
     <table-header>
         <div slot="left">
-            <Input v-model="orderApiName" size="small" style="width: 200px;" type="text" placeholder="请输入API名称" auto-complete="off"></Input>
+            <Select size="small" filterable v-model="orderApiName" placeholder="请输入API名称" style="width: 200px" clearable>
+                <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+            </Select>
             <Button size="small" icon="search" @click="searchClick">查询</Button>
         </div>
         <div slot="right">
@@ -14,7 +16,6 @@
     <Row :gutter="16">
         <Col span="24">
             <Table highlight-row :columns="columns" :data="notOrderedCallerList" :height="tableHeihgt" @on-current-change="onCurrentChange"></Table>
-            <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
     </Row>
 </GPage>
@@ -51,12 +52,9 @@ export default {
                 {title: '描述', key: 'comments'},
                 {title: '服务组', key: 'groupName'}
             ],
-            currentPage: 1,
-            pageSize: 20,
-            totalNum: 0,
             tableHeihgt: '',
-            serverTime: 0,
-            activeType: 1
+            activeType: 1,
+            apiList: []
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -74,40 +72,26 @@ export default {
     },
     methods: {
         ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'setApiInfo']),
-        handleMainChange (v) {
-            this.currentPage = v
-            this.getOrderApi()
-        },
-        getOrderApi () {
-            console.log(this.$route.params.callerId)
-            let callerId = this.$route.params.callerId
+        getOrderApi (type) {
+            let name
+            if (type) {
+                name = this.orderApiName
+            }
             this.openLoading()
-            this.closeLoading()
-            subconfigApi.getNoOrderedAPI({
-                callerId: callerId,
-                name: this.orderApiName
-            }).then(() => {})
-            this.notOrderedCallerList = [
-                {
-                    groupName: 'helloworld',
-                    comments: 'this is a describe',
-                    id: '01490ea66942000',
-                    name: '人员管理',
-                    path: '/user',
-                    serviceGroupId: '012345',
-                    virtual: false
-                }, {
-                    groupName: 'wohaoea',
-                    comments: 'this is a describe123',
-                    id: '01490ea0-942000',
-                    name: '天气预报',
-                    path: '/user',
-                    serviceGroupId: '701223',
-                    virtual: true
+            subconfigApi.getApiList({
+                name: name
+            }).then(({data: {msg, resultCode, result}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.notOrderedCallerList = result
+                    this.apiList = this.apiList.length === 0 ? result : this.apiList
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
                 }
-            ]
-            this.serverTime = 1532499166598
-            this.totalNum = this.notOrderedCallerList.length
+            })
         },
         onCurrentChange (currentRow, oldRow) {
             // console.log(currentRow)
@@ -124,7 +108,7 @@ export default {
             this.setStep()
         },
         searchClick () {
-            this.getOrderApi()
+            this.getOrderApi('search')
         },
         back () {
             this.$router.push({

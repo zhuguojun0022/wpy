@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import './components/confirm'
+// import 'iview/dist/styles/iview.css'
 import {
     Button,
     Icon,
