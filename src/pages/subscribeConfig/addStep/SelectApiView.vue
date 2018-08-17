@@ -3,18 +3,19 @@
 <GPage bg>
     <table-header>
         <div slot="left">
-            <Input v-model="orderApiName" style="width: 200px;" type="text" placeholder="请输入" auto-complete="off"></Input>
-            <Button icon="search">查询</Button>
+            <Select size="small" filterable v-model="orderApiName" placeholder="请输入API名称" style="width: 200px" clearable>
+                <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+            </Select>
+            <Button size="small" icon="search" @click="searchClick">查询</Button>
         </div>
         <div slot="right">
-            <Button type="primary" @click="nextStep">下一步</Button>
-            <Button style="min-width: 52px;">取消</Button>
+            <Button size="small" type="primary" @click="nextStep">下一步</Button>
+            <Button size="small" style="min-width: 52px;" @click="back">取消</Button>
         </div>
     </table-header>
     <Row :gutter="16">
         <Col span="24">
-            <Table highlight-row :columns="columns" :data="tableData" :height="tableHeihgt" @on-current-change="onCurrentChange"></Table>
-            <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
+            <Table highlight-row :columns="columns" :data="notOrderedCallerList" :height="tableHeihgt" @on-current-change="onCurrentChange"></Table>
         </Col>
     </Row>
 </GPage>
@@ -22,6 +23,7 @@
 <script>
 import {TableHeader, TableFooter} from '../../../components/table'
 import { mapGetters, mapMutations } from 'vuex'
+import { subconfigApi } from '../../../apis'
 // import server from '../../config/httpConfig'
 // import {systemApi} from '../../apis'
 
@@ -30,7 +32,7 @@ export default {
     data () {
         return {
             orderApiName: '',
-            tableData: [],
+            notOrderedCallerList: [],
             columns: [
                 {
                     title: 'API名称',
@@ -44,25 +46,15 @@ export default {
                                 display: 'block',
                                 float: 'left'
                             }
-                        }, {
-                            tag: 'Tag',
-                            color: 'yellow',
-                            label: '虚拟',
-                            style: {
-                                display: row.virtual ? 'inline-block' : 'none'
-                            }
                         }])
                     }
                 },
                 {title: '描述', key: 'comments'},
                 {title: '服务组', key: 'groupName'}
             ],
-            currentPage: 1,
-            pageSize: 20,
-            totalNum: 0,
             tableHeihgt: '',
-            serverTime: 0,
-            activeType: 1
+            activeType: 1,
+            apiList: []
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -73,52 +65,55 @@ export default {
         })
     },
     created () {
-        this.getOrderApi()
         this.tableHeihgt = window.innerHeight - 284
+    },
+    mounted () {
+        this.getOrderApi()
     },
     methods: {
         ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'setApiInfo']),
-        handleMainChange (v) {
-            this.currentPage = v
-            this.getOrderApi()
-        },
-        getOrderApi () {
+        getOrderApi (type) {
+            let name
+            if (type) {
+                name = this.orderApiName
+            }
             this.openLoading()
-            this.closeLoading()
-            this.tableData = [
-                {
-                    groupName: 'helloworld',
-                    comments: 'this is a describe',
-                    id: '01490ea66942000',
-                    name: '人员管理',
-                    path: '/user',
-                    serviceGroupId: '012345',
-                    virtual: false
-                }, {
-                    groupName: 'wohaoea',
-                    comments: 'this is a describe123',
-                    id: '01490ea0-942000',
-                    name: '天气预报',
-                    path: '/user',
-                    serviceGroupId: '701223',
-                    virtual: true
+            subconfigApi.getApiList({
+                name: name
+            }).then(({data: {msg, resultCode, result}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.notOrderedCallerList = result
+                    this.apiList = this.apiList.length === 0 ? result : this.apiList
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
                 }
-            ]
-            this.serverTime = 1532499166598
-            this.totalNum = this.tableData.length
+            })
         },
         onCurrentChange (currentRow, oldRow) {
+            // console.log(currentRow)
             this.setApiInfo(currentRow)
         },
         nextStep () {
             if (Object.keys(this.apiInfo).length < 1) {
                 this.$Message.warning({
                     content: '您还未选择API，请选择',
-                    duration: 5
+                    duration: 3
                 })
                 return false
             }
             this.setStep()
+        },
+        searchClick () {
+            this.getOrderApi('search')
+        },
+        back () {
+            this.$router.push({
+                name: 'orderConfig'
+            })
         }
     },
     computed: {

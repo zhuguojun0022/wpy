@@ -11,12 +11,12 @@ export default [
         component: orderedCaller
     },
     {
-        path: 'orderConfig/:callerId/:callerName',
-        name: 'OrderConfig',
+        path: 'orderConfig',
+        name: 'orderConfig',
         component: orderConfig
     },
     {
-        path: 'subDetails/:way/:orderId/:serverTime/:callerName/:apiName',
+        path: 'subDetails/:apiId/:apiName',
         name: 'subDetails',
         component: subDetails
     },

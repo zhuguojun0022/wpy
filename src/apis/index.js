@@ -5,5 +5,6 @@ import channelApi from './channelApi'
 import billApi from './billApi'
 import subconfigApi from './subconfigApi'
 import serviceApi from './serviceApi'
+import monitorApi from './monitorApi'
 
-export {infraApi, systemApi, channelApi, billApi, subconfigApi, serviceApi}
+export {infraApi, systemApi, channelApi, billApi, subconfigApi, serviceApi, monitorApi}

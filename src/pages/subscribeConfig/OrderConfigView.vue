@@ -6,15 +6,19 @@
             <Button type="primary" @click="addOrder">新增订阅</Button>
         </div>
         <div slot="right">
-            <RadioGroup type="button" v-model="activeType">
-                <Radio :label="1">全部</Radio>
-                <Radio :label="2">已过期</Radio>
-            </RadioGroup>
+            <Select filterable v-model="APIName" placeholder="API名称" style="width: 200px" clearable>
+                <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+            </Select>
+            <Input v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable></Input>
+            <Select v-model="status" style="width: 200px" placeholder="状态">
+                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <Button type="primary" @click="onSearchClick">查询</Button>
         </div>
     </table-header>
     <Row :gutter="16">
         <Col span="24">
-            <Table highlight-row :columns="columns" :data="tableData" :height="tableHeihgt"></Table>
+            <Table :columns="columns" :data="tableData" :height="tableHeihgt"></Table>
             <table-footer :total-num="totalNum" :current-page="currentPage" :page-size="pageSize" @on-change="handleMainChange"></table-footer>
         </Col>
     </Row>
@@ -30,34 +34,18 @@ import {subconfigApi} from '../../apis'
 export default {
     components: {TableHeader, TableFooter},
     data () {
-        let filter = (serverTime, row) => {
-            if (row.subscribeExpire <= serverTime) {
+        let filter = (row) => {
+            if (!row.active) {
                 return {
-                    label: '已过期',
-                    color: 'default',
-                    border: '1px solid grey'
+                    label: '未启用',
+                    color: 'red',
+                    border: '1px solid red'
                 }
-            } else {
-                if (!row.active) {
-                    return {
-                        label: '未启用',
-                        color: 'red',
-                        border: '1px solid red'
-                    }
-                } else if (row.active) {
-                    if (row.subscribeBegin > serverTime) {
-                        return {
-                            label: '未生效',
-                            color: 'default',
-                            border: '1px solid #f90'
-                        }
-                    } else if (row.subscribeBegin <= serverTime && row.subscribeExpire > serverTime) {
-                        return {
-                            label: '已生效',
-                            color: 'green',
-                            border: '1px solid #19be6b'
-                        }
-                    }
+            } else if (row.active) {
+                return {
+                    label: '已启用',
+                    color: 'green',
+                    border: '1px solid #19be6b'
                 }
             }
         }
@@ -78,36 +66,28 @@ export default {
                         }])
                     }
                 },
-                {title: 'API描述', key: 'apiComments'},
-                {title: '生效时间', key: 'activeTime'},
-                {title: '有效时间至', key: 'endTime'},
+                {title: '渠道名称', key: 'callerName'},
+                {title: 'API描述', key: 'comments'},
                 {
                     title: '状态',
                     fixed: 'center',
                     render: (h, {column, index, row}) => {
-                        let serverTime = this.serverTime
                         return this.getCellRender(h, [{
-                            label: filter(serverTime, row).label,
-                            color: filter(serverTime, row).color,
-                            tag: 'Tag',
-                            on: {
-                                click: () => {
-                                    this.watchNameClick(row)
-                                }
-                            }
+                            label: filter(row).label,
+                            color: filter(row).color,
+                            tag: 'Tag'
                         }])
                     }
                 },
                 {
                     title: '操作',
                     render: (h, {column, index, row}) => {
-                        let serverTime = this.serverTime
                         return this.getCellRender(h, [{
                             label: !row.active ? '启用' : '',
                             type: 'success',
                             style: {
                                 marginRight: '5px',
-                                display: !row.active && filter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
+                                display: !row.active && filter(row).label !== '已过期' ? 'inline-block' : 'none'
                             },
                             on: {
                                 click: (e) => {
@@ -115,15 +95,12 @@ export default {
                                 }
                             }
                         }, {
-                            label: '复制',
+                            label: '——',
                             type: 'primary',
                             style: {
-                                marginRight: '5px'
-                            },
-                            on: {
-                                click: (e) => {
-                                    this.copyApiClick(row)
-                                }
+                                marginRight: '5px',
+                                display: !row.active && filter(row).label !== '已过期' ? 'none' : 'inline-block',
+                                color: '#cccccc'
                             }
                         }])
                     }
@@ -133,8 +110,17 @@ export default {
             pageSize: 20,
             totalNum: 0,
             tableHeihgt: '',
-            serverTime: 0,
-            activeType: 1
+            APIName: '',
+            channelName: '',
+            status: '',
+            statusList: [{
+                value: 1,
+                label: '已启用'
+            }, {
+                value: 0,
+                label: '未启用'
+            }],
+            apiList: []
         }
     },
     created () {
@@ -147,10 +133,11 @@ export default {
             name: '订阅配置',
             icon: 'icon-fuwuguanli'
         })
-        this.pushBreadcrumb({
-            name: this.$route.params.callerName
-        })
+        // this.pushBreadcrumb({
+        //     name: this.$route.params.callerName
+        // })
         this.appId = this.$route.params.appId
+        this.getApiList()
         this.getOrderApi(this.callerId)
     },
     methods: {
@@ -159,86 +146,68 @@ export default {
             this.currentPage = v
             this.getOrderApi()
         },
+        // 获取api列表
+        getApiList () {
+            subconfigApi.getApiList({
+                name: null
+            }).then(({data: {msg, resultCode, result}}) => {
+                if (resultCode === '000000') {
+                    this.apiList = result
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
+                }
+            })
+        },
         addOrder () {
             this.resetStep()
             this.$router.push({
                 name: 'addOrder',
                 params: {
-                    appId: this.appId,
-                    callerId: this.callerId,
-                    callerName: this.$route.params.callerName
+                    appId: '123',
+                    callerId: '123456',
+                    callerName: 'admin'
                 }
             })
         },
-        getOrderApi () {
+        getOrderApi (type) {
+            let searchInfo = {}
+            if (type === 'search') {
+                searchInfo.apiId = this.APIName
+                searchInfo.callerId = this.channelName
+                if (this.status) {
+                    searchInfo.active = true
+                } else {
+                    searchInfo.active = false
+                }
+            }
             this.openLoading()
             subconfigApi.getOrderApi({
-                callerId: this.callerId,
-                activeType: this.activeType === 1 ? '5' : '6'
-            }).then(({data: {resultCode, msg}}) => {
-                if (resultCode === 404) {
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+                apiId: searchInfo.apiId,
+                callerId: searchInfo.callerId,
+                active: searchInfo.active
+            }).then(({data: {resultCode, msg, result}}) => {
+                this.closeLoading()
+                if (resultCode === '000000') {
+                    this.tableData = result.list
+                    this.totalNum = result.total
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
                 }
             })
-            this.closeLoading()
-            this.tableData = [
-                {
-                    active: false,
-                    activeTime: '2018-06-01',
-                    activeType: 0,
-                    antiReplayAttack: false,
-                    apiAuthRequired: true,
-                    apiComments: '',
-                    apiId: '01490ea66942000',
-                    apiName: '人员管理',
-                    apiPath: '/user',
-                    apiSignFailure: null,
-                    bgPath: null,
-                    callerId: null,
-                    concurrentLimit: 0,
-                    encryption: false,
-                    endTime: '2023-10-01',
-                    free: false,
-                    groupName: 'qwe',
-                    id: '028asd299012210',
-                    subscribeBegin: 1527782400000,
-                    subscribeDuration: 60,
-                    subscribeExpire: 1685548800000
-                }, {
-                    active: true,
-                    activeTime: '2020-12-01',
-                    activeType: 0,
-                    antiReplayAttack: false,
-                    apiAuthRequired: true,
-                    apiComments: '这是一条测试数据',
-                    apiId: '01490ea66942000',
-                    apiName: '测试数据',
-                    apiPath: '/user/23123sao',
-                    apiSignFailure: null,
-                    bgPath: null,
-                    callerId: null,
-                    concurrentLimit: 0,
-                    encryption: false,
-                    endTime: '2020-11-19',
-                    free: false,
-                    groupName: 'qwe',
-                    id: '028asd2ppp12210',
-                    subscribeBegin: 1527782400000,
-                    subscribeDuration: 60,
-                    subscribeExpire: 1685548800000
-                }
-            ]
-            this.serverTime = 1532499166598
-            this.totalNum = this.tableData.length
         },
         watchNameClick (row) {
             this.$router.push({
                 name: 'subDetails',
                 params: {
-                    orderId: row.id,
-                    appId: this.appId,
-                    way: 'edit',
-                    serverTime: this.serverTime,
-                    callerName: this.$route.params.callerName,
+                    apiId: row.id,
                     apiName: row.apiName
                 }
             })
@@ -251,7 +220,8 @@ export default {
                 loading: true,
                 onOk: () => {
                     subconfigApi.updateStatusOrderedAPI({
-                        id: row.id
+                        id: row.id,
+                        active: true
                     }).then(({data: {resultCode, msg}}) => {
                     })
                     this.$Modal.remove()
@@ -263,22 +233,11 @@ export default {
                 }
             })
         },
-        copyApiClick (row) {
-            this.$router.push({
-                name: 'copy',
-                params: {
-                    orderId: row.id,
-                    callerId: this.callerId
-                }
-            })
+        onSearchClick () {
+            this.getOrderApi('search')
         }
     },
-    computed: {},
-    watch: {
-        activeType () {
-            this.getOrderApi()
-        }
-    }
+    computed: {}
 }
 </script>
 
