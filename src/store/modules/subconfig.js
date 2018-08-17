@@ -18,7 +18,7 @@ export default {
         },
         changeChannel ({subconfig}, info) {
             subconfig.channelInfo = subconfig.channelInfo.filter(function (item) {
-                return item.AAZ570 !== info
+                return item.channelId !== info
             })
         },
         resetStep ({subconfig}) {
