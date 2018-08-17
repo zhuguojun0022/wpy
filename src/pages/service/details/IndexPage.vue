@@ -8,6 +8,7 @@
 
 <script>
 import GTab from '../../../components/GTab'
+import { mapMutations } from 'vuex'
 export default {
     components: {GTab},
     data () {
@@ -24,6 +25,9 @@ export default {
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
+            vm.pushBreadcrumb({
+                name: '详情'
+            })
             if (to.name === 'serviceDetailsBase') {
                 vm.value = 1
             } else if (to.name === 'serviceDetailsOrder') {
@@ -32,6 +36,7 @@ export default {
         })
     },
     methods: {
+        ...mapMutations(['pushBreadcrumb']),
         onChange (value) {
             if (value === 1) {
                 this.$router.replace({

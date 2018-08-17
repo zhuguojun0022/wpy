@@ -5,6 +5,7 @@ import SystemManagePage from './system.route'
 import ChannelManagePage from './channel.route'
 import BillManagePage from './bill.route'
 import ServiceManage from './service.route'
+import SubscribeConfig from './subconf.route'
 export default [{
     path: '/',
     redirect: '/index/home'
@@ -26,5 +27,6 @@ export default [{
     ...SystemManagePage,
     ...ChannelManagePage,
     ...BillManagePage,
-    ...ServiceManage]
+    ...ServiceManage,
+    ...SubscribeConfig]
 }]

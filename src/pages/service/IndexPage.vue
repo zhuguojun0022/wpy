@@ -1,14 +1,16 @@
 <template>
     <GPage class="service-manage-page" bg>
         <!-- tab切换组件 -->
-        <GTab :options="options" :value="value" @input="onChange">
-            <Button class="add-sg-btn" type="primary" @click="onAddSGClick">新增服务组</Button>
+        <GTab :options="options" :value="removed" @input="onChange">
+            <Button class="add-sg-btn pull-right" type="primary" @click="onAddSGClick">新增服务组</Button>
         </GTab>
         <!-- 主要内容展示区域 -->
         <section class="main-content p-y">
             <service-group
-                v-for="item in serviceGroupList"
+                v-for="(item, index) in serviceGroupList"
                 :key="item.id"
+                :index="index"
+                :sg-removed="removed"
                 :sg-info="item"
                 @onEditSGClick="onEditSGClick"
                 @onDeleteSGClick="onDeleteSGClick"></service-group>
@@ -61,6 +63,8 @@
 import GTab from '../../components/GTab'
 import FormLabel from '../../components/form/FormLabel'
 import ServiceGroup from './ServiceGroup'
+import { mapMutations } from 'vuex'
+import {serviceApi} from '../../apis'
 export default {
     components: {
         GTab,
@@ -94,7 +98,7 @@ export default {
             }
         }
         return {
-            value: 1,
+            removed: 1,
             closeNum: 0,
             sgDiaShow: false,
             sgTitle: '新增服务组',
@@ -127,11 +131,7 @@ export default {
                 type: 2,
                 typeName: '静态路径'
             }],
-            serviceGroupList: [{
-                id: 1,
-                name: 'test',
-                groupPath: '/sss'
-            }]
+            serviceGroupList: [{}]
         }
     },
     computed: {
@@ -145,8 +145,23 @@ export default {
             }]
         }
     },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            vm.resetBreadcrumb({
+                name: '服务管理',
+                icon: 'icon-fuwuguanli'
+            })
+        })
+    },
+    created () {
+        this.getSGListInterface()
+    },
     methods: {
-        onChange () {},
+        ...mapMutations(['resetBreadcrumb']),
+        onChange (val) {
+            this.removed = val
+            this.getSGListInterface()
+        },
         onAddSGClick () {
             this.sgDiaShow = true
         },
@@ -157,8 +172,40 @@ export default {
                 this.sgForm.concurrentRequest = -1
             }
         },
-        onEditSGClick () {},
-        onDeleteSGClick () {},
+        onEditSGClick (sgInfo) {
+            let router = (sgInfo.router && sgInfo.routerType === 1) ? sgInfo.router.split(',').join('\n') : sgInfo.router
+            this.sgTitle = '编辑服务组'
+            this.sgFormRef = 'sgEdit'
+            this.sgForm = {
+                ...sgInfo,
+                router: router,
+                concurrentRequestJudge: sgInfo.concurrentRequest !== -1
+            }
+            this.sgDiaShow = true
+        },
+        onDeleteSGClick (sgInfo) {
+            this.$Modal.confirm({
+                title: '提示',
+                content: `您将删除服务组： ${sgInfo.name}，是否确认删除？`,
+                cancelText: '取消',
+                loading: true,
+                onOk: () => {
+                    serviceApi.deleteServiceGroup(sgInfo.id).then(({data: {msg, result, resultCode}}) => {
+                        this.$Model.remove()
+                        if (resultCode === '000000') {
+                            this.$Message.success(msg)
+                            // 处理逻辑
+                            this.getSGListInterface()
+                        } else {
+                            this.$Message.warning(msg)
+                        }
+                    }).catch(() => {
+                        this.$Model.remove()
+                        this.$Message.error('删除失败，请重试')
+                    })
+                }
+            })
+        },
         onChannelClick (name) {
             console.log(name)
             this.sgDiaShow = false
@@ -167,10 +214,68 @@ export default {
         onSubmitClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    this.$Message.success('Success!')
+                    this.diaLoading = true
+                    let router = this.sgForm.routerType === 1 ? this.sgForm.router.split('\n').join(',') : this.sgForm.router
+                    let params = {
+                        ...this.sgForm,
+                        router: router
+                    }
+                    if (name === 'sgAdd') {
+                        this.addSGInterface(params, name)
+                    } else {
+                        this.editSGInterface(params, name)
+                    }
                 } else {
                     this.$Message.error('Fail!')
                 }
+            })
+        },
+        getSGListInterface () {
+            serviceApi.getOpenServiceGroupList(this.removed).then(({data: {msg, result, resultCode}}) => {
+                this.serviceGroupList = result
+            })
+            if (this.removed === 1) {
+                serviceApi.getClosedServiceGroupNum(this.removed).then(({data: {msg, result, resultCode}}) => {
+                    this.closeNum = result
+                })
+            }
+        },
+        addSGInterface (param, name) {
+            this.diaLoading = true
+            serviceApi.addServiceGroup(param).then(({data: {msg, result, resultCode}}) => {
+                this.diaLoading = false
+                if (resultCode === '000000') {
+                    this.onChannelClick(name)
+                    this.getSGListInterface()
+                    this.$Message.success({
+                        content: msg
+                    })
+                } else {
+                    this.$Message.warning({
+                        content: msg
+                    })
+                }
+            }).catch(() => {
+                this.diaLoading = false
+            })
+        },
+        editSGInterface (param, name) {
+            this.diaLoading = true
+            serviceApi.updateServiceGroup(param).then(({data: {msg, result, resultCode}}) => {
+                this.diaLoading = false
+                if (resultCode === '000000') {
+                    this.onChannelClick(name)
+                    this.getSGListInterface()
+                    this.$Message.success({
+                        content: msg
+                    })
+                } else {
+                    this.$Message.warning({
+                        content: msg
+                    })
+                }
+            }).catch(() => {
+                this.diaLoading = false
             })
         }
     }
@@ -178,9 +283,4 @@ export default {
 </script>
 
 <style lang="less">
-.service-manage-page {
-    .add-sg-btn {
-        float: right;
-    }
-}
 </style>

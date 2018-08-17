@@ -54,7 +54,8 @@ export default {
     props: {},
     data () {
         infraApi.getMenu().then(({data: {result}}) => {
-            this.init(result.children)
+            let menuList = result.children
+            this.init(menuList)
         })
         return {
             menuList: [],

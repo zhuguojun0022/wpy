@@ -6,7 +6,11 @@ export default {
     },
     mutations: {
         pushBreadcrumb (state, item) {
-            state.breadcrumb.push(item)
+            if (item.constructor === Array) {
+                state.breadcrumb = [...state.breadcrumb, ...item]
+            } else {
+                state.breadcrumb.push(item)
+            }
         },
         popBreadcrumb (state) {
             state.breadcrumb.pop()

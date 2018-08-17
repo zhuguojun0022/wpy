@@ -15,14 +15,14 @@
             </div>
             <collapse-transition>
                 <div class="api-area" v-if="condition">
-                    <div class="api-option-area p-y">
+                    <div class="api-option-area p-y-t" v-if="sgRemoved === 1">
                         <RadioGroup v-model="removed" type="button" size="small">
                             <Radio :label="1">{{`运行中（${openApiNum}）`}}</Radio>
                             <Radio :label="2">{{`已删除（${closedApiNum}）`}}</Radio>
                         </RadioGroup>
                         <Button size="small" type="primary" class="add-api-btn pull-right" @click="onAddApiClick" icon="plus-round">新增Api</Button>
                     </div>
-                    <Table class="api-table" :columns="columns" :data="apiList" size="small"></Table>
+                    <Table class="api-table m-y" :columns="columns" :data="apiList" size="small"></Table>
                 </div>
             </collapse-transition>
         </Card>
@@ -64,6 +64,7 @@
 <script>
 import CollapseTransition from 'iview/src/components/base/collapse-transition'
 import FormLabel from '../../components/form/FormLabel'
+import { serviceApi } from '../../apis'
 export default {
     components: {CollapseTransition, FormLabel},
     props: {
@@ -72,6 +73,14 @@ export default {
             default: () => {
                 return {}
             }
+        },
+        sgRemoved: {
+            type: Number,
+            default: 1
+        },
+        index: {
+            type: Number,
+            default: 0
         }
     },
     data () {
@@ -80,24 +89,16 @@ export default {
                 .set(1, {color: 'blue', label: '新建', option: '上线'})
                 .set(2, {color: 'green', label: '已上线', option: '下线'})
                 .set(3, {color: 'red', label: '已下线', option: '上线'})
+                .set(4, {color: 'grey', label: '已废弃', option: ''})
             return map.get(row.lifecycle)
         }
         return {
             loading: false,
-            condition: true,
+            condition: false,
             openApiNum: 0,
             closedApiNum: 0,
             removed: 1,
-            apiList: [{
-                lifecycle: 1,
-                name: 1
-            }, {
-                lifecycle: 2,
-                name: 2
-            }, {
-                lifecycle: 3,
-                name: 3
-            }],
+            apiList: [],
             openColumns: [{
                 title: 'API名称',
                 key: 'name',
@@ -137,6 +138,8 @@ export default {
                 title: '操作',
                 fixed: 'center',
                 render: (h, {column, index, row}) => {
+                    console.log(row.lifecycle)
+                    console.log(statusFilter(row))
                     return this.getCellRender(h, [{
                         label: statusFilter(row).option,
                         type: 'success',
@@ -239,6 +242,25 @@ export default {
             return this.removed === 1 ? this.openColumns : this.closedColumns
         }
     },
+    watch: {
+        removed (val) {
+            this.loading = true
+            this.getApiList()
+        },
+        condition (val) {
+            console.log(val)
+            if (val && this.apiList.length > 0) return
+            if (val && this.apiList.length === 0) {
+                this.loading = true
+                this.getApiList()
+            }
+        }
+    },
+    mounted () {
+        if (this.index === 0) {
+            this.onExpandClick()
+        }
+    },
     methods: {
         /**
          * @description 扩展点击事件
@@ -272,19 +294,67 @@ export default {
         /**
          * @description API列表 状态修改点击事件
          */
-        onApiStatusClick () {},
+        onApiStatusClick (row) {
+            let lifecycle = (row.lifecycle === 1 || row.lifecycle === 3) ? 2 : 3
+            serviceApi.updateAPIStatus(row.id, lifecycle).then(({data: {msg, result, resultCode}}) => {
+                if (resultCode === '000000') {
+                    row.lifecycle = lifecycle
+                    this.$Message.success({
+                        content: msg
+                    })
+                } else {
+                    this.$Message.warning({
+                        content: msg
+                    })
+                }
+            })
+        },
         /**
          * @description API列表 删除点击事件
          */
-        onApiDeleteClick () {},
+        onApiDeleteClick (row) {
+            this.$Modal.confirm({
+                title: '提示',
+                content: `您将删除API： ${row.name}，是否确认删除？`,
+                cancelText: '取消',
+                loading: true,
+                onOk: () => {
+                    serviceApi.deleteAPI(row.id, 4).then(({data: {msg, result, resultCode}}) => {
+                        this.$Modal.remove()
+                        // 处理逻辑
+                        if (resultCode === '000000') {
+                            this.getApiList()
+                            this.$Message.success({
+                                content: msg
+                            })
+                        } else {
+                            this.$Message.warning({
+                                content: msg
+                            })
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
+                }
+            })
+        },
         /**
          * @description API列表 复制点击事件
          */
-        onApiCopyClick () {},
+        onApiCopyClick (row) {
+            this.apiFormRef = 'copyApi'
+            this.apiForm = {
+                ...row
+            }
+            this.apiTitle = 'API复制'
+            this.apiDiaShow = true
+        },
         /**
          * @description 新增api点击事件
          */
         onAddApiClick () {
+            this.apiFormRef = 'addApi'
+            this.apiTitle = '新增API'
             this.apiDiaShow = true
         },
         /**
@@ -301,11 +371,52 @@ export default {
         onSubmitClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    this.$Message.success('Success!')
+                    let params = {
+                        ...this.apiForm,
+                        serviceGroupId: this.sgInfo.id
+                    }
+                    this.diaLoading = true
+                    serviceApi.addAPI(params).then(({data: {msg, result, resultCode}}) => {
+                        this.diaLoading = false
+                        if (resultCode === '000000') {
+                            this.getApiList()
+                            this.onChannelClick(name)
+                            this.$Message.success(msg)
+                        } else {
+                            this.$Message.error(msg)
+                        }
+                    })
                 } else {
-                    this.$Message.error('Fail!')
+                    this.$Message.error('格式校验失败')
                 }
             })
+        },
+        getApiList () {
+            this.sgInfo.id = 'first_service_group_id'
+            let removed = this.removed === 2 ? 2 : 1
+            if (this.sgRemoved !== 1) {
+                removed = 2
+            }
+            this.loading = true
+            serviceApi.getOpenAPIList(this.sgInfo.id, removed).then(({data: {msg, result, resultCode}}) => {
+                this.loading = false
+                // 处理逻辑
+                if (resultCode === '000000') {
+                    this.apiList = result
+                    if (removed === 1) {
+                        this.openApiNum = result.length
+                    }
+                } else {
+                    this.$Message.warning(msg)
+                }
+            }).catch(() => {
+                this.loading = false
+            })
+            if (this.removed === 1) {
+                serviceApi.getClosedAPIListNum(this.sgInfo.id, 2).then(({data: {msg, result, resultCode}}) => {
+                    this.closedApiNum = result
+                })
+            }
         }
     }
 }
