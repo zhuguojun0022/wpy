@@ -59,7 +59,7 @@
                 <Col :span="8">
                     <Tag
                         closable
-                        @on-close="handleClose(channel.AAZ570)"
+                        @on-close="handleClose(channel.channelId)"
                         v-for="(channel, index) in channelInfo"
                         v-bind:key="index"
                         class="m-x-r-2"
@@ -153,7 +153,7 @@ export default {
             let apiIds = [apiId]
             let callerIds = []
             this.channelInfo.forEach(el => {
-                callerIds.push(el.AAZ570)
+                callerIds.push(el.channelId)
             })
             let params = {
                 apiIds: apiIds,
