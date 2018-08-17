@@ -67,14 +67,6 @@ export default {
                 key: 'callerName',
                 minWidth: 100
             }, {
-                title: '生效时间',
-                key: 'activeTime',
-                minWidth: 120
-            }, {
-                title: '有效时间至',
-                key: 'endTime',
-                minWidth: 120
-            }, {
                 title: '状态',
                 key: 'active',
                 fixed: 'center',
@@ -110,7 +102,7 @@ export default {
     },
     mounted () {
         let id = this.$route.params.id
-        id = 'first_api_id'
+        // id = 'first_api_id'
         this.getOrderListByApiId(id)
     },
     methods: {

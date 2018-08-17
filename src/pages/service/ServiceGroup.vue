@@ -392,7 +392,8 @@ export default {
             })
         },
         getApiList () {
-            this.sgInfo.id = 'first_service_group_id'
+            // this.sgInfo.id = 'first_service_group_id'
+            console.log(this.sgInfo)
             let removed = this.removed === 2 ? 2 : 1
             if (this.sgRemoved !== 1) {
                 removed = 2
