@@ -5,54 +5,25 @@
                 <label class="required-search m-x-r m-x-l">开始时间:</label>
                 <Date-picker transfer :clearable="false" confirm v-model="searchValue.startTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择开始时间" style="width: 216px"></Date-picker>
             </FormItem>
-            <FormItem v-if="isCustomized" prop="endTime" class="m-x-r search-condition">
+            <FormItem prop="endTime" class="m-x-r search-condition">
                 <label class="required-search m-x-r">结束时间:</label>
                 <Date-picker transfer :clearable="false" confirm v-model="searchValue.endTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择结束时间" style="width: 216px"></Date-picker>
             </FormItem>
             <FormItem prop="apiName" class="m-x search-condition">
                 <label class="search-title m-x-r">API名称:</label>
-                <!-- <Select
-                    v-if="isAdmin"
-                    v-model="applySelect"
-                    placeholder="请搜索应用"
-                    style="width: 200px"
-                    size="small"
-                    filterable
-                    clearable
-                    remote
-                    :transfer="true"
-                    :remote-method="matchAppEvent"
-                    :loading="findLoading">
-                    <Option v-for="item in applyData" :value="item.id" :key="item.id">{{item.name}}</Option>
-                </Select> -->
                 <Select v-model="searchValue.apiSelected" placeholder="请选择api" size="small" clearable style="width: 200px">
                     <Option v-for="item in apiData" :value="item.id" :key="item.id">{{ item.name }}</Option>
                 </Select>
             </FormItem>
-            <FormItem prop="caller" class="m-x-r-2 search-condition" v-if="publish">
+            <FormItem prop="caller" class="m-x-r-2 search-condition">
                 <label class="search-title m-x-r">&nbsp;&nbsp;&nbsp;&nbsp;调用者:</label>
                 <Select
-                    v-if="!isAdmin && publish"
                     v-model="searchValue.caller"
                     style="width: 140px"
                     size="small"
                     clearable
                     transfer>
                     <Option v-for="(item) in filterCallerListData" :value="item.channelId" :key="item.channelId">{{item.AAZ571}}</Option>
-                </Select>
-                <Select
-                    v-if="isAdmin"
-                    v-model="searchValue.caller"
-                    placeholder="请搜索应用"
-                    style="width: 200px"
-                    size="small"
-                    filterable
-                    clearable
-                    remote
-                    :transfer="true"
-                    :remote-method="matchAppEvent"
-                    :loading="findLoading">
-                    <Option v-for="item in callerList" :value="item.appKey" :key="item.appKey">{{ item.apiName }}</Option>
                 </Select>
             </FormItem>
             <FormItem prop="returnCode" class="m-x-r search-condition">
@@ -96,21 +67,9 @@ export default {
                 returnCode: '2',
                 timeFrame: 3600000 * 24
             },
-            isCustomized: true,
-            timeFrameList: [
-                { label: '1小时', value: 60 * 60 * 1000 },
-                { label: '3小时', value: 3 * 60 * 60 * 1000 },
-                { label: '12小时', value: 12 * 60 * 60 * 1000 },
-                { label: '24小时', value: 24 * 60 * 60 * 1000 },
-                { label: '48小时', value: 48 * 60 * 60 * 1000 }
-            ],
             applySelect: '',
-            isAdmin: false,
-            applyData: [],
             apiData: [],
-            publish: true,
             filterCallerListData: [],
-            callerList: [],
             codeList: [],
             tableData: [],
             columns: [{
@@ -169,13 +128,6 @@ export default {
             this.currentPage = val
             this.reqLogList()
         },
-        // 查询应用的方法
-        getAppList (name) {
-            monitorApi.getApp({
-                name: name,
-                publish: true
-            }).then(({body: {result, code, msg}}) => {})
-        },
         // 查询api接口
         getApiList (appId) {
             subconfigApi.getApiList({
@@ -195,9 +147,6 @@ export default {
         reqLogList () {
             let start = this.searchValue.startTime - 0
             let end = this.searchValue.endTime - 0
-            if (!this.isCustomized) {
-                end = start + this.searchValue.timeFrame
-            }
             if (!(end && start)) {
                 this.$Message.warning({
                     content: '时间不可以为空',
@@ -217,22 +166,10 @@ export default {
                 callerId: this.searchValue.caller,
                 apiId: this.searchValue.apiSelected,
                 code: this.searchValue.returnCode,
-                start: this.searchValue.startTime,
-                end: this.searchValue.endTime
+                start: new Date().getTime(this.searchValue.startTime),
+                end: new Date().getTime(this.searchValue.endTime)
             }
             monitorApi.oldReqLogs(params).then(({body: {result, code, msg}}) => {})
-        },
-        matchAppEvent (name) {
-            if (name.length < 1) {
-                return false
-            }
-            this.getAppList(name)
-        },
-        matchCallerEvent () {
-            if (name.length < 1) {
-                return false
-            }
-            this.getCallerList(name)
         },
         getCodeList () {
             this.codeList = [

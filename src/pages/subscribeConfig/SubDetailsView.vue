@@ -35,16 +35,14 @@
                 </div>
                 <div class="p-x-l-1">
                     <h4 style="padding: 20px 0">渠道名称</h4>
-                    <Tag class="m-x-l">测试tag</Tag>
-                    <Tag class="m-x-l">测试tag</Tag>
-                    <Tag class="m-x-l">测试tag</Tag>
+                    <Tag class="m-x-l">{{$route.params.channelName}}</Tag>
                 </div>
                 <div class="subscription-policy p-x-l-1">
                     <h4>订阅策略</h4>
                     <!-- <h5 class="service-control p-x-r-5">服务控制</h5> -->
                     <section class="detail-info">
-                        <label class="detail-info-desc">并发限制</label>
                         <detail-item-edit
+                            label="并发限制"
                             :valueObject="editInfo"
                             :isCanEdit="true"
                             :valueFields="['concurrentLimit']"
@@ -214,9 +212,6 @@ export default {
     mounted () {
         this.clearBreadcrumb()
         this.pushBreadcrumb([{
-            name: '服务管理',
-            icon: 'icon-fuwuguanli'
-        }, {
             name: '订阅详情'
         }, {
             name: this.$route.params.apiName
