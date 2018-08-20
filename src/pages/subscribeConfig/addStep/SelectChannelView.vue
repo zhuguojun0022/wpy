@@ -115,6 +115,11 @@ export default {
             }).then(({data: {resultCode, result, msg}}) => {
                 if (resultCode === '000000') {
                     this.notOrderedCallerList = result
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
                 }
             })
         },
