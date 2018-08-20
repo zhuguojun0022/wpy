@@ -217,8 +217,8 @@ export default {
                 callerId: this.searchValue.caller,
                 apiId: this.searchValue.apiSelected,
                 code: this.searchValue.returnCode,
-                start: this.searchValue.startTime,
-                end: this.searchValue.endTime
+                start: new Date().getTime(this.searchValue.startTime),
+                end: new Date().getTime(this.searchValue.endTime)
             }
             monitorApi.oldReqLogs(params).then(({body: {result, code, msg}}) => {})
         },

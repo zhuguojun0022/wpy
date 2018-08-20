@@ -9,7 +9,9 @@
             <Select filterable v-model="APIName" placeholder="API名称" style="width: 200px" clearable>
                 <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
-            <Input v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable></Input>
+            <Select filterable v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable>
+                <Option v-for="item in channelList" :value="item.channelId" :key="item.channelId">{{ item.AAZ571 }}</Option>
+            </Select>
             <Select v-model="status" style="width: 200px" placeholder="状态">
                 <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
@@ -112,6 +114,7 @@ export default {
             tableHeihgt: '',
             APIName: '',
             channelName: '',
+            channelList: '',
             status: '',
             statusList: [{
                 value: 1,
@@ -138,6 +141,7 @@ export default {
         // })
         this.appId = this.$route.params.appId
         this.getApiList()
+        this.getChannelList()
         this.getOrderApi(this.callerId)
     },
     methods: {
@@ -149,7 +153,8 @@ export default {
         // 获取api列表
         getApiList () {
             subconfigApi.getApiList({
-                name: null
+                name: null,
+                active: true
             }).then(({data: {msg, resultCode, result}}) => {
                 if (resultCode === '000000') {
                     this.apiList = result
@@ -161,15 +166,18 @@ export default {
                 }
             })
         },
+        // 获取渠道列表
+        getChannelList () {
+            subconfigApi.getChannelInfo({
+                name: ''
+            }).then(({data: {result, resultCode, msg}}) => {
+                this.channelList = result
+            })
+        },
         addOrder () {
             this.resetStep()
             this.$router.push({
-                name: 'addOrder',
-                params: {
-                    appId: '123',
-                    callerId: '123456',
-                    callerName: 'admin'
-                }
+                name: 'addOrder'
             })
         },
         getOrderApi (type) {
@@ -177,11 +185,7 @@ export default {
             if (type === 'search') {
                 searchInfo.apiId = this.APIName
                 searchInfo.callerId = this.channelName
-                if (this.status) {
-                    searchInfo.active = true
-                } else {
-                    searchInfo.active = false
-                }
+                searchInfo.active = this.status
             }
             this.openLoading()
             subconfigApi.getOrderApi({
@@ -208,7 +212,8 @@ export default {
                 name: 'subDetails',
                 params: {
                     apiId: row.id,
-                    apiName: row.apiName
+                    apiName: row.apiName,
+                    channelName: row.callerName
                 }
             })
         },
