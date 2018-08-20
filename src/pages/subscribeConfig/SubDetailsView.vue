@@ -157,7 +157,7 @@ export default {
         ...mapMutations(['pushBreadcrumb', 'clearBreadcrumb']),
         submit (val) {
             subconfigApi.updateOrderedAPI({
-                id: this.$route.params.apiId,
+                id: this.$route.params.orderId,
                 concurrency: this.editConcurrentLimit
             }).then(({data: {resultCode, msg}}) => {
                 if (resultCode === '000000') {
@@ -185,8 +185,8 @@ export default {
             }
         },
         getInfoById () {
-            let apiId = this.$route.params.apiId
-            subconfigApi.getOrderedDetailAPI(apiId).then(({data: {msg, result, resultCode}}) => {
+            let orderId = this.$route.params.orderId
+            subconfigApi.getOrderedDetailAPI(orderId).then(({data: {msg, result, resultCode}}) => {
                 if (resultCode === '000000') {
                     this.baseInfo = result
                     this.isCanEdit = true

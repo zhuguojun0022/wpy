@@ -49,7 +49,7 @@ export default {
                     }])
                 }
             }, {
-                title: '订阅方',
+                title: '渠道',
                 key: 'callerName',
                 minWidth: 100
             }, {
@@ -92,7 +92,16 @@ export default {
         this.getOrderListByApiId(id)
     },
     methods: {
-        onOrderIdClick (row) {},
+        onOrderIdClick (row) {
+            this.$router.push({
+                name: 'subDetails',
+                params: {
+                    orderId: row.id,
+                    apiName: row.apiName,
+                    channelName: row.callerName
+                }
+            })
+        },
         onOrderStatusClick (row) {},
         getOrderListByApiId (id) {
             serviceApi.getOrderListByApiId(id).then(({data: {resultCode, msg, result}}) => {

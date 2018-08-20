@@ -10,7 +10,7 @@ export default [
         component: orderConfig
     },
     {
-        path: 'subDetails/:apiId/:apiName/:channelName',
+        path: 'subDetails/:orderId/:apiName/:channelName',
         name: 'subDetails',
         component: subDetails
     },
