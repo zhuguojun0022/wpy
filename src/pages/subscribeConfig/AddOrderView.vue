@@ -58,7 +58,7 @@ export default {
     mounted () {
         this.resetBreadcrumb({
             name: '订阅配置',
-            icon: 'icon-fuwuguanli'
+            icon: 'icon-subscribeConfig'
         })
         this.pushBreadcrumb([{
             name: '新增订阅'

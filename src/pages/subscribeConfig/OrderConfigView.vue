@@ -134,7 +134,7 @@ export default {
         // console.log(this.$route.params.callerName)
         this.resetBreadcrumb({
             name: '订阅配置',
-            icon: 'icon-fuwuguanli'
+            icon: 'icon-subscribeConfig'
         })
         // this.pushBreadcrumb({
         //     name: this.$route.params.callerName
