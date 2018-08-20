@@ -17,35 +17,21 @@ import {serviceApi} from '../../../apis'
 export default {
     data () {
         const statusFilter = (serverTime, row) => {
-            if (row.subscribeExpried <= serverTime) {
+            if (row.active) {
                 return {
-                    label: '已过期',
-                    color: 'default'
+                    label: '已生效',
+                    color: 'green'
                 }
             } else {
-                if (row.active) {
-                    if (row.subscribeBegin > serverTime) {
-                        return {
-                            label: '未生效',
-                            color: 'default'
-                        }
-                    } else if (row.subscribeExpried > serverTime && row.subscribeBegin <= serverTime) {
-                        return {
-                            label: '已生效',
-                            color: 'green'
-                        }
-                    }
-                } else {
-                    return {
-                        label: '未启用',
-                        color: 'red'
-                    }
+                return {
+                    label: '未启用',
+                    color: 'red'
                 }
             }
         }
         return {
             activeType: 1,
-            list: [{}],
+            list: [],
             columns: [{
                 title: '订阅编号',
                 key: 'id',

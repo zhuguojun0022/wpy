@@ -39,10 +39,12 @@
                 <FormItem label="前端路径" prop="path">
                     <form-label slot="label" label="前端路径" info="描述"></form-label>
                     <Input v-model.trim="apiForm.path" :maxlength="16" type="text" placeholder="请输入服务组路径" auto-complete="off"></Input>
+                    <Alert class="alert-dia" show-icon>组路径请以 ‘/’ 开头， 例如：'/path'</Alert>
                 </FormItem>
                 <FormItem label="后端路径" prop="bgPath">
                     <form-label slot="label" label="后端路径" info="描述"></form-label>
                     <Input v-model.trim="apiForm.bgPath" :maxlength="16" type="text" placeholder="请输入服务组路径" auto-complete="off"></Input>
+                    <Alert class="alert-dia" show-icon>组路径请以 ‘/’ 开头， 例如：'/bgpath'</Alert>
                 </FormItem>
                 <FormItem label="请求方式" prop="method">
                     <Select v-model="apiForm.method">
@@ -138,8 +140,6 @@ export default {
                 title: '操作',
                 fixed: 'center',
                 render: (h, {column, index, row}) => {
-                    console.log(row.lifecycle)
-                    console.log(statusFilter(row))
                     return this.getCellRender(h, [{
                         label: statusFilter(row).option,
                         type: 'success',
@@ -244,17 +244,13 @@ export default {
     },
     watch: {
         removed (val) {
+            console.log(123)
             this.loading = true
             this.getApiList()
-        },
-        condition (val) {
-            console.log(val)
-            if (val && this.apiList.length > 0) return
-            if (val && this.apiList.length === 0) {
-                this.loading = true
-                this.getApiList()
-            }
         }
+        // condition (val) {
+        //     console.log(val)
+        // }
     },
     mounted () {
         if (this.index === 0) {
@@ -267,6 +263,11 @@ export default {
          */
         onExpandClick () {
             this.condition = !this.condition
+            if (this.condition && this.apiList.length > 0) return
+            if (this.condition && this.apiList.length === 0) {
+                this.loading = true
+                this.getApiList()
+            }
         },
         /**
          * @description 编辑服务组点击事件
@@ -361,7 +362,6 @@ export default {
          * @description api弹出框 取消事件
          */
         onChannelClick (name) {
-            console.log(name)
             this.apiDiaShow = false
             this.$refs[name].resetFields()
         },
@@ -392,8 +392,6 @@ export default {
             })
         },
         getApiList () {
-            // this.sgInfo.id = 'first_service_group_id'
-            console.log(this.sgInfo)
             let removed = this.removed === 2 ? 2 : 1
             if (this.sgRemoved !== 1) {
                 removed = 2
@@ -431,6 +429,10 @@ export default {
         &:hover {
             color: lighten(#2D8cF0, 20%);
         }
+    }
+    .alert-dia {
+        margin-bottom: 0;
+        margin-top: 5px;
     }
 }
 </style>

@@ -15,6 +15,9 @@ export default {
         popBreadcrumb (state) {
             state.breadcrumb.pop()
         },
+        setBreadcrumb (state, item) {
+            state.breadcrumb = item
+        },
         resetBreadcrumb (state, item) {
             state.breadcrumb = [item]
         },

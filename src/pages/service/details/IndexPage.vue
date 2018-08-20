@@ -25,9 +25,12 @@ export default {
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
-            vm.pushBreadcrumb({
+            vm.setBreadcrumb([{
+                name: '服务管理',
+                icon: 'icon-fuwuguanli'
+            }, {
                 name: '详情'
-            })
+            }])
             if (to.name === 'serviceDetailsBase') {
                 vm.value = 1
             } else if (to.name === 'serviceDetailsOrder') {
@@ -36,7 +39,7 @@ export default {
         })
     },
     methods: {
-        ...mapMutations(['pushBreadcrumb']),
+        ...mapMutations(['setBreadcrumb']),
         onChange (value) {
             if (value === 1) {
                 this.$router.replace({
