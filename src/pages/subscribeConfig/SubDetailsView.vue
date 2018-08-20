@@ -41,8 +41,8 @@
                     <h4>订阅策略</h4>
                     <!-- <h5 class="service-control p-x-r-5">服务控制</h5> -->
                     <section class="detail-info">
-                        <label class="detail-info-desc">并发限制</label>
                         <detail-item-edit
+                            label="并发限制"
                             :valueObject="editInfo"
                             :isCanEdit="true"
                             :valueFields="['concurrentLimit']"

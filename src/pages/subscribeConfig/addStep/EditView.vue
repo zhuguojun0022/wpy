@@ -105,19 +105,7 @@ export default {
                 virtual: false
             },
             editInfo: {
-                verifySign: 1,
-                concurrentLimitJudge: false,
-                startTime: '',
-                time: 0,
-                endTime: '',
-                type: '',
-                baseprice: '',
-                priceitems: [{
-                    start: 1,
-                    end: '',
-                    price: ''
-                }],
-                strategyComment: ''
+                concurrentLimitJudge: false
             },
             editConcurrentLimit: -1,
             addBtnShow: false,
@@ -137,9 +125,6 @@ export default {
         }
     },
     computed: {
-        // unit () {
-        //     return this.editInfo.type === 1 ? '次' : '月'
-        // },
         ...mapGetters({
             apiInfo: 'apiInfo',
             channelInfo: 'channelInfo'
@@ -149,7 +134,6 @@ export default {
         ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'gobackStep', 'changeChannel']),
         submit () {
             let apiId = this.apiInfo.id
-            console.log(apiId)
             let apiIds = [apiId]
             let callerIds = []
             this.channelInfo.forEach(el => {
@@ -160,10 +144,17 @@ export default {
                 callerIds: callerIds,
                 concurrency: this.editConcurrentLimit
             }
-            console.log(params)
-            subconfigApi.addOrderedAPI(params).then(() => {
+            let that = this
+            subconfigApi.addOrderedAPI(params).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    that.setStep()
+                } else {
+                    that.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
+                }
             })
-            this.setStep()
         },
         goBack (title) {
             if (title === '1') {
@@ -185,26 +176,6 @@ export default {
             console.log(this.channelInfo)
         }
     }
-    // watch: {
-    //     'editInfo.startTime' (val) {
-    //         if (!val) {
-    //             this.editInfo.endTime = ''
-    //             return
-    //         }
-    //         let date = new Date(val)
-    //         let endTime = date.setMonth(date.getMonth() + this.editInfo.time)
-    //         let _endtime = new Date(endTime)
-    //         _endtime = _endtime.setDate(_endtime.getDate() - 1)
-    //         this.editInfo.endTime = new Date(_endtime)
-    //     },
-    //     'editInfo.time' (val) {
-    //         let date = new Date(this.editInfo.startTime)
-    //         let endTime = date.setMonth(date.getMonth() + val)
-    //         let _endtime = new Date(endTime)
-    //         _endtime = _endtime.setDate(_endtime.getDate() - 1)
-    //         this.editInfo.endTime = new Date(_endtime)
-    //     }
-    // }
 }
 </script>
 <style lang="less">

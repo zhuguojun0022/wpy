@@ -108,7 +108,6 @@ export default {
             if (type === 'search') {
                 name = this.channelName
             }
-            console.log(this.$route.params.callerId)
             this.openLoading()
             this.closeLoading()
             subconfigApi.getChannelInfo({
