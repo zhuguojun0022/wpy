@@ -228,13 +228,22 @@ export default {
                         id: row.id,
                         active: true
                     }).then(({data: {resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            this.$Modal.remove()
+                            this.$Message.success({
+                                content: msg,
+                                duration: 2
+                            })
+                            row.active = true
+                        } else {
+                            this.$Modal.remove()
+                            this.$Message.error({
+                                content: msg,
+                                duration: 2
+                            })
+                            row.active = false
+                        }
                     })
-                    this.$Modal.remove()
-                    this.$Message.success({
-                        content: 'success',
-                        duration: 2
-                    })
-                    row.active = true
                 }
             })
         },
