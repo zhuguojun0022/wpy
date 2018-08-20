@@ -3,9 +3,7 @@
 <GPage bg>
     <table-header>
         <div slot="left">
-            <Select size="small" filterable v-model="orderApiName" placeholder="请输入API名称" style="width: 200px" clearable>
-                <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
+            <Input v-model="orderApiName" size="small" placeholder="请输入API名称" style="width: 200px" clearable></Input>
             <Button size="small" icon="search" @click="searchClick">查询</Button>
         </div>
         <div slot="right">
@@ -79,12 +77,13 @@ export default {
             }
             this.openLoading()
             subconfigApi.getApiList({
-                name: name
+                name: name,
+                active: true
             }).then(({data: {msg, resultCode, result}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
                     this.notOrderedCallerList = result
-                    this.apiList = this.apiList.length === 0 ? result : this.apiList
+                    // this.apiList = this.apiList.length === 0 ? result : this.apiList
                 } else {
                     this.$Message.error({
                         content: msg,

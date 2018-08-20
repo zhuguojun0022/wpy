@@ -35,9 +35,7 @@
                 </div>
                 <div class="p-x-l-1">
                     <h4 style="padding: 20px 0">渠道名称</h4>
-                    <Tag class="m-x-l">测试tag</Tag>
-                    <Tag class="m-x-l">测试tag</Tag>
-                    <Tag class="m-x-l">测试tag</Tag>
+                    <Tag class="m-x-l">{{$route.params.channelName}}</Tag>
                 </div>
                 <div class="subscription-policy p-x-l-1">
                     <h4>订阅策略</h4>
@@ -214,9 +212,6 @@ export default {
     mounted () {
         this.clearBreadcrumb()
         this.pushBreadcrumb([{
-            name: '服务管理',
-            icon: 'icon-fuwuguanli'
-        }, {
             name: '订阅详情'
         }, {
             name: this.$route.params.apiName

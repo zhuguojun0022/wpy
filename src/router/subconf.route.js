@@ -16,12 +16,12 @@ export default [
         component: orderConfig
     },
     {
-        path: 'subDetails/:apiId/:apiName',
+        path: 'subDetails/:apiId/:apiName/:channelName',
         name: 'subDetails',
         component: subDetails
     },
     {
-        path: 'addOrder/:callerId/:callerName',
+        path: 'addOrder',
         name: 'addOrder',
         component: addOrder
     },

@@ -13,7 +13,7 @@
 export default {
     data () {
         return {
-            c: 30
+            c: 3
         }
     },
     mounted () {
