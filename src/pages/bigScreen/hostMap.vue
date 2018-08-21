@@ -23,13 +23,31 @@ export default {
     },
     methods: {
         handleAllCitySuees (res) {
-            let cityData = res.data.result
             let i = 0
+            let cityData = res.data.result
             if (cityData) {
-                for (i in cityData) {
-                    this.data.push({ name: cityData[i].regionName.slice(0, 2), value: Number(cityData[i].ecardCount), level1: Number(cityData[i].ecardOneCount), level2: Number(cityData[i].ecardTwoCount), regionNo: cityData[i].regionNo })
+                for (i in cityData) { // 处理后端传不了直辖市经纬度和传过来的regionName不符合echarts地图规则的问题
+                    cityData[i].regionName = cityData[i].regionName.slice(0, 2)
+                    if (res.data.result[i].regionName === '北京') {
+                        res.data.result[i].latitude = 39.90
+                        res.data.result[i].longitude = 116.40
+                    } else if (res.data.result[i].regionName === '上海') {
+                        res.data.result[i].latitude = 31.23
+                        res.data.result[i].longitude = 121.47
+                    } else if (res.data.result[i].regionName === '重庆') {
+                        res.data.result[i].latitude = 29.57
+                        res.data.result[i].longitude = 106.55
+                    } else if (res.data.result[i].regionName === '天津') {
+                        res.data.result[i].latitude = 39.12
+                        res.data.result[i].longitude = 117.20
+                    } else if (res.data.result[i].regionName === '黑龙') {
+                        cityData[i].regionName = cityData[i].regionName + '江'
+                    } else if (res.data.result[i].regionName === '内蒙') {
+                        cityData[i].regionName = cityData[i].regionName + '古'
+                    }
+                    this.data.push({ name: cityData[i].regionName, value: Number(cityData[i].ecardCount), level1: Number(cityData[i].ecardOneCount), level2: Number(cityData[i].ecardTwoCount), regionNo: cityData[i].regionNo })
                     this.weiData.push([Number(cityData[i].longitude), Number(cityData[i].latitude)])
-                    this.mapData[cityData[i].regionName.slice(0, 2)] = this.weiData[i]
+                    this.mapData[cityData[i].regionName] = this.weiData[i]
                 }
                 this.drawLine()
             }
@@ -83,6 +101,7 @@ export default {
                     map: 'china',
                     zoom: 1.2,
                     roam: true,
+                    top: '12%',
                     label: {
                         emphasis: {
                             borderWidth: 1,

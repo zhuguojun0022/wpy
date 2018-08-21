@@ -4,7 +4,7 @@
         <ul>
           <li class="top_time">{{date}} {{time}}</li>
             <li class="top_title" >电子社保卡签发情况</li>
-            <li><span class="sign_out" @click="goback">返回</span></li>
+            <li style="cursor:pointer"><span class="sign_out" @click="goback">返回</span></li>
         </ul>
     </div>
     <div class="data_show">
