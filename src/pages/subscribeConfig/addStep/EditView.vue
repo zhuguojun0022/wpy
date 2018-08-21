@@ -133,6 +133,7 @@ export default {
     methods: {
         ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'setStep', 'gobackStep', 'changeChannel']),
         submit () {
+            this.openLoading()
             let apiId = this.apiInfo.id
             let apiIds = [apiId]
             let callerIds = []
@@ -146,6 +147,7 @@ export default {
             }
             let that = this
             subconfigApi.addOrderedAPI(params).then(({data: {result, resultCode, msg}}) => {
+                this.closeLoading()
                 if (resultCode === '000000') {
                     that.setStep()
                 } else {
