@@ -81,11 +81,13 @@ export default {
     },
     mounted () {
         infraApi.getInquire().then((res) => {
+            console.log(res)
             const data = res.data
             this.prov = data.result
             console.log(this.prov)
         })
         infraApi.getList().then((res) => {
+            console.log(res)
             const data = res.data
             this.newsList = data.result
         })
@@ -103,12 +105,19 @@ export default {
         getCitylist (a) {
             console.log(a)
             infraApi.getCity(a).then((res) => {
+                console.log(res)
                 const data = res.data
                 this.city = data.result
-                // console.log(res)
+                console.log(this.city)
             })
         },
         handleMockdele (val) {
+            for (let i = 0; i < this.city.length; i++) {
+                if (this.city[i].REGIONNAME === this.addDetail.REGIONNAME) {
+                    console.log(this.city[i].REGIONID)
+                    this.addDetail.REGIONID = this.city[i].REGIONID
+                }
+            }
             console.log(this.addDetail.REGIONNAME)
         },
         handleBtn () {
@@ -117,11 +126,11 @@ export default {
             } else if (!this.addDetail.REGIONNAME) {
                 this.$Message.warning('请选择城市')
             } else if (!this.longitude) {
-                this.$Message.warning('请输入正确的经度')
+                this.$Message.warning('请输入正确的中国经度')
             } else if (!this.latitude) {
-                this.$Message.warning('请输入正确的纬度')
+                this.$Message.warning('请输入正确的中国纬度')
             } else {
-                infraApi.Save(this.addDetail.REGIONNO, this.addDetail.REGIONPROVINCE, this.addDetail.REGIONNAME, this.addDetail.longitude, this.addDetail.latitude, sessionStorage.getItem('USERID')).then((res) => {
+                infraApi.Save(this.addDetail.REGIONID, this.addDetail.REGIONPROVINCE, this.addDetail.REGIONNAME, this.addDetail.longitude, this.addDetail.latitude, sessionStorage.getItem('USERID')).then((res) => {
                     console.log(res)
                     if (res.status === 200) {
                         infraApi.getList().then((res) => {
@@ -141,8 +150,10 @@ export default {
         handleChangeInput (e) {
             let regex = /^[-+]?(0?\d{1,2}\.\d{1,5}|1[0-7]?\d{1}\.\d{1,5}|180\.0{1,5})$/
             if (regex.test(e.target.value)) {
-                this.longitude = true
-                return true
+                if (e.target.value > 73.33 && e.target.value < 135.05) {
+                    this.longitude = true
+                    return true
+                }
             } else {
                 this.longitude = false
                 return false
@@ -151,20 +162,25 @@ export default {
         handleChangeInputow (e) {
             let regex = /^[-+]?([0-8]?\d{1}\.\d{1,5}|90\.0{1,5})$/
             if (regex.test(e.target.value)) {
-                this.latitude = true
-                return true
+                if (e.target.value > 3.15 && e.target.value < 53.33) {
+                    this.latitude = true
+                    return true
+                }
             } else {
                 this.latitude = false
                 return false
             }
         },
         edit (item) {
+            // console.log(item)
             this.editlist = true
-            console.log(item.REGIONID)
+            // console.log(item.REGIONID)
+            // console.log(item.REGIONPROVINCE)
+            // console.log(item.REGIONNAME)
             this.addDetail.REGIONNO = item.REGIONID
         },
         handleDelete (REGIONID) {
-            console.log(this.addDetail.REGIONNO)
+            console.log(REGIONID)
             infraApi.Delete(REGIONID).then((res) => {
                 if (res.data.resultCode === '000000') {
                     infraApi.getList().then((res) => {
@@ -175,14 +191,16 @@ export default {
             })
         },
         update () {
+            console.log(this.addDetail.REGIONID)
             if (!this.longitude) {
-                this.$Message.warning('请输入正确的经度')
+                this.$Message.warning('请输入正确的中国经度')
             } else if (!this.latitude) {
                 console.log(!this.latitude)
-                this.$Message.warning('请输入正确的纬度')
+                this.$Message.warning('请输入正确的中国纬度')
             } else {
                 infraApi.Change(this.addDetail.REGIONNO, this.addDetail.longitude, this.addDetail.latitude, sessionStorage.getItem('USERID'))
                     .then((res) => {
+                        console.log(res)
                         if (res.data.resultCode === '000000') {
                             this.editlist = false
                             infraApi.getList().then((res) => {
