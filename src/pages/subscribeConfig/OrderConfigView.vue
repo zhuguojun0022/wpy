@@ -211,7 +211,7 @@ export default {
             this.$router.push({
                 name: 'subDetails',
                 params: {
-                    apiId: row.id,
+                    orderId: row.id,
                     apiName: row.apiName,
                     channelName: row.callerName
                 }
