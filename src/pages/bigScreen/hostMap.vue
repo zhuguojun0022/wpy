@@ -11,7 +11,9 @@ export default {
             weiData: [],
             mapData: {},
             areaBig: '',
-            areaBlog: 'china'
+            areaBlog: 'china',
+            cityDataLength: 0,
+            firstLength: 0
         }
     },
     mounted () {
@@ -25,6 +27,8 @@ export default {
         handleAllCitySuees (res) {
             let i = 0
             let cityData = res.data.result
+            this.cityDataLength = Math.floor(res.data.result.length / 3)
+            this.firstLength = Math.floor(res.data.result.length / 3)
             if (cityData) {
                 for (i in cityData) { // 处理后端传不了直辖市经纬度和传过来的regionName不符合echarts地图规则的问题
                     cityData[i].regionName = cityData[i].regionName.slice(0, 2)
@@ -146,15 +150,16 @@ export default {
                         coordinateSystem: 'geo',
                         data: convertData(data.sort(function (a, b) { return b.value - a.value }).slice(0)),
                         symbolSize: function (val) {
+                            // console.log(val)
+                            // console.log( Math.floor(that.cityDataLength/3))
                             let wave = 5
-                            if (val[2] <= 100) {
-                                wave = 5
-                            } else if (val[2] <= 500) {
-                                wave = 7
-                            } else if (val[2] <= 1000) {
-                                wave = 9
+                            that.cityDataLength--
+                            if (that.cityDataLength >= 0) {
+                                wave = 10
+                            } else if (that.cityDataLength >= that.firstLength * (-1)) {
+                                wave = 8
                             } else {
-                                wave = 11
+                                wave = 5
                             }
                             // return val[2] / 100 + 4
                             return wave

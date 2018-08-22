@@ -56,6 +56,7 @@ export default {
             time: '',
             data: '',
             xzhedata: ['9月', '10月', '11月'],
+            // xzhedata: ['6月', '7月', '8月', '9月', '10月', '11月', '12月'],
             yzheFdata: [],
             yzheSdata: [],
             tiaoData: [],
@@ -92,6 +93,7 @@ export default {
             return (zero + num).slice(-digit)
         }
         infraApi.dapingMoth(this.areaBlog).then(this.handleMothSuees.bind(this))
+        // infraApi.dapingCity(this.areaBlog.slice(0, 3)).then(this.handleCitySuees.bind(this))
         infraApi.dapingCity(this.areaBlog).then(this.handleCitySuees.bind(this))
         infraApi.dapingChannel(this.areaBlog).then(this.handleChannelSuees.bind(this))
     },
