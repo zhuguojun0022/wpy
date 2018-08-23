@@ -253,13 +253,9 @@ export default {
     },
     watch: {
         removed (val) {
-            console.log(123)
             this.loading = true
             this.getApiList()
         }
-        // condition (val) {
-        //     console.log(val)
-        // }
     },
     mounted () {
         if (this.index === 0) {
@@ -395,8 +391,6 @@ export default {
                             this.$Message.error(msg)
                         }
                     })
-                } else {
-                    this.$Message.error('格式校验失败')
                 }
             })
         },

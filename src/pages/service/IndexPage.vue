@@ -216,7 +216,7 @@ export default {
                             // 处理逻辑
                             this.getSGListInterface()
                         } else {
-                            this.$Message.warning(msg)
+                            this.$Message.error(msg)
                         }
                     }).catch(() => {
                         this.$Modal.remove()
@@ -226,7 +226,6 @@ export default {
             })
         },
         onChannelClick (name) {
-            console.log(name)
             this.sgDiaShow = false
             this.$refs[name].resetFields()
             this.sgFormRef = 'sgAdd'
@@ -244,8 +243,6 @@ export default {
                     } else {
                         this.editSGInterface(params, name)
                     }
-                } else {
-                    this.$Message.error('Fail!')
                 }
             })
         },

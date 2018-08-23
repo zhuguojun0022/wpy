@@ -175,7 +175,6 @@ export default {
         },
         handleClose (channelId) {
             this.changeChannel(channelId)
-            console.log(this.channelInfo)
         }
     }
 }
