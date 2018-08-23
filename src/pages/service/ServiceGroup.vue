@@ -10,7 +10,7 @@
                     <Tag class="sgi-sg-grouppath m-x" type="border">{{sgInfo.groupPath}}</Tag>
                 </Tooltip>
                 <Tooltip content="删除" placement="top" class="sgi-sg-name-tip">
-                    <Button size="small" type="text" class="delete-sg-btn" @click="onDeleteSGClick" icon="trash-a"></Button>
+                    <Button v-if="sgRemoved === 1" size="small" type="text" class="delete-sg-btn" @click="onDeleteSGClick" icon="trash-a"></Button>
                 </Tooltip>
             </div>
             <collapse-transition>
