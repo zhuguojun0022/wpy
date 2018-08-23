@@ -37,14 +37,14 @@
                     <Input v-model.trim="apiForm.name" type="text" placeholder="请输入API名称" auto-complete="off"></Input>
                 </FormItem>
                 <FormItem label="前端路径" prop="path">
-                    <form-label slot="label" label="前端路径" info="描述"></form-label>
+                    <form-label slot="label" label="前端路径" info="提供给调用者访问的路径，将映射成后端路径，同一个服务组下前端路径不能相同"></form-label>
                     <Input v-model.trim="apiForm.path" :maxlength="16" type="text" placeholder="请输入服务组路径" auto-complete="off"></Input>
-                    <Alert class="alert-dia" show-icon>组路径请以 ‘/’ 开头， 例如：'/path'</Alert>
+                    <Alert class="alert-dia" show-icon>前端路径请以 ‘/’ 开头， 例如：'/path'</Alert>
                 </FormItem>
                 <FormItem label="后端路径" prop="bgPath">
-                    <form-label slot="label" label="后端路径" info="描述"></form-label>
+                    <form-label slot="label" label="后端路径" info="用于拼接服务访问路径"></form-label>
                     <Input v-model.trim="apiForm.bgPath" :maxlength="16" type="text" placeholder="请输入服务组路径" auto-complete="off"></Input>
-                    <Alert class="alert-dia" show-icon>组路径请以 ‘/’ 开头， 例如：'/bgpath'</Alert>
+                    <Alert class="alert-dia" show-icon>后端路径请以 ‘/’ 开头， 例如：'/bgpath'</Alert>
                 </FormItem>
                 <FormItem label="请求方式" prop="method">
                     <Select v-model="apiForm.method">
@@ -93,6 +93,13 @@ export default {
                 .set(3, {color: 'red', label: '已下线', option: '上线'})
                 .set(4, {color: 'grey', label: '已废弃', option: ''})
             return map.get(row.lifecycle)
+        }
+        let pathRule = (rule, value, callback) => {
+            if (/\/$/.test(value) && value !== '/') {
+                callback(new Error('组路径不可以 ‘/’ 结尾，请重新输入'))
+            } else {
+                callback()
+            }
         }
         return {
             loading: false,
@@ -213,14 +220,16 @@ export default {
                 path: [
                     {required: true, trigger: 'blur', message: '前端路径不能为空，请输入'},
                     {pattern: /^\//, trigger: 'blur', message: '前端路径必须以 ‘/’ 开头，请重新输入'},
-                    {pattern: /(?<!\/)$/, trigger: 'blur', message: '前端路径不可以 ‘/’ 结尾，请重新输入'},
+                    // {pattern: /(?<!\/)$/, trigger: 'blur', message: '前端路径不可以 ‘/’ 结尾，请重新输入'},
+                    {validator: pathRule, trigger: 'blur'},
                     {pattern: /^[^`~!@#$%^&*()+=|{}':;',[\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]+$/, trigger: 'blur', message: '前端路径不可以包含特殊字符，请重新输入'},
                     {pattern: /^[^\u4e00-\u9fa5]+$/, trigger: 'blur', message: '前端路径不可以包含中文字符，请重新输入'}
                 ],
                 bgPath: [
                     {required: true, trigger: 'blur', message: '后端路径不能为空，请输入'},
                     {pattern: /^\//, trigger: 'blur', message: '后端路径必须以 ‘/’ 开头，请重新输入'},
-                    {pattern: /(?<!\/)$/, trigger: 'blur', message: '后端路径不可以 ‘/’ 结尾，请重新输入'},
+                    // {pattern: /(?<!\/)$/, trigger: 'blur', message: '后端路径不可以 ‘/’ 结尾，请重新输入'},
+                    {validator: pathRule, trigger: 'blur'},
                     {pattern: /^[^`~!@#$%^&*()+=|{}':;',[\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]+$/, trigger: 'blur', message: '后端路径不可以包含特殊字符，请重新输入'},
                     {pattern: /^[^\u4e00-\u9fa5]+$/, trigger: 'blur', message: '后端路径不可以包含中文字符，请重新输入'}
                 ]

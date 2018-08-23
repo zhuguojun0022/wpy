@@ -93,7 +93,7 @@ export default {
                     return {pass: false, msg: '路径不能为空！请重新输入'}
                 } else if (!/^\//.test(value)) {
                     return {pass: false, msg: '路径必须以 ’/‘ 开头！请重新输入'}
-                } else if (!/(?<!\/)$/.test(value)) {
+                } else if (/\/$/.test(value)) {
                     return {pass: false, msg: '路径不可以 ’/‘ 结尾！请重新输入'}
                 } else if (!/^[^`~!@#$%^&*()+=|{}':;',[\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]+$/.test(value)) {
                     return {pass: false, msg: '路径不可以包含特殊字符！请重新输入'}
