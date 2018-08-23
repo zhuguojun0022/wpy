@@ -47,8 +47,8 @@ export default {
                         }])
                     }
                 },
-                {title: '描述', key: 'comments'},
-                {title: '服务组', key: 'groupName'}
+                {title: '服务组', key: 'groupName'},
+                {title: '描述', key: 'comments'}
             ],
             tableHeihgt: '',
             activeType: 1,
