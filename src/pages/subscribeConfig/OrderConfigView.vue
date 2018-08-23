@@ -12,7 +12,7 @@
             <Select filterable v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable>
                 <Option v-for="item in channelList" :value="item.channelId" :key="item.channelId">{{ item.AAZ571 }}</Option>
             </Select>
-            <Select v-model="status" style="width: 200px" placeholder="状态">
+            <Select v-model="status" style="width: 200px" placeholder="状态" clearable>
                 <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Button type="primary" @click="onSearchClick">查询</Button>
@@ -154,7 +154,7 @@ export default {
         getApiList () {
             subconfigApi.getApiList({
                 name: null,
-                active: true
+                active: null
             }).then(({data: {msg, resultCode, result}}) => {
                 if (resultCode === '000000') {
                     this.apiList = result
@@ -186,6 +186,7 @@ export default {
                 searchInfo.apiId = this.APIName
                 searchInfo.callerId = this.channelName
                 searchInfo.active = this.status
+                this.currentPage = 1
             }
             this.openLoading()
             subconfigApi.getOrderApi({
