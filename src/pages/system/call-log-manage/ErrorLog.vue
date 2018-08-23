@@ -2,24 +2,25 @@
     <section>
         <Form :model="searchValue" inline>
             <FormItem prop="startTime" class="m-x-r search-condition">
-                <label class="required-search m-x-r m-x-l">开始时间:</label>
-                <Date-picker transfer :clearable="false" confirm v-model="searchValue.startTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择开始时间" style="width: 216px"></Date-picker>
+                <label class="required-search m-x-l">开始时间:</label>
+                <Date-picker transfer :clearable="false" confirm v-model="searchValue.startTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择开始时间" style="width: 200px"></Date-picker>
             </FormItem>
             <FormItem prop="endTime" class="m-x-r search-condition">
-                <label class="required-search m-x-r">结束时间:</label>
-                <Date-picker transfer :clearable="false" confirm v-model="searchValue.endTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择结束时间" style="width: 216px"></Date-picker>
+                <label class="required-search">结束时间:</label>
+                <Date-picker transfer :clearable="false" confirm v-model="searchValue.endTime" class="m-x" size="small" type="datetime" format="yyyy-MM-dd HH:mm" placeholder="请选择结束时间" style="width: 200px"></Date-picker>
             </FormItem>
-            <FormItem prop="apiName" class="m-x search-condition">
+            <FormItem prop="apiName" class="m-x-r search-condition">
                 <label class="search-title m-x-r">API名称:</label>
-                <Select v-model="searchValue.apiSelected" placeholder="请选择api" size="small" clearable style="width: 200px">
+                <Select filterable v-model="searchValue.apiSelected" placeholder="请选择api" size="small" clearable style="width: 200px">
                     <Option v-for="item in apiData" :value="item.id" :key="item.id">{{ item.name }}</Option>
                 </Select>
             </FormItem>
             <FormItem prop="caller" class="m-x-r-2 search-condition">
-                <label class="search-title m-x-r">&nbsp;&nbsp;&nbsp;&nbsp;调用者:</label>
+                <label class="search-title m-x-r">&nbsp;&nbsp;&nbsp;&nbsp;渠道名称:</label>
                 <Select
+                    filterable
                     v-model="searchValue.caller"
-                    style="width: 140px"
+                    style="width: 200px"
                     size="small"
                     clearable
                     transfer>
@@ -33,7 +34,7 @@
                     v-model="searchValue.returnCode"
                     placeholder="请选择返回码"
                     size="small"
-                    style="width: 260px">
+                    style="width: 200px">
                     <Option v-for="item in codeList" :value="item.code" :key="item.code">{{ item.msg }}</Option>
                 </Select>
             </FormItem>
@@ -74,11 +75,11 @@ export default {
             tableData: [],
             columns: [{
                 title: '请求ID',
-                key: 'reqId',
+                key: 'id',
                 width: 200
             }, {
-                title: '调用者名称',
-                key: 'callerName'
+                title: '渠道名称',
+                key: 'channelName'
             }, {
                 title: 'API名称',
                 render: (h, {columns, index, row}) => {
@@ -169,7 +170,16 @@ export default {
                 start: new Date().getTime(this.searchValue.startTime),
                 end: new Date().getTime(this.searchValue.endTime)
             }
-            monitorApi.oldReqLogs(params).then(({body: {result, code, msg}}) => {})
+            monitorApi.oldReqLogs(params).then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.tableData = result.list
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
+                }
+            })
         },
         getCodeList () {
             this.codeList = [
