@@ -54,8 +54,8 @@ export default {
     props: {},
     data () {
         infraApi.getMenu().then(({data: {result}}) => {
-            // console.log(infraApi.getMenu())
-            this.init(result.children)
+            let menuList = result.children
+            this.init(menuList)
         })
         return {
             menuList: [],
@@ -105,7 +105,7 @@ export default {
             this.menuList = menuList
         },
         firstLevalClick (pItem) {
-            if (pItem.leaf) {
+            if (pItem.children.length === 0) {
                 this.clickedMenuId = pItem.menuId
                 this.pActiveLeafId = this.clickedMenuId
             }
@@ -114,7 +114,7 @@ export default {
                 this.openedMenuId = null
                 return
             }
-            if (pItem.leaf) {
+            if (pItem.children.length === 0) {
                 this.$router.push({
                     name: pItem.menuRouter
                 })

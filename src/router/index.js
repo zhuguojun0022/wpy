@@ -11,6 +11,8 @@ import CityScreen from '../pages/bigScreen/cityScreen'
 // import CityScreen from '../pages/bigScreen/cityMap'
 import InquirePage from './inquire.route'
 
+import ServiceManage from './service.route'
+import SubscribeConfig from './subconf.route'
 export default [{
     path: '/',
     redirect: '/index/home'
@@ -46,5 +48,7 @@ export default [{
     ...SystemManagePage,
     ...ChannelManagePage,
     ...BillManagePage,
-    ...InquirePage]
+    ...InquirePage,
+    ...ServiceManage,
+    ...SubscribeConfig]
 }]

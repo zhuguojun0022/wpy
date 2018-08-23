@@ -1,0 +1,81 @@
+.ivu-card-head {
+  border-bottom: none;
+}
+.ivu-table-cell .ivu-btn-primary {
+  color: #0888f2;
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+}
+.ivu-table-cell .ivu-btn-primary:hover {
+  color: #066cc1;
+}
+.ivu-table-cell .ivu-btn-primary[disabled] {
+  color: #bbbec4;
+  background-color: transparent;
+  border-color: #dddee1;
+}
+.ivu-table-cell .ivu-btn-success {
+  color: #19be6b;
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+}
+.ivu-table-cell .ivu-btn-success:hover {
+  color: #139152;
+}
+.ivu-table-cell .ivu-btn-success[disabled] {
+  color: #bbbec4;
+  background-color: transparent;
+  border-color: #dddee1;
+}
+.ivu-table-cell .ivu-btn-error {
+  color: #ff4949;
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+}
+.ivu-table-cell .ivu-btn-error:hover {
+  color: #ff1616;
+}
+.ivu-table-cell .ivu-btn-error[disabled] {
+  color: #bbbec4;
+  background-color: transparent;
+  border-color: #dddee1;
+}
+.ivu-table-cell .ivu-btn-warning {
+  color: #ff9a00;
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+}
+.ivu-table-cell .ivu-btn-warning:hover {
+  color: #cc7b00;
+}
+.ivu-table-cell .ivu-btn-warning[disabled] {
+  color: #bbbec4;
+  background-color: transparent;
+  border-color: #dddee1;
+}
+.ivu-tooltip-inner {
+  max-width: 450px;
+}
+td.ivu-table-expanded-cell {
+  background: #fffaf6;
+}
+textarea.ivu-input {
+  font-size: 12px;
+}
+.ivu-table th .ivu-table td.ivu-table td {
+  min-width: 0;
+  height: 48px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  text-align: center !important;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9eaec;
+}
+.ivu-btn-text:focus {
+  box-shadow: none;
+}

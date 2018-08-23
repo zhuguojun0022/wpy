@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import './components/confirm'
+// import 'iview/dist/styles/iview.css'
 import {
     Button,
     Icon,
@@ -19,7 +20,7 @@ import {
     Row,
     Col,
     Modal,
-    // Card,
+    Card,
     Tag,
     RadioGroup,
     Radio,
@@ -31,7 +32,13 @@ import {
     CheckboxGroup,
     Checkbox,
     AutoComplete,
-    Spin
+    Spin,
+    Step,
+    Steps,
+    InputNumber,
+    Alert,
+    Avatar,
+    Slider
 } from 'iview'
 Vue.component('Button', Button)
 Vue.component('Icon', Icon)
@@ -49,7 +56,7 @@ Vue.component('Option', Option)
 Vue.component('Row', Row)
 Vue.component('Col', Col)
 Vue.component('Modal', Modal)
-// Vue.component('Card', Card)
+Vue.component('Card', Card)
 Vue.component('Tag', Tag)
 // Vue.component('Cascader', Cascader)
 Vue.component('RadioGroup', RadioGroup)
@@ -63,6 +70,12 @@ Vue.component('Checkbox', Checkbox)
 Vue.component('Spin', Spin)
 Vue.component('DatePicker', DatePicker)
 Vue.component('AutoComplete', AutoComplete)
+Vue.component('Steps', Steps)
+Vue.component('Step', Step)
+Vue.component('InputNumber', InputNumber)
+Vue.component('Alert', Alert)
+Vue.component('Avatar', Avatar)
+Vue.component('Slider', Slider)
 
 Vue.prototype.$Message = Message
 Vue.prototype.$Modal = Modal

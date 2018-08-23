@@ -8,12 +8,11 @@ const path = require('path')
 // const host = "11.240.240.47:8091"
 // const host = "11.240.240.145:8091"
 // const host = "11.240.240.184:8080"
-const host = "39.107.82.211:8080"
+// const host = "39.107.82.211:8080"
 // const host = "127.0.0.1:8088"
 // const host = "192.168.10.180:8080"
-
-
-
+const host = '192.168.4.96:8080'
+// const host = '192.168.5.64:8080'
 
 module.exports = {
   dev: {

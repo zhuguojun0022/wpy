@@ -35,6 +35,7 @@ function replaceRequestURL (config) {
 server.interceptors.request.use(config => {
     if (getToken()) {
         config.headers['X-TOKEN'] = getToken()
+        // config.headers['X-TOKEN'] = 'DEV_TOKEN'
     }
     replaceRequestURL(config)
     return config

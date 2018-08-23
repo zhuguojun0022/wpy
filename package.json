@@ -20,11 +20,13 @@
     "echarts": "^4.1.0",
     "iview": "^2.11.0",
     "js-sha256": "^0.9.0",
+    "qs": "^6.5.2",
     "underscore": "^1.9.1",
     "vue": "^2.5.2",
     "vue-countup-v2": "^1.0.3",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "vuex-persist": "^1.4.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
