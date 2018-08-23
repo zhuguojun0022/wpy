@@ -81,6 +81,14 @@ export default {
                                 this.onOrderStatusClick(row)
                             }
                         }
+                    }, {
+                        label: '——',
+                        type: 'primary',
+                        style: {
+                            marginRight: '5px',
+                            display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'none' : 'inline-block',
+                            color: '#cccccc'
+                        }
                     }])
                 }
             }]

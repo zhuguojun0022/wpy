@@ -2,7 +2,7 @@
     <GPage class="service-manage-page" bg>
         <!-- tab切换组件 -->
         <GTab :options="options" :value="removed" @input="onChange">
-            <Button class="add-sg-btn pull-right" type="primary" @click="onAddSGClick">新增服务组</Button>
+            <Button class="add-sg-btn pull-right" type="default" @click="onAddSGClick">新增服务组</Button>
         </GTab>
         <!-- 主要内容展示区域 -->
         <section class="main-content p-y">
@@ -14,6 +14,7 @@
                 :sg-info="item"
                 @onEditSGClick="onEditSGClick"
                 @onDeleteSGClick="onDeleteSGClick"></service-group>
+            <div class="no-data" v-if="serviceGroupList.length === 0">暂无数据</div>
         </section>
         <!-- 服务组新增、修改dia -->
         <Modal
@@ -75,6 +76,13 @@ export default {
         ServiceGroup
     },
     data () {
+        let gpRule = (rule, value, callback) => {
+            if (/\/$/.test(value) && value !== '/') {
+                callback(new Error('组路径不可以 ‘/’ 结尾，请重新输入'))
+            } else {
+                callback()
+            }
+        }
         let routerRule = (rule, value, callback) => {
             // const ip = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5]):([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/
             const url = /[a-zA-Z]+:\/\/[^\s]*/
@@ -126,7 +134,8 @@ export default {
                 groupPath: [
                     {required: true, trigger: 'blur', message: '组路径不能为空，请输入'},
                     {pattern: /^\//, trigger: 'blur', message: '组路径必须以 ‘/’ 开头，请重新输入'},
-                    {pattern: /(?<!\/)$/, trigger: 'blur', message: '组路径不可以 ‘/’ 结尾，请重新输入'},
+                    {validator: gpRule, trigger: 'blur'},
+                    // {pattern: /(?<!\/)$/, trigger: 'blur', message: '组路径不可以 ‘/’ 结尾，请重新输入'},
                     {pattern: /^[^`~!@#$%^&*()+=|{}':;',[\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]+$/, trigger: 'blur', message: '组路径不可以包含特殊字符，请重新输入'},
                     {pattern: /^[^\u4e00-\u9fa5]+$/, trigger: 'blur', message: '组路径不可以包含中文字符，请重新输入'}
                 ],
@@ -171,7 +180,10 @@ export default {
             this.getSGListInterface()
         },
         onAddSGClick () {
-            this.sgDiaShow = true
+            this.sgFormRef = 'sgAdd'
+            this.$nextTick(() => {
+                this.sgDiaShow = true
+            })
         },
         // switchChangeEvent (val) {
         //     if (val) {
@@ -217,6 +229,7 @@ export default {
             console.log(name)
             this.sgDiaShow = false
             this.$refs[name].resetFields()
+            this.sgFormRef = 'sgAdd'
         },
         onSubmitClick (name) {
             this.$refs[name].validate((valid) => {
@@ -293,6 +306,13 @@ export default {
     .alert-dia {
         margin-bottom: 0;
         margin-top: 5px;
+    }
+    .no-data {
+        margin: 30px auto;
+        text-align: center;
+        font-size: 30px;
+        font-style: italic;
+        color: rgb(186, 187, 187);
     }
 }
 </style>
