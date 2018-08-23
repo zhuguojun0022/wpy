@@ -183,11 +183,11 @@ export default {
         getOrderApi (type) {
             let searchInfo = {}
             if (type === 'search') {
-                searchInfo.apiId = this.APIName
-                searchInfo.callerId = this.channelName
-                searchInfo.active = this.status
                 this.currentPage = 1
             }
+            searchInfo.apiId = this.APIName
+            searchInfo.callerId = this.channelName
+            searchInfo.active = this.status
             this.openLoading()
             subconfigApi.getOrderApi({
                 pageNum: this.currentPage,
