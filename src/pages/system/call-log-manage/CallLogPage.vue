@@ -41,7 +41,8 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.resetBreadcrumb({
-                name: '调用日志'
+                name: '调用日志',
+                icon: 'icon-xitongguanli'
             })
         })
     },

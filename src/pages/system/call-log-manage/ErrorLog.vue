@@ -123,7 +123,7 @@ export default {
     },
     methods: {
         searchClick () {
-            this.reqLogList()
+            this.reqLogList('search')
         },
         handleCurrentChange (val) {
             this.currentPage = val
@@ -145,7 +145,10 @@ export default {
                 this.filterCallerListData = result
             })
         },
-        reqLogList () {
+        reqLogList (type) {
+            if (type === 'search') {
+                this.currentPage = 1
+            }
             let start = this.searchValue.startTime - 0
             let end = this.searchValue.endTime - 0
             if (!(end && start)) {
