@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import {serviceApi} from '../../../apis'
+import {serviceApi, subconfigApi} from '../../../apis'
 export default {
     data () {
         const statusFilter = (serverTime, row) => {
@@ -71,23 +71,27 @@ export default {
                 render: (h, {column, index, row}) => {
                     let serverTime = this.serverTime
                     return this.getCellRender(h, [{
-                        label: '启用',
-                        type: 'success',
-                        style: {
-                            display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
-                        },
+                        label: !row.active && statusFilter(serverTime, row).label !== '已过期' ? '启用' : '停用',
+                        type: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'success' : 'warning',
+                        // style: {
+                        //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
+                        // },
                         on: {
                             click: () => {
                                 this.onOrderStatusClick(row)
                             }
                         }
                     }, {
-                        label: '——',
-                        type: 'primary',
-                        style: {
-                            marginRight: '5px',
-                            display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'none' : 'inline-block',
-                            color: '#cccccc'
+                        label: '删除',
+                        type: 'error',
+                        disabled: !row.active && statusFilter(serverTime, row).label !== '已过期',
+                        // style: {
+                        //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
+                        // },
+                        on: {
+                            click: () => {
+                                this.onDeleteOrderClick(row)
+                            }
                         }
                     }])
                 }
@@ -110,7 +114,61 @@ export default {
                 }
             })
         },
-        onOrderStatusClick (row) {},
+        onOrderStatusClick (row) {
+            this.$Modal.confirm({
+                title: '提示',
+                content: `您将${row.active ? '停用' : '启用'}该订阅，是否继续？`,
+                cancelText: '取消',
+                loading: true,
+                onOk: () => {
+                    subconfigApi.updateStatusOrderedAPI({
+                        id: row.id,
+                        active: true
+                    }).then(({data: {resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            this.$Modal.remove()
+                            this.$Message.success({
+                                content: msg,
+                                duration: 2
+                            })
+                            row.active = !row.active
+                        } else {
+                            this.$Modal.remove()
+                            this.$Message.error({
+                                content: msg,
+                                duration: 2
+                            })
+                        }
+                    })
+                }
+            })
+        },
+        onDeleteOrderClick (id) {
+            this.$Modal.confirm({
+                title: '提示',
+                content: `您将删除该订阅，是否确认？`,
+                cancelText: '取消',
+                loading: true,
+                onOk: () => {
+                    serviceApi.deleteAPI(row.id, 4).then(({data: {msg, result, resultCode}}) => {
+                        this.$Modal.remove()
+                        // 处理逻辑
+                        if (resultCode === '000000') {
+                            this.getApiList()
+                            this.$Message.success({
+                                content: msg
+                            })
+                        } else {
+                            this.$Message.warning({
+                                content: msg
+                            })
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
+                }
+            })
+        },
         getOrderListByApiId (id) {
             serviceApi.getOrderListByApiId(id).then(({data: {resultCode, msg, result}}) => {
                 // TODO
