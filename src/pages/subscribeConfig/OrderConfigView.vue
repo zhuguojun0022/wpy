@@ -6,8 +6,11 @@
             <Button type="primary" @click="addOrder">新增订阅</Button>
         </div>
         <div slot="right">
-            <Select filterable v-model="APIName" placeholder="API名称" style="width: 200px" clearable>
-                <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+            <Select filterable v-model="APIName" placeholder="API名称" style="width: 230px" clearable>
+                <Option v-for="item in apiList" :value="item.id" :key="item.id" :label="item.name">
+                    <span>{{ item.name }}</span>
+                    <span style="float:right;color:#ccc">{{ item.groupName }}</span>
+                </Option>
             </Select>
             <Select filterable v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable>
                 <Option v-for="item in channelList" :value="item.channelId" :key="item.channelId">{{ item.AAZ571 }}</Option>
