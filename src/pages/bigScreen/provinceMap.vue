@@ -154,7 +154,7 @@ export default {
                         visualMap: false,
                         coordinateSystem: 'geo',
                         data: convertData(data),
-                        symbolSize: function (val) { return val[2] / 100 }
+                        symbolSize: function (val) { return val[2] / 10000000000 }
                     },
                     {
                         name: 'Top 5',

@@ -105,8 +105,8 @@ export default {
                 for (i in cityData) {
                     let temp = cityData[i].month
                     this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
-                    this.yzheFdata.push(cityData[i].ecardOneCount)
-                    this.yzheSdata.push(cityData[i].ecardTwoCount)
+                    this.yzheFdata.unshift(cityData[i].ecardOneCount)
+                    this.yzheSdata.unshift(cityData[i].ecardTwoCount)
                 }
             }
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
