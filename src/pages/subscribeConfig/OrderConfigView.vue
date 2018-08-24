@@ -88,24 +88,16 @@ export default {
                     title: '操作',
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
-                            label: !row.active ? '启用' : '',
-                            type: 'success',
+                            label: !row.active ? '启用' : '禁用',
+                            type: !row.active ? 'success' : 'warning',
                             style: {
                                 marginRight: '5px',
-                                display: !row.active && filter(row).label !== '已过期' ? 'inline-block' : 'none'
+                                display: 'inline-block'
                             },
                             on: {
                                 click: (e) => {
                                     this.stateAPIClick(row)
                                 }
-                            }
-                        }, {
-                            label: '——',
-                            type: 'primary',
-                            style: {
-                                marginRight: '5px',
-                                display: !row.active && filter(row).label !== '已过期' ? 'none' : 'inline-block',
-                                color: '#cccccc'
                             }
                         }])
                     }
@@ -222,15 +214,23 @@ export default {
             })
         },
         stateAPIClick (row) {
+            let content, active
+            if (row.active) {
+                content = '您将禁用此API，是否继续？'
+                active = false
+            } else {
+                content = '您将启用此API，是否继续？'
+                active = true
+            }
             this.$Modal.confirm({
                 title: '提示',
-                content: '您将启用此API，是否继续？',
+                content: content,
                 cancelText: '取消',
                 loading: true,
                 onOk: () => {
                     subconfigApi.updateStatusOrderedAPI({
                         id: row.id,
-                        active: true
+                        active: active
                     }).then(({data: {resultCode, msg}}) => {
                         if (resultCode === '000000') {
                             this.$Modal.remove()
@@ -238,14 +238,14 @@ export default {
                                 content: msg,
                                 duration: 2
                             })
-                            row.active = true
+                            row.active = !row.active
                         } else {
                             this.$Modal.remove()
                             this.$Message.error({
                                 content: msg,
                                 duration: 2
                             })
-                            row.active = false
+                            row.active = row.active
                         }
                     })
                 }
