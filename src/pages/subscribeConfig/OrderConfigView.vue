@@ -31,7 +31,7 @@
 </template>
 <script>
 import {TableHeader, TableFooter} from '../../components/table'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapGetters} from 'vuex'
 import {subconfigApi} from '../../apis'
 // import server from '../../config/httpConfig'
 // import {systemApi} from '../../apis'
@@ -172,7 +172,7 @@ export default {
         this.getOrderApi(this.callerId)
     },
     methods: {
-        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'resetStep', 'resetBreadcrumb']),
+        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'resetStep', 'resetBreadcrumb', 'saveSearchInfo']),
         handleMainChange (v) {
             this.currentPage = v
             this.getOrderApi()
@@ -209,20 +209,21 @@ export default {
         },
         getOrderApi (type) {
             let searchInfo = {}
-            if (type === 'search') {
-                this.currentPage = 1
-            }
+            searchInfo.pageNum = this.currentPage
+            searchInfo.pageSize = this.pageSize
             searchInfo.apiId = this.APIName
             searchInfo.callerId = this.channelName
             searchInfo.active = this.status
+            if (type === 'search') {
+                searchInfo.type = 'search'
+                this.currentPage = 1
+                this.saveSearchInfo(searchInfo)
+            } else {
+                searchInfo.type = undefined
+                this.saveSearchInfo(searchInfo)
+            }
             this.openLoading()
-            subconfigApi.getOrderApi({
-                pageNum: this.currentPage,
-                pageSize: this.pageSize,
-                apiId: searchInfo.apiId,
-                callerId: searchInfo.callerId,
-                active: searchInfo.active
-            }).then(({data: {resultCode, msg, result}}) => {
+            subconfigApi.getOrderApi(this.getSearchInfo).then(({data: {resultCode, msg, result}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableData = result.list
@@ -287,7 +288,11 @@ export default {
             this.getOrderApi('search')
         }
     },
-    computed: {}
+    computed: {
+        ...mapGetters({
+            getSearchInfo: 'getSearchInfo'
+        })
+    }
 }
 </script>
 

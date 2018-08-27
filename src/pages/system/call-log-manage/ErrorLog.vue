@@ -81,7 +81,7 @@ export default {
             columns: [{
                 title: '请求ID',
                 key: 'id',
-                width: 300
+                minWidth: 200
             }, {
                 title: '渠道名称',
                 key: 'channelName'
@@ -89,7 +89,7 @@ export default {
                 title: 'API名称',
                 render: (h, {columns, index, row}) => {
                     return h('div', [
-                        h('Button', {props: {type: 'primary'}, style: {'paddingLeft': '0px'}}, [
+                        h('div', {props: {type: 'primary'}, style: {'paddingLeft': '0px'}}, [
                             h('Tooltip', {
                                 props: {
                                     content: '请求url：' + (row.url || '无'),
@@ -111,7 +111,7 @@ export default {
                 title: '返回码',
                 render: (h, {column, index, row}) => {
                     return h('div', [
-                        h('Button', {props: {type: 'primary'}, style: {'paddingLeft': '0px'}}, [
+                        h('div', {props: {type: 'primary'}, style: {'paddingLeft': '0px'}}, [
                             h('Tooltip', {
                                 props: {
                                     content: '返回信息: ' + (row.error || '无'),
