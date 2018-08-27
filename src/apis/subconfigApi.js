@@ -17,6 +17,8 @@ const getOrderedDetailAPI = (params) => http.get('/security/subscription/details
 const updateOrderedAPI = (params) => http.get('/security/subscription/concurrency?' + qs.stringify(params), params)
 // 获取渠道列表
 const getChannelInfo = (params) => http.get('/channel/list?' + qs.stringify(params))
+// 删除订阅
+const deleteOrder = (id) => http.get(`/security/subscription/remove?id=${id}`)
 
 export default {
     getOrderApi,
@@ -25,5 +27,6 @@ export default {
     getOrderedDetailAPI,
     updateOrderedAPI,
     getApiList,
-    getChannelInfo
+    getChannelInfo,
+    deleteOrder
 }

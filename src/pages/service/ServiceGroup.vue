@@ -248,7 +248,11 @@ export default {
             return this.condition ? 'chevron-up' : 'chevron-down'
         },
         columns () {
-            return this.removed === 1 ? this.openColumns : this.closedColumns
+            if (this.sgRemoved === 2) {
+                return this.closedColumns
+            } else {
+                return this.removed === 1 ? this.openColumns : this.closedColumns
+            }
         }
     },
     watch: {

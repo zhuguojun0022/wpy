@@ -88,7 +88,7 @@ export default {
                         // },
                         on: {
                             click: () => {
-                                this.onDeleteOrderClick(row)
+                                this.onDeleteOrderClick(row.id)
                             }
                         }
                     }])
@@ -97,9 +97,8 @@ export default {
         }
     },
     mounted () {
-        let id = this.$route.params.id
         // id = 'first_api_id'
-        this.getOrderListByApiId(id)
+        this.getOrderListByApiId()
     },
     methods: {
         onOrderIdClick (row) {
@@ -148,11 +147,11 @@ export default {
                 cancelText: '取消',
                 loading: true,
                 onOk: () => {
-                    serviceApi.deleteAPI(id, 4).then(({data: {msg, result, resultCode}}) => {
+                    subconfigApi.deleteOrder(id).then(({data: {msg, result, resultCode}}) => {
                         this.$Modal.remove()
                         // 处理逻辑
                         if (resultCode === '000000') {
-                            this.getApiList()
+                            this.getOrderListByApiId()
                             this.$Message.success({
                                 content: msg
                             })
@@ -167,8 +166,9 @@ export default {
                 }
             })
         },
-        getOrderListByApiId (id) {
-            serviceApi.getOrderListByApiId(id).then(({data: {resultCode, msg, result}}) => {
+        getOrderListByApiId () {
+            let apiId = this.$route.params.id
+            serviceApi.getOrderListByApiId(apiId).then(({data: {resultCode, msg, result}}) => {
                 // TODO
                 this.list = result
             })
