@@ -102,6 +102,7 @@ export default {
                         }, {
                             label: '删除',
                             type: 'error',
+                            disabled: row.active ? true : false,
                             on: {
                                 click: (e) => {
                                     this.$Modal.confirm({
