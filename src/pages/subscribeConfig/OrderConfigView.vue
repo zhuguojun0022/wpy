@@ -99,6 +99,37 @@ export default {
                                     this.stateAPIClick(row)
                                 }
                             }
+                        }, {
+                            label: '删除',
+                            type: 'error',
+                            on: {
+                                click: (e) => {
+                                    this.$Modal.confirm({
+                                        title: '提示',
+                                        content: '是否删除这条订阅配置',
+                                        cancelText: '取消',
+                                        loading: true,
+                                        onOk: () => {
+                                            subconfigApi.removeOrderApi({
+                                                id: row.id
+                                            }).then(({data: {result, resultCode, msg}}) => {
+                                                this.$Modal.remove()
+                                                if (resultCode === '000000') {
+                                                    this.$Message.success({
+                                                        content: msg,
+                                                        duration: 3
+                                                    })
+                                                } else {
+                                                    this.$Message.error({
+                                                        content: msg,
+                                                        duration: 3
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
                         }])
                     }
                 }

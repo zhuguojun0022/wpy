@@ -147,7 +147,7 @@ export default {
                 cancelText: '取消',
                 loading: true,
                 onOk: () => {
-                    subconfigApi.deleteOrder(id).then(({data: {msg, result, resultCode}}) => {
+                    subconfigApi.removeOrderApi({id: id}).then(({data: {msg, result, resultCode}}) => {
                         this.$Modal.remove()
                         // 处理逻辑
                         if (resultCode === '000000') {
