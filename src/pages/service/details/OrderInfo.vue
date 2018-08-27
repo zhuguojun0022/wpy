@@ -16,7 +16,7 @@
 import {serviceApi, subconfigApi} from '../../../apis'
 export default {
     data () {
-        const statusFilter = (serverTime, row) => {
+        const statusFilter = (row) => {
             if (row.active) {
                 return {
                     label: '已生效',
@@ -58,10 +58,9 @@ export default {
                 fixed: 'center',
                 width: 95,
                 render: (h, {column, index, row}) => {
-                    let serverTime = this.serverTime
                     return this.getCellRender(h, [{
-                        label: statusFilter(serverTime, row).label,
-                        color: statusFilter(serverTime, row).color,
+                        label: statusFilter(row).label,
+                        color: statusFilter(row).color,
                         tag: 'Tag'
                     }])
                 }
@@ -69,10 +68,9 @@ export default {
                 title: '操作',
                 fixed: 'center',
                 render: (h, {column, index, row}) => {
-                    let serverTime = this.serverTime
                     return this.getCellRender(h, [{
-                        label: !row.active && statusFilter(serverTime, row).label !== '已过期' ? '启用' : '停用',
-                        type: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'success' : 'warning',
+                        label: !row.active ? '启用' : '停用',
+                        type: !row.active ? 'success' : 'warning',
                         // style: {
                         //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
                         // },
@@ -84,7 +82,7 @@ export default {
                     }, {
                         label: '删除',
                         type: 'error',
-                        disabled: !row.active && statusFilter(serverTime, row).label !== '已过期',
+                        disabled: row.active,
                         // style: {
                         //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
                         // },
@@ -123,7 +121,7 @@ export default {
                 onOk: () => {
                     subconfigApi.updateStatusOrderedAPI({
                         id: row.id,
-                        active: true
+                        active: !row.active
                     }).then(({data: {resultCode, msg}}) => {
                         if (resultCode === '000000') {
                             this.$Modal.remove()
@@ -150,7 +148,7 @@ export default {
                 cancelText: '取消',
                 loading: true,
                 onOk: () => {
-                    serviceApi.deleteAPI(row.id, 4).then(({data: {msg, result, resultCode}}) => {
+                    serviceApi.deleteAPI(id, 4).then(({data: {msg, result, resultCode}}) => {
                         this.$Modal.remove()
                         // 处理逻辑
                         if (resultCode === '000000') {

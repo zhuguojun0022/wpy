@@ -10,7 +10,7 @@
             label="API名称"
             @submit="submitClick">
             <span slot="displayValue">{{nameDisplayValue}}</span>
-            <Input slot="editOption" size="small" v-model.trim="apiBaseInfo.name"></Input>
+            <Input slot="editOption" size="small" v-model.trim="apiBaseInfo.name" style="width: 300px;"></Input>
         </detial-item-eidt>
         <detial-item-eidt
             :isCanEdit="false"
@@ -19,7 +19,7 @@
             paramKey="requestPath"
             label="请求路径">
             <span slot="displayValue">{{requestPathDisplayValue}}</span>
-            <Input slot="editOption" size="small" v-model="apiBaseInfo.requestPath"></Input>
+            <Input slot="editOption" size="small" v-model="apiBaseInfo.requestPath" style="width: 300px;"></Input>
         </detial-item-eidt>
         <detial-item-eidt
             :isCanEdit="isCanEdit"
@@ -29,7 +29,7 @@
             label="前端路径"
             @submit="submitClick">
             <span slot="displayValue">{{pathDisplayValue}}</span>
-            <Input slot="editOption" size="small" v-model.trim="apiBaseInfo.path"></Input>
+            <Input slot="editOption" size="small" v-model.trim="apiBaseInfo.path" style="width: 300px;"></Input>
         </detial-item-eidt>
         <detial-item-eidt
             :isCanEdit="isCanEdit"
@@ -39,7 +39,7 @@
             label="后端路径"
             @submit="submitClick">
             <span slot="displayValue">{{bgPathDisplayValue}}</span>
-            <Input slot="editOption" size="small" v-model.trim="apiBaseInfo.bgPath"></Input>
+            <Input slot="editOption" size="small" v-model.trim="apiBaseInfo.bgPath" style="width: 300px;"></Input>
         </detial-item-eidt>
         <detial-item-eidt
             :isCanEdit="isCanEdit"
@@ -61,7 +61,7 @@
             label="描述"
             @submit="submitClick">
             <span slot="displayValue">{{commentsDisplayValue}}</span>
-            <Input slot="editOption" size="small" v-model="apiBaseInfo.comments"></Input>
+            <Input slot="editOption" size="small" v-model="apiBaseInfo.comments" style="width: 300px;"></Input>
         </detial-item-eidt>
     </section>
 </div>

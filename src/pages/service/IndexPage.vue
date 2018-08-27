@@ -29,7 +29,7 @@
                 </FormItem>
                 <FormItem label="组路径" prop="groupPath">
                     <form-label slot="label" label="组路径" info="组路径用于拼接调用路径，例如：组路径为'/api'，API前端路径为‘/getInfo’，那么最终的调用路径为‘/api/getInfo’"></form-label>
-                    <Input v-model.trim="sgForm.groupPath" :maxlength="16" type="text" placeholder="请输入服务组路径" auto-complete="off"></Input>
+                    <Input v-model.trim="sgForm.groupPath" type="text" placeholder="请输入服务组路径" auto-complete="off"></Input>
                     <Alert class="alert-dia" show-icon>组路径请以 ‘/’ 开头， 例如：'/api'</Alert>
                     <Alert class="alert-dia" type="warning" show-icon v-show="sgFormRef === 'sgEdit'">修改服务组的路径，将会影响服务API对外的调用路径，修改请慎重！</Alert>
                 </FormItem>
