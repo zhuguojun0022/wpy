@@ -174,6 +174,13 @@ export default {
             }
         },
         handleClose (channelId) {
+            if (this.channelInfo.length === 1) {
+                this.$Message.warning({
+                    content: '至少选择一个渠道',
+                    duration: 3
+                })
+                return false
+            }
             this.changeChannel(channelId)
         }
     }
