@@ -185,11 +185,21 @@ export default {
             })
         },
         getCodeList () {
-            this.codeList = [
-                { msg: '4002 (没有有效的订阅)', code: '4002' },
-                { msg: '4003 (没有订阅该API)', code: '4003' },
-                { msg: '4004 (服务没有找到)', code: '4004' }
-            ]
+            // this.codeList = [
+            //     { msg: '4002 (没有有效的订阅)', code: '4002' },
+            //     { msg: '4003 (没有订阅该API)', code: '4003' },
+            //     { msg: '4004 (服务没有找到)', code: '4004' }
+            // ]
+            monitorApi.errorCode().then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.codeList = result
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
+                }
+            })
         }
     },
     watch: {
