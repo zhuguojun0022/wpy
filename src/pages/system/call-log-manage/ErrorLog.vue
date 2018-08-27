@@ -170,8 +170,8 @@ export default {
                 callerId: this.searchValue.caller,
                 apiId: this.searchValue.apiSelected,
                 code: this.searchValue.returnCode,
-                start: new Date().getTime(this.searchValue.startTime),
-                end: new Date().getTime(this.searchValue.endTime)
+                start: new Date(start).getTime(),
+                end: new Date(end).getTime()
             }
             monitorApi.oldReqLogs(params).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
@@ -222,7 +222,9 @@ export default {
             this.searchValue.startTime = new Date(str)
         } else {
             let strDate = `${year}/${month}/${date} 00:00:00`
+            let strEndDate = `${year}/${month}/${date} 23:59:59`
             this.searchValue.startTime = new Date(strDate)
+            this.searchValue.endTime = new Date(strEndDate)
         }
     }
 }
