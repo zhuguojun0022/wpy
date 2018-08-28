@@ -44,9 +44,10 @@ server.interceptors.request.use(config => {
 })
 
 function clientErrorProcess (response) {
+    console.log(response)
     if (!response.config.alert) {
-        if (response.data && response.data.msg) {
-            Message.error(`${response.data.msg}`)
+        if (response.data && response.data.message) {
+            Message.error(`${response.data.message}`)
         } else {
             Message.error('请求错误，错误码未知！')
         }
@@ -55,8 +56,8 @@ function clientErrorProcess (response) {
 
 server.interceptors.response.use(response => {
     const {config, data} = response
-    if (data && data.code &&
-        (data.code.startsWith('4') || data.code.startsWith('5'))) {
+    if (data && data.resultCode &&
+        (data.resultCode.startsWith('4') || data.resultCode.startsWith('5'))) {
         clientErrorProcess(response)
     } else if (config.alertSuccess) {
         Message.success(data.msg || '操作成功')
@@ -66,8 +67,8 @@ server.interceptors.response.use(response => {
     if (!error.response && error.message.indexOf('timeout') !== -1) {
         Message.error('请求超时')
     } else if (error.response && error.response.status >= 500) {
-        if (error.response.data && error.response.data.code) {
-            Message.error(`服务器错误，错误码：${error.response.data.code}，消息：${error.response.data.msg}`)
+        if (error.response.data && error.response.data.resultCode) {
+            Message.error(`服务器错误，错误码：${error.response.data.resultCode}，消息：${error.response.data.msg}`)
         } else {
             Message.error('服务器错误，错误码未知')
         }

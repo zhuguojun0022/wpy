@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import {serviceApi} from '../../../apis'
+import {serviceApi, subconfigApi} from '../../../apis'
 export default {
     data () {
-        const statusFilter = (serverTime, row) => {
+        const statusFilter = (row) => {
             if (row.active) {
                 return {
                     label: '已生效',
@@ -58,10 +58,9 @@ export default {
                 fixed: 'center',
                 width: 95,
                 render: (h, {column, index, row}) => {
-                    let serverTime = this.serverTime
                     return this.getCellRender(h, [{
-                        label: statusFilter(serverTime, row).label,
-                        color: statusFilter(serverTime, row).color,
+                        label: statusFilter(row).label,
+                        color: statusFilter(row).color,
                         tag: 'Tag'
                     }])
                 }
@@ -69,25 +68,28 @@ export default {
                 title: '操作',
                 fixed: 'center',
                 render: (h, {column, index, row}) => {
-                    let serverTime = this.serverTime
                     return this.getCellRender(h, [{
-                        label: '启用',
-                        type: 'success',
-                        style: {
-                            display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
-                        },
+                        label: !row.active ? '启用' : '停用',
+                        type: !row.active ? 'success' : 'warning',
+                        // style: {
+                        //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
+                        // },
                         on: {
                             click: () => {
                                 this.onOrderStatusClick(row)
                             }
                         }
                     }, {
-                        label: '——',
-                        type: 'primary',
-                        style: {
-                            marginRight: '5px',
-                            display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'none' : 'inline-block',
-                            color: '#cccccc'
+                        label: '删除',
+                        type: 'error',
+                        disabled: row.active,
+                        // style: {
+                        //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
+                        // },
+                        on: {
+                            click: () => {
+                                this.onDeleteOrderClick(row.id)
+                            }
                         }
                     }])
                 }
@@ -95,9 +97,8 @@ export default {
         }
     },
     mounted () {
-        let id = this.$route.params.id
         // id = 'first_api_id'
-        this.getOrderListByApiId(id)
+        this.getOrderListByApiId()
     },
     methods: {
         onOrderIdClick (row) {
@@ -110,9 +111,64 @@ export default {
                 }
             })
         },
-        onOrderStatusClick (row) {},
-        getOrderListByApiId (id) {
-            serviceApi.getOrderListByApiId(id).then(({data: {resultCode, msg, result}}) => {
+        onOrderStatusClick (row) {
+            this.$Modal.confirm({
+                title: '提示',
+                content: `您将${row.active ? '停用' : '启用'}该订阅，是否继续？`,
+                cancelText: '取消',
+                loading: true,
+                onOk: () => {
+                    subconfigApi.updateStatusOrderedAPI({
+                        id: row.id,
+                        active: !row.active
+                    }).then(({data: {resultCode, msg}}) => {
+                        if (resultCode === '000000') {
+                            this.$Modal.remove()
+                            this.$Message.success({
+                                content: msg,
+                                duration: 2
+                            })
+                            row.active = !row.active
+                        } else {
+                            this.$Modal.remove()
+                            this.$Message.error({
+                                content: msg,
+                                duration: 2
+                            })
+                        }
+                    })
+                }
+            })
+        },
+        onDeleteOrderClick (id) {
+            this.$Modal.confirm({
+                title: '提示',
+                content: `您将删除该订阅，是否确认？`,
+                cancelText: '取消',
+                loading: true,
+                onOk: () => {
+                    subconfigApi.removeOrderApi({id: id}).then(({data: {msg, result, resultCode}}) => {
+                        this.$Modal.remove()
+                        // 处理逻辑
+                        if (resultCode === '000000') {
+                            this.getOrderListByApiId()
+                            this.$Message.success({
+                                content: msg
+                            })
+                        } else {
+                            this.$Message.warning({
+                                content: msg
+                            })
+                        }
+                    }).catch(() => {
+                        this.$Modal.remove()
+                    })
+                }
+            })
+        },
+        getOrderListByApiId () {
+            let apiId = this.$route.params.id
+            serviceApi.getOrderListByApiId(apiId).then(({data: {resultCode, msg, result}}) => {
                 // TODO
                 this.list = result
             })

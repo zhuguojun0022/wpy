@@ -34,8 +34,12 @@
                     v-model="searchValue.returnCode"
                     placeholder="请选择返回码"
                     size="small"
+                    clearable
                     style="width: 200px">
-                    <Option v-for="item in codeList" :value="item.code" :key="item.code">{{ item.msg }}</Option>
+                    <Option v-for="item in codeList" :value="item.code" :key="item.code" :label="item.msg">
+                        <span>{{ item.msg }}</span>
+                        <span style="float:right;color:#ccc">{{ item.code }}</span>
+                    </Option>
                 </Select>
             </FormItem>
             <FormItem>
@@ -49,6 +53,7 @@
 <script>
 import {monitorApi, subconfigApi} from '../../../apis'
 import {TableFooter} from '../../../components/table'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
     components: {
@@ -65,7 +70,7 @@ export default {
                 endTime: '',
                 apiSelected: '',
                 caller: '',
-                returnCode: '2',
+                returnCode: '',
                 timeFrame: 3600000 * 24
             },
             applySelect: '',
@@ -76,7 +81,7 @@ export default {
             columns: [{
                 title: '请求ID',
                 key: 'id',
-                width: 200
+                minWidth: 200
             }, {
                 title: '渠道名称',
                 key: 'channelName'
@@ -84,7 +89,7 @@ export default {
                 title: 'API名称',
                 render: (h, {columns, index, row}) => {
                     return h('div', [
-                        h('Button', {props: {type: 'primary', style: {paddingLeft: '0px'}}}, [
+                        h('div', {props: {type: 'primary'}, style: {'paddingLeft': '0px'}}, [
                             h('Tooltip', {
                                 props: {
                                     content: '请求url：' + (row.url || '无'),
@@ -100,12 +105,13 @@ export default {
                 }
             }, {
                 title: '时间',
-                key: 'starttime'
+                key: 'starttime',
+                width: 200
             }, {
                 title: '返回码',
                 render: (h, {column, index, row}) => {
                     return h('div', [
-                        h('Button', {props: {type: 'primary'}}, [
+                        h('div', {props: {type: 'primary'}, style: {'paddingLeft': '0px'}}, [
                             h('Tooltip', {
                                 props: {
                                     content: '返回信息: ' + (row.error || '无'),
@@ -122,6 +128,7 @@ export default {
         }
     },
     methods: {
+        ...mapMutations(['saveSearchInfo']),
         searchClick () {
             this.reqLogList('search')
         },
@@ -146,9 +153,6 @@ export default {
             })
         },
         reqLogList (type) {
-            if (type === 'search') {
-                this.currentPage = 1
-            }
             let start = this.searchValue.startTime - 0
             let end = this.searchValue.endTime - 0
             if (!(end && start)) {
@@ -170,13 +174,23 @@ export default {
                 callerId: this.searchValue.caller,
                 apiId: this.searchValue.apiSelected,
                 code: this.searchValue.returnCode,
-                start: new Date().getTime(this.searchValue.startTime),
-                end: new Date().getTime(this.searchValue.endTime)
+                start: new Date(start).getTime(),
+                end: new Date(end).getTime()
             }
-            monitorApi.oldReqLogs(params).then(({data: {result, resultCode, msg}}) => {
+            if (type === 'search') {
+                params.type = 'search'
+                this.currentPage = 1
+                this.saveSearchInfo(params)
+            } else {
+                params.type = undefined
+                this.saveSearchInfo(params)
+            }
+            monitorApi.oldReqLogs(this.getSearchInfo).then(({data: {result, resultCode, msg}}) => {
                 if (resultCode === '000000') {
+                    this.totalNum = result.total
                     this.tableData = result.list
                 } else {
+                    this.totalNum = 0
                     this.$Message.error({
                         content: msg,
                         duration: 3
@@ -185,11 +199,21 @@ export default {
             })
         },
         getCodeList () {
-            this.codeList = [
-                { msg: '4002 (没有有效的订阅)', code: '4002' },
-                { msg: '4003 (没有订阅该API)', code: '4003' },
-                { msg: '4004 (服务没有找到)', code: '4004' }
-            ]
+            // this.codeList = [
+            //     { msg: '4002 (没有有效的订阅)', code: '4002' },
+            //     { msg: '4003 (没有订阅该API)', code: '4003' },
+            //     { msg: '4004 (服务没有找到)', code: '4004' }
+            // ]
+            monitorApi.errorCode().then(({data: {result, resultCode, msg}}) => {
+                if (resultCode === '000000') {
+                    this.codeList = result
+                } else {
+                    this.$Message.error({
+                        content: msg,
+                        duration: 3
+                    })
+                }
+            })
         }
     },
     watch: {
@@ -212,8 +236,16 @@ export default {
             this.searchValue.startTime = new Date(str)
         } else {
             let strDate = `${year}/${month}/${date} 00:00:00`
+            let strEndDate = `${year}/${month}/${date} 23:59:59`
             this.searchValue.startTime = new Date(strDate)
+            this.searchValue.endTime = new Date(strEndDate)
         }
+        this.searchClick()
+    },
+    computed: {
+        ...mapGetters({
+            getSearchInfo: 'getSearchInfo'
+        })
     }
 }
 </script>

@@ -6,8 +6,11 @@
             <Button type="primary" @click="addOrder">新增订阅</Button>
         </div>
         <div slot="right">
-            <Select filterable v-model="APIName" placeholder="API名称" style="width: 200px" clearable>
-                <Option v-for="item in apiList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+            <Select filterable v-model="APIName" placeholder="API名称" style="width: 230px" clearable>
+                <Option v-for="item in apiList" :value="item.id" :key="item.id" :label="item.name">
+                    <span>{{ item.name }}</span>
+                    <span style="float:right;color:#ccc">{{ item.groupName }}</span>
+                </Option>
             </Select>
             <Select filterable v-model="channelName" placeholder="渠道名称" style="width: 200px" clearable>
                 <Option v-for="item in channelList" :value="item.channelId" :key="item.channelId">{{ item.AAZ571 }}</Option>
@@ -28,7 +31,7 @@
 </template>
 <script>
 import {TableHeader, TableFooter} from '../../components/table'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapGetters} from 'vuex'
 import {subconfigApi} from '../../apis'
 // import server from '../../config/httpConfig'
 // import {systemApi} from '../../apis'
@@ -85,11 +88,11 @@ export default {
                     title: '操作',
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
-                            label: !row.active ? '启用' : '',
-                            type: 'success',
+                            label: !row.active ? '启用' : '禁用',
+                            type: !row.active ? 'success' : 'warning',
                             style: {
                                 marginRight: '5px',
-                                display: !row.active && filter(row).label !== '已过期' ? 'inline-block' : 'none'
+                                display: 'inline-block'
                             },
                             on: {
                                 click: (e) => {
@@ -97,12 +100,36 @@ export default {
                                 }
                             }
                         }, {
-                            label: '——',
-                            type: 'primary',
-                            style: {
-                                marginRight: '5px',
-                                display: !row.active && filter(row).label !== '已过期' ? 'none' : 'inline-block',
-                                color: '#cccccc'
+                            label: '删除',
+                            type: 'error',
+                            disabled: row.active,
+                            on: {
+                                click: (e) => {
+                                    this.$Modal.confirm({
+                                        title: '提示',
+                                        content: '是否删除这条订阅配置',
+                                        cancelText: '取消',
+                                        loading: true,
+                                        onOk: () => {
+                                            subconfigApi.removeOrderApi({
+                                                id: row.id
+                                            }).then(({data: {result, resultCode, msg}}) => {
+                                                this.$Modal.remove()
+                                                if (resultCode === '000000') {
+                                                    this.$Message.success({
+                                                        content: msg,
+                                                        duration: 3
+                                                    })
+                                                } else {
+                                                    this.$Message.error({
+                                                        content: msg,
+                                                        duration: 3
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
                             }
                         }])
                     }
@@ -145,7 +172,7 @@ export default {
         this.getOrderApi(this.callerId)
     },
     methods: {
-        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'resetStep', 'resetBreadcrumb']),
+        ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'resetStep', 'resetBreadcrumb', 'saveSearchInfo']),
         handleMainChange (v) {
             this.currentPage = v
             this.getOrderApi()
@@ -182,20 +209,21 @@ export default {
         },
         getOrderApi (type) {
             let searchInfo = {}
+            searchInfo.pageNum = this.currentPage
+            searchInfo.pageSize = this.pageSize
+            searchInfo.apiId = this.APIName
+            searchInfo.callerId = this.channelName
+            searchInfo.active = this.status
             if (type === 'search') {
-                searchInfo.apiId = this.APIName
-                searchInfo.callerId = this.channelName
-                searchInfo.active = this.status
+                searchInfo.type = 'search'
                 this.currentPage = 1
+                this.saveSearchInfo(searchInfo)
+            } else {
+                searchInfo.type = undefined
+                this.saveSearchInfo(searchInfo)
             }
             this.openLoading()
-            subconfigApi.getOrderApi({
-                pageNum: this.currentPage,
-                pageSize: this.pageSize,
-                apiId: searchInfo.apiId,
-                callerId: searchInfo.callerId,
-                active: searchInfo.active
-            }).then(({data: {resultCode, msg, result}}) => {
+            subconfigApi.getOrderApi(this.getSearchInfo).then(({data: {resultCode, msg, result}}) => {
                 this.closeLoading()
                 if (resultCode === '000000') {
                     this.tableData = result.list
@@ -219,15 +247,23 @@ export default {
             })
         },
         stateAPIClick (row) {
+            let content, active
+            if (row.active) {
+                content = '您将禁用此API，是否继续？'
+                active = false
+            } else {
+                content = '您将启用此API，是否继续？'
+                active = true
+            }
             this.$Modal.confirm({
                 title: '提示',
-                content: '您将启用此API，是否继续？',
+                content: content,
                 cancelText: '取消',
                 loading: true,
                 onOk: () => {
                     subconfigApi.updateStatusOrderedAPI({
                         id: row.id,
-                        active: true
+                        active: active
                     }).then(({data: {resultCode, msg}}) => {
                         if (resultCode === '000000') {
                             this.$Modal.remove()
@@ -235,14 +271,14 @@ export default {
                                 content: msg,
                                 duration: 2
                             })
-                            row.active = true
+                            row.active = !row.active
                         } else {
                             this.$Modal.remove()
                             this.$Message.error({
                                 content: msg,
                                 duration: 2
                             })
-                            row.active = false
+                            row.active = row.active
                         }
                     })
                 }
@@ -252,7 +288,11 @@ export default {
             this.getOrderApi('search')
         }
     },
-    computed: {}
+    computed: {
+        ...mapGetters({
+            getSearchInfo: 'getSearchInfo'
+        })
+    }
 }
 </script>
 

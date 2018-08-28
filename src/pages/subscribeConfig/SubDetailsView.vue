@@ -9,7 +9,7 @@
                         <div class="detail-info-val">{{baseInfo.apiName}}</div>
                     </section>
                     <section class="detail-info">
-                        <label class="detail-info-desc">路径:</label>
+                        <label class="detail-info-desc">前端路径:</label>
                         <div class="detail-info-val">{{baseInfo.path}}</div>
                     </section>
                     <section class="detail-info">
@@ -238,7 +238,7 @@ export default {
 }
 .subscription-policy {
     h4, h5 {
-        font-weight: 500;
+        // font-weight: 500;
         padding-top: 20px;
     }
     .service-control {
