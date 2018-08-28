@@ -157,19 +157,14 @@ export default {
         this.tableHeihgt = window.innerHeight - 224
     },
     mounted () {
-        this.callerId = this.$route.params.callerId
-        // console.log(this.$route.params.callerName)
         this.resetBreadcrumb({
             name: '订阅配置',
             icon: 'icon-subscribeConfig'
         })
-        // this.pushBreadcrumb({
-        //     name: this.$route.params.callerName
-        // })
         this.appId = this.$route.params.appId
         this.getApiList()
         this.getChannelList()
-        this.getOrderApi(this.callerId)
+        this.getOrderApi('search')
     },
     methods: {
         ...mapMutations(['pushBreadcrumb', 'openLoading', 'closeLoading', 'resetStep', 'resetBreadcrumb', 'saveSearchInfo']),
