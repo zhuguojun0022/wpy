@@ -69,7 +69,7 @@ export default {
                 fixed: 'center',
                 render: (h, {column, index, row}) => {
                     return this.getCellRender(h, [{
-                        label: !row.active ? '启用' : '停用',
+                        label: !row.active ? '启用' : '禁用',
                         type: !row.active ? 'success' : 'warning',
                         // style: {
                         //     display: !row.active && statusFilter(serverTime, row).label !== '已过期' ? 'inline-block' : 'none'
@@ -114,7 +114,7 @@ export default {
         onOrderStatusClick (row) {
             this.$Modal.confirm({
                 title: '提示',
-                content: `您将${row.active ? '停用' : '启用'}该订阅，是否继续？`,
+                content: `您将${row.active ? '禁用' : '启用'}该订阅，是否继续？`,
                 cancelText: '取消',
                 loading: true,
                 onOk: () => {
