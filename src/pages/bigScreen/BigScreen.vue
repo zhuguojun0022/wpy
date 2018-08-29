@@ -96,7 +96,7 @@ export default {
             if (cityData) {
                 for (i in cityData) {
                     let temp = cityData[i].month
-                    this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
+                    this.xzhedata.unshift(Number(temp.slice(4, 6)) + '月')
                     this.yzheFdata.unshift(cityData[i].ecardOneCount)
                     this.yzheSdata.unshift(cityData[i].ecardTwoCount)
                 }

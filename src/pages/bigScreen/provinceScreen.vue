@@ -55,9 +55,10 @@ export default {
         return {
             time: '',
             data: '',
-            xzhedata: ['9月', '10月', '11月'],
-            yzheFdata: [],
-            yzheSdata: [],
+            xzhedata: ['6月', '7月', '8月', '9月', '10月', '11月'],
+            // xzhedata: ['6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            yzheFdata: ['', '0', '0', '0'],
+            yzheSdata: ['', '0', '0', '0'],
             tiaoData: [],
             zhuData: [],
             sanData: [],
@@ -98,14 +99,27 @@ export default {
         handleMothSuees (res) {
             let cityData = res.data.result
             let i = 0
+            // if (cityData) {
+            //     for (i in cityData) {
+            //         let temp = cityData[i].month
+            //         this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
+            //         this.yzheFdata.unshift(cityData[i].ecardOneCount)
+            //         this.yzheSdata.unshift(cityData[i].ecardTwoCount)
+            //     }
+            // }
             if (cityData) {
                 for (i in cityData) {
                     let temp = cityData[i].month
-                    this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
-                    this.yzheFdata.unshift(cityData[i].ecardOneCount)
-                    this.yzheSdata.unshift(cityData[i].ecardTwoCount)
+                    let temps = Number(temp.slice(4, 6))
+                    this.yzheFdata[temps - 6] = cityData[i].ecardOneCount
+                    this.yzheSdata[temps - 6] = cityData[i].ecardTwoCount
+                    this.yzheFdata[-1] = 9
                 }
             }
+            let temp = cityData.length
+            let aa = Number(cityData[temp - 1].month.slice(4, 6))
+            this.yzheFdata[aa - 7] = 0
+            this.yzheSdata[aa - 7] = 0
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
         },
         handleCitySuees (res) {
