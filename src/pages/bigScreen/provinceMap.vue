@@ -45,7 +45,9 @@ export default {
             weiData: [],
             mapData: {},
             areaBig: '',
-            areaBlog: 'china'
+            areaBlog: 'china',
+            cityDataLength: 0,
+            firstLength: 0
         }
     },
     mounted () {
@@ -58,6 +60,8 @@ export default {
     methods: {
         handleAllCitySuees (res) {
             let cityData = res.data.result
+            this.cityDataLength = Math.floor(res.data.result.length / 3)
+            this.firstLength = Math.floor(res.data.result.length / 3)
             let i = 0
             if (cityData) {
                 for (i in cityData) {
@@ -150,7 +154,7 @@ export default {
                         visualMap: false,
                         coordinateSystem: 'geo',
                         data: convertData(data),
-                        symbolSize: function (val) { return val[2] / 100 }
+                        symbolSize: function (val) { return val[2] / 10000000000 }
                     },
                     {
                         name: 'Top 5',
@@ -162,16 +166,27 @@ export default {
                         data: convertData(data.sort(function (a, b) { return b.value - a.value }).slice(0)),
                         symbolSize: function (val) {
                             let wave = 5
-                            if (val[2] <= 100) {
-                                wave = 5
-                            } else if (val[2] <= 500) {
-                                wave = 7
-                            } else if (val[2] <= 1000) {
-                                wave = 9
+                            console.log(that.cityDataLength)
+                            if (that.firstLength === 0) {
+                                if (val[2] <= 100) {
+                                    wave = 5
+                                } else if (val[2] <= 500) {
+                                    wave = 6
+                                } else if (val[2] <= 1000) {
+                                    wave = 8
+                                } else {
+                                    wave = 10
+                                }
                             } else {
-                                wave = 11
+                                that.cityDataLength--
+                                if (that.cityDataLength >= 0) {
+                                    wave = 10
+                                } else if (that.cityDataLength >= that.firstLength * (-1)) {
+                                    wave = 8
+                                } else {
+                                    wave = 5
+                                }
                             }
-                            // return val[2] / 100 + 4
                             return wave
                         },
                         showEffectOn: 'render',

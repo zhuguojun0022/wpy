@@ -4,7 +4,7 @@
         <ul>
           <li class="top_time">{{date}} {{time}}</li>
             <li class="top_title" >电子社保卡签发情况</li>
-            <li><span class="sign_out" @click="goback">返回</span></li>
+            <li style="cursor:pointer"><span class="sign_out" @click="goback">返回</span></li>
         </ul>
     </div>
     <div class="data_show">
@@ -55,9 +55,10 @@ export default {
         return {
             time: '',
             data: '',
-            xzhedata: ['9月', '10月', '11月'],
-            yzheFdata: [],
-            yzheSdata: [],
+            xzhedata: ['6月', '7月', '8月', '9月', '10月', '11月'],
+            // xzhedata: ['6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            yzheFdata: ['', '0', '0', '0'],
+            yzheSdata: ['', '0', '0', '0'],
             tiaoData: [],
             zhuData: [],
             sanData: [],
@@ -73,7 +74,6 @@ export default {
         let regionBig = window.sessionStorage.getItem('cityNumId')
         this.areaBig = provinceBig
         this.areaBlog = regionBig
-        // console.log(this.areaBlog,"wpy1")
         // this.drawLine(provinceBig);
         let that = this
         let week = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
@@ -92,7 +92,8 @@ export default {
             return (zero + num).slice(-digit)
         }
         infraApi.dapingMoth(this.areaBlog).then(this.handleMothSuees.bind(this))
-        infraApi.dapingCity(this.areaBlog).then(this.handleCitySuees.bind(this))
+        infraApi.dapingCity(this.areaBlog.slice(0, 3)).then(this.handleCitySuees.bind(this))
+        // infraApi.dapingCity(this.areaBlog).then(this.handleCitySuees.bind(this))
         infraApi.dapingChannel(this.areaBlog).then(this.handleChannelSuees.bind(this))
     },
     methods: {
@@ -102,11 +103,27 @@ export default {
             if (cityData) {
                 for (i in cityData) {
                     let temp = cityData[i].month
-                    this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
-                    this.yzheFdata.push(cityData[i].ecardOneCount)
-                    this.yzheSdata.push(cityData[i].ecardTwoCount)
+                    let temps = Number(temp.slice(4, 6))
+                    this.yzheFdata[temps - 6] = cityData[i].ecardOneCount
+                    this.yzheSdata[temps - 6] = cityData[i].ecardTwoCount
+                    this.yzheFdata[-1] = 9
                 }
             }
+            let temp = cityData.length
+            let aa = Number(cityData[temp - 1].month.slice(4, 6))
+            this.yzheFdata[aa - 7] = 0
+            this.yzheSdata[aa - 7] = 0
+            // console.log(aa, 'kkps')
+            // if (cityData[temp - 1].month === '201807') {
+            //     this.yzheFdata[0] = 0
+            //     this.yzheSdata[0] = 0
+            //     // alert(1)
+            // } else if (cityData[temp - 1].month === '201808') {
+            //     this.yzheFdata[1] = 0
+            //     this.yzheSdata[1] = 0
+            // }
+            // this.yzheFdata[0] = 0
+            // this.yzheSdata[0] = 0
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
         },
         handleCitySuees (res) {

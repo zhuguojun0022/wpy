@@ -24,7 +24,7 @@
                   :endVal="secondEndVal"
                   :decimals="secondDecimals"
                   :duration="secondDuration"
-                 :style="{color: '#00deff',fontSize: '24px',}"
+                  :style="{color: '#00deff',fontSize: '24px',}"
                   :options="options"/>
             </label></label></li>
                 <li><span>开通城市数</span><label :style="{marginLeft: '30px'}" >{{cardCity}}</label></li>

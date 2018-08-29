@@ -4,7 +4,7 @@
         <ul>
           <li class="top_time">{{date}} {{time}}</li>
             <li class="top_title" >电子社保卡签发情况</li>
-            <li><span class="sign_out" @click="goback">返回</span></li>
+            <li style="cursor:pointer"><span class="sign_out" @click="goback">返回</span></li>
         </ul>
     </div>
     <div class="data_show">
@@ -96,9 +96,9 @@ export default {
             if (cityData) {
                 for (i in cityData) {
                     let temp = cityData[i].month
-                    this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
-                    this.yzheFdata.push(cityData[i].ecardOneCount)
-                    this.yzheSdata.push(cityData[i].ecardTwoCount)
+                    this.xzhedata.unshift(Number(temp.slice(4, 6)) + '月')
+                    this.yzheFdata.unshift(cityData[i].ecardOneCount)
+                    this.yzheSdata.unshift(cityData[i].ecardTwoCount)
                 }
             }
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
