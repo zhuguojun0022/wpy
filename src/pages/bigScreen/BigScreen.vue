@@ -55,7 +55,7 @@ export default {
         return {
             time: '',
             data: '',
-            xzhedata: ['9月', '10月', '11月'],
+            xzhedata: ['10月', '11月'],
             yzheFdata: [],
             yzheSdata: [],
             tiaoData: [],
