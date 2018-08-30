@@ -120,6 +120,7 @@ export default {
                                                         content: msg,
                                                         duration: 3
                                                     })
+                                                    this.getOrderApi('search')
                                                 } else {
                                                     this.$Message.error({
                                                         content: msg,
@@ -291,5 +292,5 @@ export default {
 }
 </script>
 
-<style  lang="less" scoped>
+<style lang="less" scoped>
 </style>
