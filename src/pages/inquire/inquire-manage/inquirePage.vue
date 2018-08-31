@@ -65,6 +65,7 @@
 
 <script>
 import {infraApi} from '../../../apis'
+import {mapMutations} from 'vuex'
 export default {
     data () {
         return {
@@ -78,6 +79,14 @@ export default {
             latitude: false,
             diquId: ''
         }
+    },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            vm.resetBreadcrumb({
+                name: '城市经纬度参数配置',
+                icon: 'icon-zonghechaxun'
+            })
+        })
     },
     mounted () {
         infraApi.getInquire().then((res) => {
@@ -93,6 +102,7 @@ export default {
         })
     },
     methods: {
+        ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         handleMockdel (val) {
             for (let i = 0; i < this.prov.length; i++) {
                 if (this.prov[i].REGIONPROVINCE === this.addDetail.REGIONPROVINCE) {

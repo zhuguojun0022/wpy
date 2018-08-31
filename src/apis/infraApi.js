@@ -77,6 +77,16 @@ const Change = function (regionId, longitude, latitude, createUserNo) {
         mock: mock
     })
 }
+const Statist = function (province, city, channel, date) {
+    return http.post('/count/signDaily', {
+        province,
+        city,
+        channel,
+        date
+    }, {
+        mock: mock
+    })
+}
 export default {
     test,
     login,
@@ -93,6 +103,6 @@ export default {
     dapingMoth,
     dapingCity,
     dapingChannel,
-    dapingAllCity
-
+    dapingAllCity,
+    Statist
 }

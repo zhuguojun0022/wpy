@@ -13,6 +13,7 @@ import InquirePage from './inquire.route'
 
 import ServiceManage from './service.route'
 import SubscribeConfig from './subconf.route'
+import StatisticsPage from './statistics.route'
 export default [{
     path: '/',
     redirect: '/index/home'
@@ -46,6 +47,7 @@ export default [{
         component: AdminIndexPage
     },
     ...SystemManagePage,
+    ...StatisticsPage,
     ...ChannelManagePage,
     ...BillManagePage,
     ...InquirePage,
