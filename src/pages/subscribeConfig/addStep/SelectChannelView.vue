@@ -110,8 +110,8 @@ export default {
             }
             this.openLoading()
             this.closeLoading()
-            subconfigApi.getChannelInfo({
-                name: name
+            subconfigApi.getChanmpnelInfo({
+                AAZ571: name
             }).then(({data: {resultCode, result, msg}}) => {
                 if (resultCode === '000000') {
                     this.notOrderedCallerList = result
