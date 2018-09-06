@@ -191,7 +191,7 @@ export default {
         // 获取渠道列表
         getChannelList () {
             subconfigApi.getChannelInfo({
-                name: ''
+                AAZ571: ''
             }).then(({data: {result, resultCode, msg}}) => {
                 this.channelList = result
             })

@@ -17,7 +17,8 @@ const getOrderedDetailAPI = (params) => http.get('/security/subscription/details
 const updateOrderedAPI = (params) => http.get('/security/subscription/concurrency?' + qs.stringify(params))
 // 获取渠道列表
 // const getChannelInfo = (params) => http.get('/channel/list?' + qs.stringify(params))
-const getChannelInfo = (params) => http.post('/channel/list?name=' + params.name, {mock: mock})
+// const getChannelInfo = (params) => http.post('/channel/list?name=' + params.name, {mock: mock})
+const getChannelInfo = (params) => http.post('/channel/list', params, {mock: mock})
 // 删除订阅
 const removeOrderApi = (params) => http.get('/security/subscription/remove?' + qs.stringify(params))
 
