@@ -10,7 +10,7 @@
     <div class="data_show">
         <div class="flag" :style="{height:'60px', lineHeight:'60px'}">{{areaBig}}</div>
         <div>
-          <cityTop></cityTop>
+          <LocalTop></LocalTop>
         </div>
     </div>
     <div class="wpycontent">
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="map">
-          <cityMap></cityMap>
+          <component v-bind:is="who"></component>
         </div>
         <div class="schart">
             <div>
@@ -45,9 +45,10 @@
 <script>
 import echarts from 'echarts'
 import { setOptionPie, setOptionBar } from './option'
-import cityMap from './cityMap'
+import LocalprovinceMap from './LocalprovinceMap'
+import LocalcityMap from './LocalcityMap'
 import Bigliu from './Bigliu'
-import cityTop from './cityTop'
+import LocalTop from './LocalTop'
 import { infraApi } from '../../apis'
 import './BigScreen.css'
 export default {
@@ -63,18 +64,40 @@ export default {
             zhuData: [],
             sanData: [],
             allSign: '',
-            timerID: ''
+            timerID: '',
+            areaBig: '',
+            who: LocalprovinceMap
         }
     },
     components: {
-        cityMap, Bigliu, cityTop
+        LocalprovinceMap, Bigliu, LocalTop, LocalcityMap
+    },
+    created () {
+        infraApi.localCity(sessionStorage.getItem('USERID')).then((res) => {
+            let localData = res.data.result
+            if (localData.REGIONNO.slice(2, 6) === '0000') {
+                this.areaBig = localData.REGIONNAME.slice(0, 2)
+                infraApi.dapingMoth(localData.REGIONNO.slice(0, 2)).then(this.handleMothSuees.bind(this))
+                infraApi.dapingCity(localData.REGIONNO.slice(0, 2)).then(this.handleCitySuees.bind(this))
+                infraApi.dapingChannel(localData.REGIONNO.slice(0, 2)).then(this.handleChannelSuees.bind(this))
+            } else {
+                this.who = LocalcityMap
+                this.areaBig = localData.REGIONNAME
+                infraApi.dapingMoth(localData.REGIONNO).then(this.handleMothSuees.bind(this))
+                infraApi.dapingCity(localData.REGIONNO).then(this.handleCitySuees.bind(this))
+                infraApi.dapingChannel(localData.REGIONNO).then(this.handleChannelSuees.bind(this))
+            }
+        })
     },
     mounted () {
-        let provinceBig = window.sessionStorage.getItem('cityId')
-        let regionBig = window.sessionStorage.getItem('cityNumId')
-        this.areaBig = provinceBig
-        this.areaBlog = regionBig
         // this.drawLine(provinceBig);
+        // let provinceBig = window.sessionStorage.getItem('provinceId')
+        // let regionBig = window.sessionStorage.getItem('regionId')
+        // this.areaBig = provinceBig
+        // this.areaBlog = regionBig
+        // infraApi.dapingMoth(regionBig).then(this.handleMothSuees.bind(this))
+        // infraApi.dapingCity(regionBig).then(this.handleCitySuees.bind(this))
+        // infraApi.dapingChannel(regionBig).then(this.handleChannelSuees.bind(this))
         let that = this
         let week = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
         this.timerId = setInterval(updateTime, 1000)
@@ -91,15 +114,33 @@ export default {
             }
             return (zero + num).slice(-digit)
         }
-        infraApi.dapingMoth(this.areaBlog).then(this.handleMothSuees.bind(this))
-        infraApi.dapingCity(this.areaBlog.slice(0, 2)).then(this.handleCitySuees.bind(this))
-        // infraApi.dapingCity(this.areaBlog).then(this.handleCitySuees.bind(this))
-        infraApi.dapingChannel(this.areaBlog).then(this.handleChannelSuees.bind(this))
     },
     methods: {
+        handleLocalSuees (res) {
+            let localData = res.data.result
+            console.log(localData.REGIONNO.slice(0, 2), 'kk')
+            if (localData.REGIONNO.slice(2, 6) === '0000') {
+                console.log('省')
+                window.sessionStorage.setItem('provinceId', res.data.result.REGIONNAME.slice(0, 2))
+                window.sessionStorage.setItem('regionId', localData.REGIONNO.slice(0, 2))
+                window.sessionStorage.setItem('regionTopId', localData.REGIONNO.slice(0, 2))
+            } else {
+                window.sessionStorage.setItem('cityId', res.data.result.REGIONNAME)
+                window.sessionStorage.setItem('regionId', res.data.result.REGIONNO)
+                window.sessionStorage.setItem('regionTopId', res.data.result.REGIONNO)
+            }
+        },
         handleMothSuees (res) {
             let cityData = res.data.result
             let i = 0
+            // if (cityData) {
+            //     for (i in cityData) {
+            //         let temp = cityData[i].month
+            //         this.xzhedata.unshift(temp.charAt(temp.length - 1) + '月')
+            //         this.yzheFdata.unshift(cityData[i].ecardOneCount)
+            //         this.yzheSdata.unshift(cityData[i].ecardTwoCount)
+            //     }
+            // }
             if (cityData) {
                 for (i in cityData) {
                     let temp = cityData[i].month
@@ -113,17 +154,6 @@ export default {
             let aa = Number(cityData[temp - 1].month.slice(4, 6))
             this.yzheFdata[aa - 7] = 0
             this.yzheSdata[aa - 7] = 0
-            // console.log(aa, 'kkps')
-            // if (cityData[temp - 1].month === '201807') {
-            //     this.yzheFdata[0] = 0
-            //     this.yzheSdata[0] = 0
-            //     // alert(1)
-            // } else if (cityData[temp - 1].month === '201808') {
-            //     this.yzheFdata[1] = 0
-            //     this.yzheSdata[1] = 0
-            // }
-            // this.yzheFdata[0] = 0
-            // this.yzheSdata[0] = 0
             this.drawLine(this.xzhedata, this.yzheFdata, this.yzheSdata, this.tiaoData, this.zhuData, this.sanData)
         },
         handleCitySuees (res) {
@@ -264,7 +294,7 @@ export default {
 }
 .wpypop_font1 {
   font-size: 12px;
-  color: #fffffe;
+  color:c
 }
 .wpypop_font2 {
   font-size: 13px;
@@ -273,5 +303,15 @@ export default {
 }
 .wpypop_font2 > li {
   margin-bottom: 7px;
+}
+select  {
+    background: rgba(255, 255, 255, 0);
+    /* border: 1px solid red; */
+    /* color:#fffffe; */
+}
+option  {
+    background: rgba(255, 255, 255, 0);
+    /* border: 1px solid red; */
+    /* color:#fffffe; */
 }
 </style>

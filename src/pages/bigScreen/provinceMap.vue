@@ -166,7 +166,6 @@ export default {
                         data: convertData(data.sort(function (a, b) { return b.value - a.value }).slice(0)),
                         symbolSize: function (val) {
                             let wave = 5
-                            console.log(that.cityDataLength)
                             if (that.firstLength === 0) {
                                 if (val[2] <= 100) {
                                     wave = 5

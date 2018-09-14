@@ -22,20 +22,30 @@ export default {
             cityBlog: 'china'
         }
     },
-    // created () {
-    //     // import chengduJson from './cityEcharts/510100.json'
-    // },
+    created () {
+        infraApi.localCity(sessionStorage.getItem('USERID')).then((res) => {
+            let localData = res.data.result
+            this.cityBlog = localData.REGIONNAME
+            // infraApi.dapingAllCity(localData.REGIONNO.slice(0, 2)).then(this.handleAllCitySuees.bind(this))
+            this.cityBig = localData.REGIONNO
+            let that = this
+            import(`./cityEcharts/${that.cityBig}.json`).then((res) => {
+                echarts.registerMap(that.cityBlog, res)
+                infraApi.dapingAllCity(that.cityBig).then(that.handleAllCitySuees.bind(that))
+            })
+        })
+    },
     mounted () {
         // import chengduJson from './cityEcharts/510100.json'
-        let provinceBig = window.sessionStorage.getItem('cityId')
-        this.cityBlog = provinceBig
-        let regionBig = window.sessionStorage.getItem('cityNumId')
-        this.cityBig = regionBig
-        let that = this
-        import(`./cityEcharts/${that.cityBig}.json`).then((res) => {
-            echarts.registerMap(that.cityBlog, res)
-            infraApi.dapingAllCity(that.cityBig).then(that.handleAllCitySuees.bind(that))
-        })
+        // let provinceBig = window.sessionStorage.getItem('cityId')
+        // this.cityBlog = provinceBig
+        // let regionBig = window.sessionStorage.getItem('cityNumId')
+        // this.cityBig = regionBig
+        // let that = this
+        // import(`./cityEcharts/${that.cityBig}.json`).then((res) => {
+        //     echarts.registerMap(that.cityBlog, res)
+        //     infraApi.dapingAllCity(that.cityBig).then(that.handleAllCitySuees.bind(that))
+        // })
     },
     methods: {
         handleAllCitySuees (res) {

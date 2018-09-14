@@ -198,8 +198,8 @@ export default {
                 if (params.data.regionNo) {
                     that.$router.push('/provinceScreen')
                     window.sessionStorage.setItem('provinceId', params.data.name)
-                    window.sessionStorage.setItem('regionId', params.data.regionNo.slice(0, 3))
-                    window.sessionStorage.setItem('regionTopId', params.data.regionNo.slice(0, 3))
+                    window.sessionStorage.setItem('regionId', params.data.regionNo.slice(0, 2))
+                    window.sessionStorage.setItem('regionTopId', params.data.regionNo.slice(0, 2))
                 }
                 // window.sessionStorage.setItem("regionId",params.data.regionNo.slice(0,3))
             })
