@@ -24,6 +24,7 @@ const dapingMoth = (aab301) => http.post('/count/month?aab301=' + aab301, {mock:
 const dapingCity = (aab301) => http.post('/count/top5city?aab301=' + aab301, {mock: mock})
 const dapingChannel = (aab301) => http.post('/count/channel?aab301=' + aab301, {mock: mock})
 const dapingAllCity = (aab301) => http.post('/count/city?aab301=' + aab301, {mock: mock})
+const localCity = (userid) => http.post('/count/getRegion?userid=' + userid, {mock: mock})
 const getLoginInfo = function () {
     return http.get('/getLoginInfo', {mock: mock})
 }
@@ -104,5 +105,6 @@ export default {
     dapingCity,
     dapingChannel,
     dapingAllCity,
-    Statist
+    Statist,
+    localCity
 }

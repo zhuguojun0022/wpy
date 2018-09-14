@@ -6,8 +6,9 @@ import ChannelManagePage from './channel.route'
 import BillManagePage from './bill.route'
 // import BigScreen from '../components/frame/bigTop'
 import BigScreen from '../pages/bigScreen/BigScreen'
-import ProvinceScreen from '../pages/bigScreen/provinceScreen'
 import CityScreen from '../pages/bigScreen/cityScreen'
+import ProvinceScreen from '../pages/bigScreen/provinceScreen'
+import LocalScreen from '../pages/bigScreen/LocalScreen'
 // import CityScreen from '../pages/bigScreen/cityMap'
 import InquirePage from './inquire.route'
 
@@ -34,6 +35,10 @@ export default [{
     path: '/cityScreen',
     name: 'cityScreen',
     component: CityScreen
+}, {
+    path: '/LocalScreen',
+    name: 'LocalScreen',
+    component: LocalScreen
 },
 {
     path: '/index',
