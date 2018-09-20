@@ -22,7 +22,7 @@
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
 
     <Modal v-model="diaShow" :mask-closable="false" :closable="false" :title="diaTitle" ref="modal">
-        <Form :model="newUser" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-user-form">
+        <Form :model="newUser" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-user-form" >
             <FormItem prop="userAdminName" label="用户名" required>
                 <Input v-model.trim="newUser.userAdminName" placeholder="请输入用户名" :disabled="disabled" ></Input>
             </FormItem>
@@ -31,18 +31,27 @@
                     <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
                 </Select>
             </FormItem>
+            <!-- <FormItem label="行政区划" prop="userAdminProvince"  required >
+                <Select v-model="newUser.userAdminProvince" filterable placeholder="请输入行政区划"  @on-change="handleMockdel">
+                    <Option v-for="item in prov" :value="item.REGION_ID" :key="item.REGION_ID">{{ item.REGION_NAME }}</Option>
+                </Select>
+            </FormItem> -->
+            <FormItem label="行政区划" prop="userAdminProvince"  required >
+                <Select v-model="newUser.userAdminProvince" filterable placeholder="请输入行政区划" ref='select'>
+                    <Option v-for="item in prov" :value="item.REGION_ID" :key="item.REGION_ID">{{ item.REGION_NAME }}</Option>
+                </Select>
+            </FormItem>
+            <!-- <FormItem label="市" prop="userAdminCity"  >
+                <Select v-model="newUser.userAdminCity"  >
+                    <Option v-for="item in city" :value="item.REGIONID" :key="item.REGIONID">{{ item.REGIONNAME }}</Option>
+                </Select>
+            </FormItem> -->
             <FormItem prop="userAdminMobile" label="手机号">
                 <Input v-model.trim="newUser.userAdminMobile" :maxlength="11" placeholder="请输入手机号（可选）"></Input>
             </FormItem>
             <FormItem prop="userAdminEmail" label="邮箱">
                 <Input v-model.trim="newUser.userAdminEmail" placeholder="请输入邮箱（可选）"></Input>
             </FormItem>
-            <!-- <FormItem prop="userAdminStatus" label="状态" required>
-                <iSwitch size="large" v-model="newUser.userAdminStatus">
-                    <span slot="open">启用</span>
-                    <span slot="close">停用</span>
-                </iSwitch>
-            </FormItem> -->
         </Form>
         <div slot="footer">
             <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
@@ -53,7 +62,8 @@
 </template>
 <script>
 import {TableHeader, TableFooter} from '../../../components/table'
-import {systemApi} from '../../../apis/'
+import {systemApi, infraApi} from '../../../apis/'
+// import {infraApi} from '../../../apis'
 import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
 import {formatDateTime} from '../../../common/utils'
@@ -76,6 +86,8 @@ export default {
             columns: [
                 {type: 'selection', width: 50, align: 'center'},
                 {title: '用户名', key: 'userAdminName'},
+                {title: '行政区划', key: 'regionName'},
+                // {title: '行政区划', key: 'regionId'},
                 {title: '手机号', key: 'userAdminMobile', width: 120},
                 {title: '邮箱', key: 'userAdminEmail'},
                 {
@@ -84,6 +96,7 @@ export default {
                     render: (h, {column, index, row}) => {
                         let roles = row.roles.map(e => e.roleName)
                         let roleStr = roles.join(',')
+                        // console.log(roleStr, 'wpy')
                         return this.getCellRender(h, [{
                             tag: 'span',
                             label: roleStr
@@ -163,7 +176,10 @@ export default {
                 roleIds: [],
                 userAdminName: '',
                 userAdminMobile: '',
-                userAdminEmail: ''
+                userAdminEmail: '',
+                // userAdminProvince: ''
+                userAdminProvince: ''
+                // userAdminCity: 0
             },
             ruleValidate: {
                 userAdminName: [
@@ -176,12 +192,17 @@ export default {
                 userAdminEmail: [
                     {pattern: /^(?=\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$).{1,65}$/, message: '邮件格式不正确或长度过长', trigger: 'blur'}
                 ],
-                roleIds: [{required: true, type: 'array', message: '必填项', trigger: 'change'}]
+                roleIds: [{required: true, type: 'array', message: '必填项', trigger: 'change'}],
+                userAdminProvince: [{required: true, message: '必填项', trigger: 'change', type: 'number'}]
+                // userAdminCity: [{trigger: 'change', type: 'number'}]
             },
             userStatus: userStatus,
             selectedRows: [],
             tableHeihgt: '',
-            disabled: false
+            disabled: false,
+            prov: [],
+            city: [],
+            params: ''
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -196,10 +217,19 @@ export default {
         this.searchUserList()
         this.searchDownRoleList()
         this.tableHeihgt = window.innerHeight - 224
+        infraApi.getProvinceID().then(res => {
+            const data = res.data.result
+            this.prov = data
+            this.prov.unshift({'REGION_ID': 0, 'REGION_NAME': '全国'})
+        })
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
         onCreateNewUser () {
+            let query = this.$refs['select'].$data.query
+            if (query) {
+                this.$refs['select'].$data.query = ''
+            }
             this.diaShow = true
             this.disabled = false
             this.$refs.selection.selectAll(false)
@@ -284,11 +314,16 @@ export default {
             })
         },
         onEditClick (row) {
+            let query = this.$refs['select'].$data.query
+            if (query) {
+                this.$refs['select'].$data.query = ''
+            }
             this.formRef = 'edituser'
             this.newUser = {...row}
             let roleIds = this.newUser.roles.map(e => e.roleId)
             this.newUser.roleIds = roleIds
             this.newUser.userAdminId = row.userAdminId
+            this.newUser.userAdminProvince = Number(row.regionId)
             this.diaTitle = '修改用户'
             this.diaShow = true
             this.disabled = true
@@ -324,13 +359,17 @@ export default {
         onSubmitClick (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    let {userAdminName, userAdminEmail, userAdminMobile, roleIds} = {
+                    let {userAdminName, userAdminEmail, userAdminMobile, roleIds, userAdminProvince} = {
                         ...this.newUser
                     }
                     let roleIdsStr = roleIds.join(',')
                     this.modal_loading = true
+                    // let regionId = userAdminProvince
+                    // if (regionId === 0 || regionId === undefined) {
+                    //     regionId = userAdminProvince
+                    // }
                     if (name === 'adduser') {
-                        systemApi.addUserInfo(userAdminName, userAdminEmail, userAdminMobile, roleIdsStr).then(({data: {result, resultCode, msg}}) => {
+                        systemApi.addUserInfo(userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminProvince).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
                                 this.$Message.success(msg)
@@ -345,7 +384,7 @@ export default {
                         })
                     } else {
                         let userAdminId = this.newUser.userAdminId
-                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr).then(({data: {result, resultCode, msg}}) => {
+                        systemApi.updateUserInfo(userAdminId, userAdminName, userAdminEmail, userAdminMobile, roleIdsStr, userAdminProvince).then(({data: {result, resultCode, msg}}) => {
                             this.modal_loading = false
                             if (resultCode === '000000') {
                                 this.$Message.success(msg)
