@@ -264,8 +264,8 @@ export default {
                 if (this.prov[i].REGIONPROVINCE === this.addDetail.REGIONPROVINCE) {
                     this.provinceParameter = this.prov[i].REGIONNO
                     this.addDetail.REGIONNO = this.prov[i].REGIONNO
-                    this.getCitylist(this.prov[i].REGIONNO)
                 }
+                this.getCitylist(this.provinceParameter)
             }
         },
         getCitylist (a) {

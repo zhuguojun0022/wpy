@@ -42,11 +42,18 @@ const changePwd = function (userAdminId, userAdminPwdOld, userAdminPwd) {
 const getInquire = function () {
     return http.post('/geoCoord/getProvince')
 }
-
+// const getProvinceID = function () {
+//     return http.post('/geoCoord/getProvinceID')
+// }
+const getProvinceID = function () {
+    return http.post('/geoCoord/getRegion')
+}
+const getCityID = function (regionId) {
+    return http.post('/geoCoord/getCityID?regionId=' + regionId, {mock: mock})
+}
 const getCity = function (regionNo) {
     return http.post('/geoCoord/getCity?regionNo=' + regionNo, {mock: mock})
 }
-
 const Save = function (regionId, regionProvince, regionName, longitude, latitude, createUserNo) {
     return http.post('/geoCoord/insert', {
         regionId,
@@ -106,5 +113,7 @@ export default {
     dapingChannel,
     dapingAllCity,
     Statist,
-    localCity
+    localCity,
+    getProvinceID,
+    getCityID
 }
