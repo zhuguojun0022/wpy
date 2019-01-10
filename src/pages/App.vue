@@ -1,11 +1,11 @@
 <template>
     <div class="app layout">
         <Layout>
-            <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" width="240" v-model="isCollapsed">
+            <Sider ref="side1" :hide-trigger='isHide' collapsible :collapsed-width="35" width="200" v-model="isCollapsed">
                 <div class="logo">
-                    <h1><i class="iconfont icon-shebao"></i>电子社保卡管理平台</h1>
+                    <!-- <h1><i class="iconfont icon-shebao"></i>电子社保卡管理平台</h1> -->
                 </div>
-                <Menu></Menu>
+                <Menu v-if="!isCollapsed"></Menu>
             </Sider>
             <Layout>
                 <Header :style="{padding: 0}" class="layout-header-bar">
@@ -21,9 +21,12 @@
                     </div> -->
                     <header-bar></header-bar>
                 </Header>
-                <x-breadcrumb></x-breadcrumb>
+                <tab v-show="isTab"></tab>
+                <!-- <x-breadcrumb></x-breadcrumb> -->
                 <Content :style="{margin: '0px', background: '#fff'}">
+                    <keep-alive>
                     <router-view></router-view>
+                    </keep-alive>
                 </Content>
             </Layout>
         </Layout>
@@ -35,22 +38,46 @@ import Menu from '../components/frame/Menu'
 import Page from '../components/frame/Page'
 import HeaderBar from '../components/frame/HeaderBar'
 // import {startGetLoginUser} from '../common/loginUser'
-import XBreadcrumb from '../components/frame/XBreadcrumb'
+import tab from '../components/frame/tab'
 // import { loginOut } from '../common/utils'
 
 Vue.component('GPage', Page)
 export default {
     components: {
-        Menu, HeaderBar, XBreadcrumb
+        Menu, HeaderBar, tab
     },
     data () {
         return {
             isCollapsed: false,
-            activeRouteCode: null
+            activeRouteCode: null,
+            isHide: false,
+            isTab: true
         }
     },
-    beforeCreate () {
+    mounted () {
         // startGetLoginUser()
+        if (this.$route.name === 'home') {
+            console.log(this.$route.name, 'router')
+            this.isHide = true
+            this.isTab = false
+            this.isCollapsed = false
+        } else {
+            this.isHide = false
+            this.isTab = true
+        }
+    },
+    watch: {
+        $route () {
+            if (this.$route.name === 'home') {
+                console.log(this.$route.name, 'router')
+                this.isHide = true
+                this.isTab = false
+                this.isCollapsed = false
+            } else {
+                this.isHide = false
+                this.isTab = true
+            }
+        }
     },
     computed: {
         // rotateIcon () {
@@ -74,6 +101,9 @@ export default {
     },
     beforeRouteEnter (to, from, next) {
         next((vm) => {
+            // if (to.name === 'home') {
+            //     vm.isHide = true
+            // }
             vm.activeRouteCode = to.meta.menuCode
         })
     },
@@ -84,9 +114,18 @@ export default {
 }
 </script>
 <style lang="less">
+.gui-page.gui-page-bg{
+    background-color: #f2f5f9!important;
+    padding: 0 10px!important;
+    // background: lightgrey;
+}
+.ivu-layout-sider-trigger {
+    color: black;
+    background: white;
+}
 .app {
     height: 100%;
-
+    //  font-size: 20px!important;
     .layout{
         height: 100%;
         border: 1px solid #d7dde4;
@@ -96,13 +135,15 @@ export default {
         overflow: hidden;
     }
     .logo {
-        height: 64px;
+        width: 200px;
+        height: 50px;
+        background:  #e54a49;
 
         h1 {
             height: 64px;
             width: 100%;
             position: relative;
-            color: #fff;
+            // color: #fff;
             font-size: 18px;
             padding-left: 20px;
             text-align: center;
@@ -131,16 +172,17 @@ export default {
             margin-right: 5px;
         }
 
-        &:hover {
-            background-color: #f0f0f0;
-            cursor: pointer;
-        }
+        // &:hover {
+        //     background-color: #f0f0f0;
+        //     cursor: pointer;
+        // }
     }
     .ivu-layout {
         height: 100%;
     }
     .ivu-layout-sider {
         height: 100%;
+        background: white !important;
     }
     .layout-header-bar{
         background: #fff;

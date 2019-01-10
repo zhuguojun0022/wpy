@@ -1,33 +1,38 @@
 <template>
 <div class="login-page">
-    <!-- <header>
+    <header>
         <div class="logo-box">
-            logo 区域
+            logo
         </div>
-    </header> -->
+    </header>
     <main class="content">
+        <div>
+        <h1>全国电子社保卡管理平台</h1>
         <div class="main">
-            <h1><i class="iconfont icon-shebao"></i> 电子社保卡管理平台</h1>
+            <div class="loginContent"></div>
             <div class="login">
-                <h2>登录</h2>
+                <div>
+                <h2>账号密码登录</h2>
                 <Form :label-width="0" :model="form">
                     <FormItem>
-                        <Input id="t" size="large" autocomplete="off" placeholder="请输入用户名" v-model="form.username"></Input>
+                        <Input id="t" size="large" autocomplete="off" placeholder="用户名" v-model="form.username"></Input>
                     </FormItem>
                     <FormItem>
-                        <!-- <i class="iconfont icon-eye_none eye-icon"></i> -->
-                        <Input size="large" autocomplete="off" placeholder="请输入密码" type="password" v-model="form.passwd"></Input>
+                        <Input size="large" autocomplete="off" placeholder="密码" type="password" v-model="form.passwd"></Input>
                     </FormItem>
                     <FormItem>
-                        <Input class="vcode" size="large" placeholder="请输入验证码" v-model="form.vcode" @on-enter="handleSubmit()">
-                            <img slot="append" :src="imgCode" width="80" height="36" @click="getImgVCode">
+                        <Input class="vcode" size="large" placeholder="验证码" v-model="form.vcode" @on-enter="handleSubmit()">
+                            <img slot="append" :src="imgCode" width="105" height="36" @click="getImgVCode">
                         </Input>
                     </FormItem>
+                    <div class="forget">忘记密码</div>
                     <FormItem>
-                        <Button size="large" class="login-btn f-w" type="primary" @click="handleSubmit()">立即登录</Button>
+                        <Button size="large" class="login-btn f-w" type="primary" @click="handleSubmit()">登录</Button>
                     </FormItem>
                 </form>
+                </div>
             </div>
+        </div>
         </div>
     </main>
     <!-- <footer class="footer">
@@ -88,12 +93,12 @@ export default {
 </script>
 <style lang="less">
 .login-page {
-    background:url(../../../../static/loginbg.jpg) no-repeat;
+    background:url(../../../../static/loginbg.png) no-repeat;
     width:100%;
     height:100%;
     background-size:100% 100%;
     position:absolute;
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../../../static/loginbg.jpg',sizingMethod='scale');
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../../../../static/loginbg.png',sizingMethod='scale');
 
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -111,24 +116,35 @@ export default {
 
     header {
         .logo-box {
-            width: 800px;
+            width: 400px;
             position: relative;
-            padding: 10px 20px;
+            // padding: 10px 20px;
         }
     }
 
     main {
-        padding: 100px 0 24px;
+        // padding: 100px 0 24px;
         flex: 1 1 0%;
+        display: flex;
+        justify-content:center;
+        align-items:Center;
 
         .main {
-            width: 400px;
-            margin: 0 auto;
+            width: 570px;
+            display: flex;
+            // margin: 0 auto;
         }
+         .loginContent{
+                width: 285px;
+                height: 345px;
+                background:url(../../../../static/loginContent.png) no-repeat;
+                background-size:100% 100%;
+                float: left
+            }
 
         h1 {
-            text-align: center;
-            padding: 30px 20px 30px 80px;
+            text-align: left;
+            padding: 0px 20px 25px 30px;
             color: white;
             font-size: 30px;
             position: relative;
@@ -141,20 +157,29 @@ export default {
         }
 
         .login {
-            width: 400px;
-            margin: 0 auto;
+            width: 285px;
+            // margin: 0 auto;
             background: #fff;
-            padding: 40px 60px;
-            border-radius: 4px;
+            // padding: 40px 60px;
+             display: flex;
+             justify-content:center;
+             align-items:Center;
 
             h2 {
-                color: rgb(91, 10, 241);
-                font-size: 22px;
-                border-bottom: 3px solid rgb(91, 10, 241);
-                text-align: center;
-                width: 45px;
-                margin: 0 auto;
-                margin-bottom: 20px;
+                color: black;
+                font-size: 16px;
+                // border-bottom: 3px solid rgb(91, 10, 241);
+                text-align: left;
+                width: 100px;
+                // margin: 0 auto;
+                margin-bottom: 24px;
+            }
+            .forget {
+                text-align: right;
+                color: #1e7be3;
+                font-size: 14px;
+                line-height: 100%;
+                padding-top: 10px;
             }
 
             .ivu-form-item {
@@ -179,34 +204,38 @@ export default {
             }
 
             .ivu-input {
-                border: none;
-                border-bottom: 2px solid #eeeeee;
+                // border: none;
+                width: 220px;
+                height: 35px;
+                margin-bottom: 10px;
+                border: 2px solid #cccccc;
                 border-radius: 0;
                 &:focus {
                     box-shadow: none;
                 }
             }
             .ivu-input.ivu-input-large {
-                height: 42px;
+                height: 35px;
                 color: rgba(0, 0, 0, .65);
                 background-color: #fff;
             }
 
             .ivu-btn.ivu-btn-large {
-                height: 42px;
+                height: 35px;
             }
 
             .vcode {
                 position: relative;
                 input.ivu-input {
-                    padding-right: 100px;
+                    // padding-right: 100px;
+                    width: 105px;
                 }
 
                 .ivu-input-group-append {
                     padding: 0;
                     border: none;
                     position: absolute;
-                    right: 1px;
+                    right: 25px;
                     top: 1px;
                     z-index: 100;
                     width: 80px;
@@ -215,20 +244,23 @@ export default {
                         cursor: pointer;
                     }
                     img {
-                        height: 40px;
+                        height: 35px;
                         display: inline-block;
                     }
                 }
             }
 
             .login-btn {
-                margin-top: 40px;
-                background: #5b0af1;
+                margin-top: 16px;
+                width: 220px;
+                height: 10px;
+                background: #e54a49;
                 letter-spacing: 10px;
+                // border-color:  white!important;
 
-                &:hover {
-                    background: lighten(#5b0af1, 10%);
-                }
+                // &:hover {
+                //     background: lighten(#5b0af1, 10%);
+                // }
             }
         }
     }

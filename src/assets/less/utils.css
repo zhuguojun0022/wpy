@@ -77,3 +77,6 @@
   display: block;
   clear: both;
 }
+.in-b {
+  display: inline-block;
+}

@@ -1,25 +1,42 @@
 <template>
 <GPage bg>
+    <div class="bgwhite">
     <table-header>
-        <template slot="left">
-            <Button type="primary" @click="onCreateNewUser">新建用户</Button>
-            <Button type="ghost" @click="onDeleteClick">删除</Button>
-        </template>
         <template slot="right">
-            <Input v-model="filterName" placeholder="用户名/姓名" style="width: 200px" clearable></Input>
-            <Select v-model="filterRole" style="width: 200px" placeholder="角色" clearable>
-                <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
-            </Select>
-            <Select v-model="filterStatus" clearable style="width: 200px" placeholder="状态">
-                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-            <Button type="primary" @click="onSearchClick">查询</Button>
+            <Button type="primary"  @click="onCreateNewUser"><Icon type="plus"></Icon> 新建用户</Button>
+            <!-- <Button type="ghost" @click="onDeleteClick">删除</Button> -->
+        </template>
+        <template slot="left">
+            <div class="filter pull-left">
+                <Input  v-model="filterName" placeholder="用户名/姓名" style="width: 170px" clearable></Input>
+                <Select v-model="filterRole" style="width: 170px" placeholder="角色" clearable>
+                    <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
+                </Select>
+                <Select v-model="filterStatus" clearable style="width: 170px" placeholder="状态">
+                    <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <p v-if="isFilter" class="m-y-t-1">
+                    <Input  v-model="filterName" placeholder="用户名/姓名" style="width: 170px" clearable></Input>
+                    <Select v-model="filterRole" style="width: 170px" placeholder="角色" clearable>
+                        <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
+                    </Select>
+                    <Select v-model="filterStatus" clearable style="width: 170px" placeholder="状态">
+                        <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </p>
+            </div>
+            <div class=" pull-left">
+                <!-- <Button type="primary" @click="onSearchClick">展开筛选</Button> -->
+                <div class="in-b fillter" @click="isFilterClick(isFilter)">展开筛选 <i class="ivu-icon ivu-icon-ios-arrow-down arrow-icon" :class="{'open-ul': isFilter}"></i></div>
+                <Button type="primary" @click="onSearchClick">查询</Button>
+                <Button  class="Reset" @click="onSearchClick">重置</Button>
+            </div>
         </template>
     </table-header>
 
-    <Table :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt"></Table>
+    <Table  border stripe :row-class-name="rowClassName" :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt" :width="tableWidth"></Table>
 
-    <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange"></table-footer>
+    <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange" size="small" show-elevator></table-footer>
 
     <Modal v-model="diaShow" :mask-closable="false" :closable="false" :title="diaTitle" ref="modal">
         <Form :model="newUser" :label-width="80" :rules="ruleValidate" :ref="formRef" class="new-user-form" >
@@ -54,10 +71,11 @@
             </FormItem>
         </Form>
         <div slot="footer">
-            <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
+            <Button class="Reset" @click="onCancelClick(formRef)">取消</Button>
             <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
         </div>
     </Modal>
+    </div>
 </GPage>
 </template>
 <script>
@@ -72,6 +90,7 @@ export default {
     components: {TableHeader, TableFooter},
     data () {
         return {
+            isFilter: false,
             filterName: '',
             filterRole: '',
             filterStatus: '',
@@ -84,14 +103,43 @@ export default {
                 label: '停用'
             }],
             columns: [
-                {type: 'selection', width: 50, align: 'center'},
-                {title: '用户名', key: 'userAdminName'},
-                {title: '行政区划', key: 'regionName'},
+                // {type: 'selection', width: 50, align: 'center'},
+                {title: '用户名', width: 100, key: 'userAdminName'},
+                {title: '行政区划', width: 100, key: 'regionName'},
                 // {title: '行政区划', key: 'regionId'},
                 {title: '手机号', key: 'userAdminMobile', width: 120},
-                {title: '邮箱', key: 'userAdminEmail'},
+                {title: '邮箱', width: 100, key: 'userAdminEmail'},
                 {
                     title: '角色',
+                    width: 100,
+                    key: 'roles',
+                    render: (h, {column, index, row}) => {
+                        let roles = row.roles.map(e => e.roleName)
+                        let roleStr = roles.join(',')
+                        // console.log(roleStr, 'wpy')
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: roleStr
+                        }])
+                    }
+                },
+                {
+                    title: '角色',
+                    width: 100,
+                    key: 'roles',
+                    render: (h, {column, index, row}) => {
+                        let roles = row.roles.map(e => e.roleName)
+                        let roleStr = roles.join(',')
+                        // console.log(roleStr, 'wpy')
+                        return this.getCellRender(h, [{
+                            tag: 'span',
+                            label: roleStr
+                        }])
+                    }
+                },
+                {
+                    title: '角色',
+                    width: 100,
                     key: 'roles',
                     render: (h, {column, index, row}) => {
                         let roles = row.roles.map(e => e.roleName)
@@ -105,6 +153,7 @@ export default {
                 },
                 {
                     title: '创建时间',
+                    width: 170,
                     key: 'createTime',
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
@@ -133,16 +182,18 @@ export default {
                         }, [
                             h('span', {
                                 slot: 'open'
-                            }),
+                            }, '启用'),
                             h('span', {
                                 slot: 'close'
-                            })
+                            }, '停用')
                         ])
                     }
                 },
                 {
                     title: '操作',
-                    width: 150,
+                    width: 210,
+                    fixed: 'right',
+                    className: 'demo-table-info-column',
                     render: (h, {column, index, row}) => {
                         return this.getCellRender(h, [{
                             label: '编辑',
@@ -158,6 +209,14 @@ export default {
                             on: {
                                 click: () => {
                                     this.onResetPasswordClick(row)
+                                }
+                            }
+                        }, {
+                            label: '删除',
+                            type: 'error',
+                            on: {
+                                click: () => {
+                                    this.onEditClick(row)
                                 }
                             }
                         }])
@@ -216,7 +275,8 @@ export default {
     created () {
         this.searchUserList()
         this.searchDownRoleList()
-        this.tableHeihgt = window.innerHeight - 224
+        this.tableHeihgt = window.innerHeight - 225
+        this.tableWidth = window.innerWidth - 255
         infraApi.getProvinceID().then(res => {
             const data = res.data.result
             this.prov = data
@@ -225,6 +285,14 @@ export default {
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
+        isFilterClick (isFilter) {
+            this.isFilter = !isFilter
+            if (this.isFilter) {
+                this.tableHeihgt = window.innerHeight - 262
+            } else {
+                this.tableHeihgt = window.innerHeight - 217
+            }
+        },
         onCreateNewUser () {
             let query = this.$refs['select'].$data.query
             if (query) {
@@ -431,10 +499,45 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.bgwhite{
+    background: white;
+    font-size: 14px!important;
+    padding: 20px 15px 0px;
+    z-index: 10;
+    overflow: auto;
+}
 .new-user-form {
     margin-right: 40px;
 }
 .ivu-select-input {
     line-height: 24px !important;
+}
+.filter {
+    display: inline-block;
+    width: 548px;
+    height: auto;
+}
+ .arrow-icon {
+    position: relative;
+    float: right;
+    top: 4px;
+    transition: transform .2s ease-in-out;
+}
+
+ .open-ul {
+     transform: rotate(180deg);
+ }
+ .fillter {
+    color:#2d8cf0;
+    i {
+        // width: 14px;
+        margin-left: 10px;
+    }
+ }
+Table {
+    overflow: hidden
+}
+.demo-table-info-column {
+    background: white
 }
 </style>

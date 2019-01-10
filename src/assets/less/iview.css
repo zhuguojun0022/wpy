@@ -79,3 +79,6 @@ textarea.ivu-input {
 .ivu-btn-text:focus {
   box-shadow: none;
 }
+ .ivu-input {
+  border-radius: 0!important;
+}

@@ -2,7 +2,9 @@
 <div class="header-bar">
     <div class="user-box">
         <Dropdown>
-            <a class="name"><Icon type="person"></Icon>{{userAdminName}}</a>
+            <!-- <a class="name"><Icon  type="person"></Icon>{{userAdminName}}</a> <-->
+            <img :style="{width: '26px',height:'26px', verticalAlign: 'middle'}" src="../../../static/person.png" alt="">
+            <span>{{userAdminName}}</span>
             <Icon type="arrow-down-b"></Icon>
             <DropdownMenu slot="list">
                 <DropdownItem @click.native="changePwd"><Icon type="android-settings"></Icon>修改密码</DropdownItem>
@@ -27,6 +29,8 @@
         </div>
     </Modal>
     </div>
+    <div class="company">平安人寿保险股份有限公司</div>
+    <div class="currentInstitution">当前机构</div>
 </div>
 </template>
 <script>
@@ -113,14 +117,31 @@ export default {
 }
 </script>
 <style lang="less">
-@header-height:44px;
+@header-height:50px;
 .header-bar {
-    background: #fff;
+    background: #061e39;
     height: @header-height;
-    border-bottom: 1px solid #f3f3f3;
-
+    // border-bottom: 1px solid #f3f3f3;
+    .company {
+        float: right;
+        font-size: 14px;
+        color: white;
+        background: rgba(255, 255, 255, .1);
+        margin-top: 10px;
+        margin-right: 40px;
+        padding: 5px 10px;
+        // line-height: 50px;
+    }
+    .currentInstitution {
+        float: right;
+        margin-right: 20px;
+        line-height: 50px;
+        font-size: 14px;
+        color: white;
+    }
     .user-box {
         float: right;
+        margin-right: 50px;
         height: @header-height;
         // padding: 10px;
         width: 120px;
@@ -128,16 +149,25 @@ export default {
         text-align: center;
         .name {
             font-weight: bold;
-            color: #777;
+           color: white;
         }
         .ivu-icon {
             color: #777;
             margin-right: 5px;
         }
 
-        &:hover {
-            background-color: #f0f0f0;
-            cursor: pointer;
+        // &:hover {
+        //     background-color: #f0f0f0;
+        //     cursor: pointer;
+        // }
+        span {
+            //  display: inline-block;
+            // line-height: 50px;
+            margin-left: 10px;
+            display: inline-block;
+            // vertical-align: middle;
+        font-size: 14px;
+        color: white;
         }
     }
 }

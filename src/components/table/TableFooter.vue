@@ -7,6 +7,8 @@
             :page-size="pageSize"
             placeholder="top"
             show-total
+            size="small"
+            show-elevator
             @on-change="handleCurrentChange"
         ></Page>
     </footer>
@@ -39,6 +41,6 @@ export default {
 </script>
 <style lang="less">
 .table-footer {
-    padding: 15px 15px 0;
+    padding: 15px;
 }
 </style>

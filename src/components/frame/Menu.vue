@@ -11,7 +11,7 @@
                         :class="{'p-active-leaf': pActiveLeafId === pItem.menuId, 'p-active-branche': pActiveBranche === pItem.menuId}"
                         @click="firstLevalClick(pItem)">
 
-                        <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i>
+                        <!-- <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i> -->
 
                         {{pItem.menuTitle}}
 
@@ -136,7 +136,8 @@ export default {
 <style lang="less">
 .menu-comp {
     height: calc(~"100% - 64px");
-    color: rgba(226, 222, 222, 0.698);
+    // color: rgba(226, 222, 222, 0.698);
+    color: black;
     .normal-box {
         overflow-y: auto;
         overflow-x: hidden;
@@ -153,12 +154,12 @@ export default {
                 font-size: 14px;
 
                 .menu-title {
-                    width: 240px;
-                    padding: 10px 20px;
-
-                    &:hover {
-                        color: #ffffff;
-                    }
+                    width: 200px;
+                    padding: 20px 20px 20px 39px;
+                    // font-weight: 600;
+                    // &:hover {
+                    //     color: #ffffff;
+                    // }
 
                     .arrow-icon {
                         position: relative;
@@ -173,27 +174,33 @@ export default {
                 }
                 .p-active-leaf {
                     background: #0888f2;
-                    color: #ffffff;
+                    color:  #cccccc;
                 }
                 .p-active-branche {
-                    color: #ffffff;
+                    color:  black;
                 }
 
                 .normal-in-ul {
                     overflow-y: auto;
-                    background: #363e4f;
+                    // background: #363e4f;
                     overflow-x: hidden;
 
                     .normal-c-li {
                         .menu-title {
-                            padding: 10px 0 10px 49px;
+                            padding: 10px 0 10px 35px;
                             line-height: 24px;
                             font-size: 14px;
+                            color: grey;
+                            box-sizing: border-box;
+                            border-left: white 4px solid;
                         }
 
                         .c-active-leaf {
-                            background: #0888f2;
-                            color: #ffffff;
+                            background: #fdf1f1;
+                            color: #e54a49;
+                            // outline: #e54a49 4px solid;
+                            box-sizing: border-box;
+                            border-left: #e54a49 4px solid;
                         }
                     }
                 }

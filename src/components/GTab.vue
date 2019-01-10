@@ -40,6 +40,7 @@ export default {
 }
 </script>
 <style lang="less">
+// .gui-page.gui-page-b
 .gui-tabs {
     .ivu-radio-group-button {
         .ivu-radio-wrapper {

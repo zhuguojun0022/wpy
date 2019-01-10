@@ -3,27 +3,30 @@ import roleManage from '../pages/system/role-manage/RolePage'
 import menuManage from '../pages/system/menu-manage/IndexPage'
 import regionManage from '../pages/system/region-manage/RegionPage'
 import issueManage from '../pages/system/issue-manage/IssuePage'
-import callLog from '../pages/system/call-log-manage/CallLogPage'
+// import callLog from '../pages/system/call-log-manage/CallLogPage'
 
 export default [{
     path: 'sys/user',
     name: 'userManage',
     meta: {
-        menuCode: 'SYS_USER_MANAGE'
+        menuCode: 'SYS_USER_MANAGE',
+        title: '用户管理'
     },
     component: userManage
 }, {
     path: 'sys/role',
     name: 'roleManage',
     meta: {
-        menuCode: 'SYS_ROLE_MANAGE'
+        menuCode: 'SYS_ROLE_MANAGE',
+        title: '角色管理'
     },
     component: roleManage
 }, {
     path: 'sys/menu',
     name: 'menuManage',
     meta: {
-        menuCode: 'SYS_MENU_MANAGE'
+        menuCode: 'SYS_MENU_MANAGE',
+        title: '菜单管理'
     },
     component: menuManage
 }, {
@@ -40,11 +43,4 @@ export default [{
         menuCode: 'SYS_MENU_MANAGE'
     },
     component: issueManage
-}, {
-    path: 'sys/callLog',
-    name: 'callLog',
-    meta: {
-        menuCode: 'SYS_MENU_MANAGE'
-    },
-    component: callLog
 }]

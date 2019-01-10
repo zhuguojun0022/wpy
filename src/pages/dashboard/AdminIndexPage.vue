@@ -1,10 +1,11 @@
 <template>
     <div class="main" :style="{width:width,height:height}">
         <div class="content">
-            <div class="icon"><i class="iconfont icon-shebao"></i></div>
-            <div class="title">欢迎进入电子社保卡管理平台</div>
+            <!-- <div class="icon"><i class="iconfont icon-shebao"></i></div> -->
+            <!-- <div class="title">欢迎进入电子社保卡管理平台</div> -->
+            <!-- <div class="title">欢迎</div> -->
             <div class="img">
-                <img src="../../../static/mapbg2.png" alt="暂无图片" >
+                <img src="../../../static/welcome.png" alt="暂无图片" >
             </div>
         </div>
     </div>
@@ -20,8 +21,8 @@ export default {
     },
     created () {
         this.clearBreadcrumb()
-        this.width = (window.innerWidth - 260) + 'px'
-        this.height = (window.innerHeight - 46) + 'px'
+        this.width = (window.innerWidth - 200) + 'px'
+        this.height = (window.innerHeight - 50) + 'px'
     },
     methods: {
         ...mapMutations(['clearBreadcrumb'])
@@ -32,6 +33,9 @@ export default {
 <style lang="less" scoped>
     .main {
         position: relative;
+        // width: 100%;
+        background:url(../../../static/loginbg.png) no-repeat;
+        background-size:100% 100%;
         .content {
             position: absolute;
             top: 50%;
@@ -53,9 +57,11 @@ export default {
                 color: #0888F2;
             }
             .img {
-                margin-top: 40px;
-                // background: url(../../../static/mapbg2.png) no-repeat center;
-                // background-size: contain;
+                margin: 40px auto;
+                width: 300px;
+                height: auto;
+                background: url(../../../static/loginbg.png) no-repeat center;
+                background-size: contain;
                 text-align: center;
                 img {
                     width: 100%;

@@ -1,5 +1,6 @@
 <template>
 <GPage bg class="region_page">
+    <div class="bgwhite">
     <table-header>
         <template slot="left">
             <Button type="primary" @click="onCreateNewRegion">新增医保行政区划</Button>
@@ -49,6 +50,7 @@
             <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
         </div>
     </Modal>
+     </div>
 </GPage>
 </template>
 <script>
@@ -347,6 +349,10 @@ export default {
 }
 </script>
 <style lang="less">
+.bgwhite{
+    background: white;
+    z-index: 10;
+}
 .new-user-form {
     margin-right: 40px;
 }
@@ -360,6 +366,7 @@ export default {
     }
 }
 .region_page  {
+    // background: white;
     .ivu-tooltip-inner {
         width: 150px;
         white-space: normal;

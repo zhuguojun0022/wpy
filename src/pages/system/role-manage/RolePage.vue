@@ -1,5 +1,6 @@
 <template>
 <GPage bg>
+    <div class="bgwhite">
     <table-header>
         <div slot="left">
             <Button type="primary" @click="onCreateNewRole">新增角色</Button>
@@ -52,6 +53,7 @@
     <Modal v-model="reNewRoleShow" ref="modal">
 
     </Modal>
+    </div>
 </GPage>
 </template>
 <script>
@@ -506,6 +508,11 @@ export default {
 </script>
 
 <style  lang="less" scoped>
+.bgwhite{
+    background: white;
+    padding: 20px 15px 0px;
+    z-index: 10;
+}
 .authorize{
     border: 1px solid #dddee1;
     &-title {

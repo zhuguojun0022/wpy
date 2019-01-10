@@ -1,15 +1,24 @@
 <template>
     <GPage bg>
-        <Button type="primary" @click="onCreateNewMenuNode(formRef)">新建菜单</Button>
+        <div class="bgwhite">
+               <table-header>
+        <template slot="left">
+                <Select v-model="filterRole" style="width: 170px" placeholder="平安人寿保险股份有限公司" clearable>
+                    <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
+                </Select>
+                <Button type="primary" @click="onCreateNewMenuNode(formRef)"><Icon type="plus"></Icon> 新建菜单</Button>
+        </template>
+    </table-header>
         <Row :gutter="16" class="p-y-t">
-            <Col class="col" span="8">
+            <Col class="col" span="6">
+            <p>机构列表</p>
                 <div>
                     <Tree :data="menuList" @on-select-change="onSelectChange"></Tree>
                 </div>
             </Col>
-            <Col class="col" span="16">
+            <Col class="col" span="18">
                 <div>
-                    <p>菜单信息维护</p>
+                    <p>菜单管理 — 修改</p>
                     <Form style="width: 80%" :model="menuItems" :label-width="120" :rules="ruleValidate" :ref="formRef" class="new-user-form">
                         <FormItem prop="menuTitle" label="菜单标题" required>
                             <Input v-model.trim="menuItems.menuTitle" placeholder="请输入标题名称"></Input>
@@ -32,20 +41,22 @@
                             <Input v-model.trim="menuItems.menuRemark" type="textarea" placeholder="请输入描述信息"></Input>
                         </FormItem>
                         <FormItem>
-                            <Button type="ghost" @click="onCancelClick(formRef)">取消</Button>
+                            <Button class="Reset" @click="onCancelClick(formRef)">取消</Button>
                             <Button type="primary" :loading="modal_loading" @click="onSubmitClick(formRef)">提交</Button>
                         </FormItem>
                     </Form>
                 </div>
             </Col>
         </Row>
+        </div>
     </GPage>
 </template>
 <script>
 import {systemApi} from '../../../apis/'
 import {mapMutations} from 'vuex'
-
+import {TableHeader} from '../../../components/table'
 export default {
+    components: {TableHeader},
     data () {
         return {
             menuList: [],
@@ -135,7 +146,7 @@ export default {
                         ...p,
                         title: p.menuTitle,
                         children: [...child],
-                        expand: true
+                        expand: false
                     })
                 }
             })
@@ -227,8 +238,22 @@ export default {
 <style lang="less" scoped>
 .col {
     >div {
-        border: 1px solid #eeeeee;
-        padding: 20px;
+        // border: 1px solid #eeeeee;
+        padding: 10px;
+    }
+}
+p {font-weight: 700;padding: 10px;}
+.bgwhite{
+    background: white;
+    padding: 20px 15px 0px;
+    z-index: 10;
+    font-size: 14px;
+}
+Form {
+    padding: 10px;
+
+    FormItem {
+        width: 100%;
     }
 }
 </style>
