@@ -1,11 +1,12 @@
 <template>
     <div class="app layout">
         <Layout>
-            <Sider ref="side1" :hide-trigger='isHide' collapsible :collapsed-width="35" width="200" v-model="isCollapsed">
+            <Sider ref="side1" :hide-trigger='isHide' collapsible :collapsed-width="50" width="200" v-model="isCollapsed">
                 <div class="logo">
                     <!-- <h1><i class="iconfont icon-shebao"></i>电子社保卡管理平台</h1> -->
                 </div>
-                <Menu v-if="!isCollapsed"></Menu>
+                <!-- <Menu v-if="!isCollapsed"></Menu> -->
+                <Menu :isCollapsed='isCollapsed'></Menu>
             </Sider>
             <Layout>
                 <Header :style="{padding: 0}" class="layout-header-bar">
@@ -24,7 +25,7 @@
                 <tab v-show="isTab"></tab>
                 <!-- <x-breadcrumb></x-breadcrumb> -->
                 <Content :style="{margin: '0px', background: '#fff'}">
-                    <keep-alive>
+                    <keep-alive :include="tabName">
                     <router-view></router-view>
                     </keep-alive>
                 </Content>
@@ -51,7 +52,8 @@ export default {
             isCollapsed: false,
             activeRouteCode: null,
             isHide: false,
-            isTab: true
+            isTab: true,
+            tabName: []
         }
     },
     mounted () {
@@ -77,6 +79,15 @@ export default {
                 this.isHide = false
                 this.isTab = true
             }
+        },
+        visitedViews () {
+            console.log(this.visitedViews, 'visitedViews')
+            let that = this
+            this.tabName = []
+            this.visitedViews.forEach((val) => {
+                that.tabName.push(val.name)
+            })
+            console.log(this.tabName, 'tabName')
         }
     },
     computed: {
@@ -92,6 +103,9 @@ export default {
         //         this.isCollapsed ? 'collapsed-menu' : ''
         //     ]
         // }
+        visitedViews () { // store中取值
+            return this.$store.getters.visitedviews
+        }
     },
     methods: {
         // onLogout () {

@@ -7,18 +7,30 @@
                 <!-- 一级菜单li -->
                 <li class="normal-p-li" v-for="pItem in menuList" :key="pItem.menuId">
                     <!-- 一级菜单 title -->
-                    <div class="menu-title"
+                    <div class="menu-title" v-if="!isCollapsed"
                         :class="{'p-active-leaf': pActiveLeafId === pItem.menuId, 'p-active-branche': pActiveBranche === pItem.menuId}"
                         @click="firstLevalClick(pItem)">
-
                         <!-- <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i> -->
-
                         {{pItem.menuTitle}}
 
                         <i
                             class="ivu-icon ivu-icon-ios-arrow-down arrow-icon"
                             :class="{'open-ul': openedMenuId === pItem.menuId}"
                             v-if="pItem.children.length !== 0"></i>
+
+                    </div>
+
+                     <div class="menu-titles" v-if="isCollapsed"
+                        :class="{'p-active-leaf': pActiveLeafId === pItem.menuId, 'p-active-branche': pActiveBranche === pItem.menuId}"
+                        @click="firstLevalClick(pItem)">
+                        <!-- <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i> -->
+                        <div class="new-title">
+                        {{pItem.menuTitle.slice(0,2)}} </div>
+
+                        <!-- <i
+                            class="ivu-icon ivu-icon-ios-arrow-down arrow-icon"
+                            :class="{'open-ul': openedMenuId === pItem.menuId}"
+                            v-if="pItem.children.length !== 0"></i> -->
 
                     </div>
                     <!-- iview 展开动画组件 -->
@@ -32,6 +44,7 @@
                                     :class="{'c-active-leaf': cActiveLeafId === cItem.menuId}"
                                     @click="secondLevalClick(cItem)"
                                     >
+                                    <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i>
                                     {{cItem.menuTitle}}
                                 </div>
                             </li>
@@ -46,12 +59,23 @@
 <script>
 import CollapseTransition from 'iview/src/components/base/collapse-transition'
 import {infraApi} from '../../apis'
+import {mapGetters} from 'vuex'
 
 export default {
     components: {
         CollapseTransition
     },
-    props: {},
+    computed: {
+        ...mapGetters({
+            breadcrumbData: 'getBreadcrumbData'
+        })
+    },
+    props: {
+        isCollapsed: {
+            type: Boolean,
+            default: true
+        }
+    },
     data () {
         infraApi.getMenu().then(({data: {result}}) => {
             let menuList = result.children
@@ -71,8 +95,11 @@ export default {
             if (route.name === old.name) return
             this.init()
         }
+        // isCollapsed: function () {
+        //     if
+        // }
     },
-    computed: {},
+    // computed: {},
     created () {},
     mounted () {},
     methods: {
@@ -103,6 +130,7 @@ export default {
                 }
             })
             this.menuList = menuList
+            console.log(this.menuList, 'menuList')
         },
         firstLevalClick (pItem) {
             if (pItem.children.length === 0) {
@@ -143,6 +171,17 @@ export default {
         overflow-x: hidden;
         height: 100%;
 
+        .new-title {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e9f0f8;
+            line-height: 250%;
+            color: #115c76;
+            font-size: 12px;
+            text-align: center;
+        }
+
         .normal-out-ul {
             overflow-y: auto;
             overflow-x: hidden;
@@ -155,7 +194,26 @@ export default {
 
                 .menu-title {
                     width: 200px;
-                    padding: 20px 20px 20px 39px;
+                    padding: 20px 20px 20px 19px;
+                    // font-weight: 600;
+                    // &:hover {
+                    //     color: #ffffff;
+                    // }
+
+                    .arrow-icon {
+                        position: relative;
+                        float: right;
+                        top: 4px;
+                        transition: transform .2s ease-in-out;
+                    }
+
+                    .open-ul {
+                        transform: rotate(180deg);
+                    }
+                }
+                .menu-titles {
+                    width: 200px;
+                    padding: 20px 20px 10px 10px;
                     // font-weight: 600;
                     // &:hover {
                     //     color: #ffffff;
@@ -187,7 +245,7 @@ export default {
 
                     .normal-c-li {
                         .menu-title {
-                            padding: 10px 0 10px 35px;
+                            padding: 10px 0 10px 16px;
                             line-height: 24px;
                             font-size: 14px;
                             color: grey;

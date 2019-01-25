@@ -13,7 +13,8 @@
 export default {
     data () {
         return {
-            params: {}
+            params: {},
+            tabName: []
         }
     },
     computed: {
@@ -33,6 +34,14 @@ export default {
     watch: {
         $route () {
             this.addViewTags()
+        },
+        visitedViews () {
+            console.log('1qq')
+            let that = this
+            this.tabName = []
+            this.visitedViews.forEach((val) => {
+                that.tabName.push(val.tabName)
+            })
         }
     },
     methods: {

@@ -1,9 +1,10 @@
-import userManage from '../pages/system/user-manage/IndexPage'
+// import userManage from '../pages/system/user-manage/IndexPage'
 import roleManage from '../pages/system/role-manage/RolePage'
 import menuManage from '../pages/system/menu-manage/IndexPage'
 import regionManage from '../pages/system/region-manage/RegionPage'
 import issueManage from '../pages/system/issue-manage/IssuePage'
 // import callLog from '../pages/system/call-log-manage/CallLogPage'
+const userManage = () => import(/* webpackChunkName: "group-foo" */ '../pages/system/user-manage/IndexPage')
 
 export default [{
     path: 'sys/user',

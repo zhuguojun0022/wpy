@@ -63,6 +63,7 @@ import {systemApi} from '../../../apis'
 import {formatDateTime} from '../../../common/utils'
 
 export default {
+    name: 'roleManage',
     components: {TableHeader, TableFooter},
     data () {
         return {

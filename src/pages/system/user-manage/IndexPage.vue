@@ -34,7 +34,7 @@
         </template>
     </table-header>
 
-    <Table  border stripe :row-class-name="rowClassName" :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt" :width="tableWidth"></Table>
+    <Table  border stripe  :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt" :width="tableWidth"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange" size="small" show-elevator></table-footer>
 
@@ -87,6 +87,7 @@ import {mapMutations} from 'vuex'
 import {formatDateTime} from '../../../common/utils'
 
 export default {
+    name: 'userManage',
     components: {TableHeader, TableFooter},
     data () {
         return {

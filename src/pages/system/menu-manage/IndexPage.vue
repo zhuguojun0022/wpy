@@ -3,8 +3,8 @@
         <div class="bgwhite">
                <table-header>
         <template slot="left">
-                <Select v-model="filterRole" style="width: 170px" placeholder="平安人寿保险股份有限公司" clearable>
-                    <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option>
+                <Select  style="width: 170px" placeholder="平安人寿保险股份有限公司" clearable>
+                    <!-- <Option v-for="item in roleList" :value="item.roleId" :key="item.roleId">{{ item.roleName }}</Option> -->
                 </Select>
                 <Button type="primary" @click="onCreateNewMenuNode(formRef)"><Icon type="plus"></Icon> 新建菜单</Button>
         </template>
@@ -57,6 +57,7 @@ import {mapMutations} from 'vuex'
 import {TableHeader} from '../../../components/table'
 export default {
     components: {TableHeader},
+    name: 'menuManage',
     data () {
         return {
             menuList: [],
