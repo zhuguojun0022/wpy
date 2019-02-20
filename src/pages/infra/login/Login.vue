@@ -68,6 +68,7 @@ export default {
     methods: {
         getImgVCode () {
             this.randomString = randomStr(true, 8, 10)
+            console.log(this.randomString, 'random')
             let img = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8088'
             this.imgCode = `${img}/auth/captcha/genImage?cid=${this.randomString}`
         },

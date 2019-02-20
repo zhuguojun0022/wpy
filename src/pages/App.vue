@@ -59,7 +59,7 @@ export default {
     mounted () {
         // startGetLoginUser()
         if (this.$route.name === 'home') {
-            console.log(this.$route.name, 'router')
+            // console.log(this.$route.name, 'router')
             this.isHide = true
             this.isTab = false
             this.isCollapsed = false
@@ -71,7 +71,7 @@ export default {
     watch: {
         $route () {
             if (this.$route.name === 'home') {
-                console.log(this.$route.name, 'router')
+                // console.log(this.$route.name, 'router')
                 this.isHide = true
                 this.isTab = false
                 this.isCollapsed = false
@@ -81,13 +81,13 @@ export default {
             }
         },
         visitedViews () {
-            console.log(this.visitedViews, 'visitedViews')
+            // console.log(this.visitedViews, 'visitedViews')
             let that = this
             this.tabName = []
             this.visitedViews.forEach((val) => {
                 that.tabName.push(val.name)
             })
-            console.log(this.tabName, 'tabName')
+            // console.log(this.tabName, 'tabName')
         }
     },
     computed: {
@@ -150,7 +150,7 @@ export default {
     }
     .logo {
         width: 200px;
-        height: 50px;
+        height: 40px;
         background:  #e54a49;
 
         h1 {

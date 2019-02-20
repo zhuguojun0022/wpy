@@ -117,7 +117,7 @@ export default {
 }
 </script>
 <style lang="less">
-@header-height:50px;
+@header-height:40px;
 .header-bar {
     background: #061e39;
     height: @header-height;
@@ -127,7 +127,7 @@ export default {
         font-size: 14px;
         color: white;
         background: rgba(255, 255, 255, .1);
-        margin-top: 10px;
+        margin-top: 5px;
         margin-right: 40px;
         padding: 5px 10px;
         // line-height: 50px;
@@ -135,7 +135,7 @@ export default {
     .currentInstitution {
         float: right;
         margin-right: 20px;
-        line-height: 50px;
+        line-height: 40px;
         font-size: 14px;
         color: white;
     }

@@ -34,7 +34,7 @@
         </template>
     </table-header>
 
-    <Table  border stripe  :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt" :width="tableWidth"></Table>
+    <Table  border stripe  :columns="columns" :data="tableData" @on-selection-change="onSelectionChange" ref="selection" :height="tableHeihgt"></Table>
 
     <table-footer :total-num="totalNum" :current-page="currentPage" @on-change="handleCurrentChange" size="small" show-elevator></table-footer>
 
@@ -80,17 +80,19 @@
 </template>
 <script>
 import {TableHeader, TableFooter} from '../../../components/table'
-import {systemApi, infraApi} from '../../../apis/'
+import {systemApi} from '../../../apis/'
 // import {infraApi} from '../../../apis'
 import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
 import {formatDateTime} from '../../../common/utils'
+import eventVue from '../../../components/VueEvent.js'
 
 export default {
     name: 'userManage',
     components: {TableHeader, TableFooter},
     data () {
         return {
+            accept: false,
             isFilter: false,
             filterName: '',
             filterRole: '',
@@ -278,14 +280,35 @@ export default {
         this.searchDownRoleList()
         this.tableHeihgt = window.innerHeight - 225
         this.tableWidth = window.innerWidth - 255
-        infraApi.getProvinceID().then(res => {
-            const data = res.data.result
-            this.prov = data
-            this.prov.unshift({'REGION_ID': 0, 'REGION_NAME': '全国'})
-        })
+        // infraApi.getProvinceID().then(res => {
+        //     const data = res.data.result
+        //     this.prov = data
+        //     this.prov.unshift({'REGION_ID': 0, 'REGION_NAME': '全国'})
+        // })
+        this.accepts()
+    },
+    watch: {
+        accept: function () {
+            if (this.accept) {
+                // this.tableWidth = window.innerWidth - 225
+                this.tableWidth = 100
+                console.log('1')
+                console.log(this.tableWidth, 'tableWidth')
+            } else {
+                console.log('2')
+                this.tableWidth = '222'
+                console.log(this.tableWidth, 'tableWidth')
+            }
+        }
     },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
+        accepts () {
+            // console.log('2')
+            eventVue.$on('myFun', (message) => {
+                this.accept = message
+            })
+        },
         isFilterClick (isFilter) {
             this.isFilter = !isFilter
             if (this.isFilter) {

@@ -44,10 +44,10 @@
                                     :class="{'c-active-leaf': cActiveLeafId === cItem.menuId}"
                                     @click="secondLevalClick(cItem)"
                                     >
-                                    <i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i>
+                                    <Tooltip :content='cItem.menuTitle' placement="left"><i class="p-x-r iconfont" :class="[pItem.menuIcon]"></i></Tooltip>
                                     {{cItem.menuTitle}}
                                 </div>
-                            </li>
+                            </li >
                         </ul>
                     </collapse-transition>
                 </li>
@@ -58,6 +58,7 @@
 
 <script>
 import CollapseTransition from 'iview/src/components/base/collapse-transition'
+import eventVue from '../VueEvent.js'
 import {infraApi} from '../../apis'
 import {mapGetters} from 'vuex'
 
@@ -94,15 +95,18 @@ export default {
         '$route' (route, old) {
             if (route.name === old.name) return
             this.init()
+        },
+        isCollapsed: function () {
+            this.selfAdaption()
         }
-        // isCollapsed: function () {
-        //     if
-        // }
     },
     // computed: {},
     created () {},
     mounted () {},
     methods: {
+        selfAdaption () {
+            eventVue.$emit('myFun', this.isCollapsed)
+        },
         init (menu) {
             let menuList = []
             if (this.menuList.length !== 0) {
