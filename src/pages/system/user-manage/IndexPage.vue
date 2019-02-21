@@ -85,7 +85,7 @@ import {systemApi} from '../../../apis/'
 import {userStatus} from '../../../common/consts'
 import {mapMutations} from 'vuex'
 import {formatDateTime} from '../../../common/utils'
-import eventVue from '../../../components/VueEvent.js'
+// import eventVue from '../../../components/VueEvent.js'
 
 export default {
     name: 'userManage',
@@ -278,7 +278,7 @@ export default {
     created () {
         this.searchUserList()
         this.searchDownRoleList()
-        this.tableHeihgt = window.innerHeight - 225
+        this.tableHeihgt = window.innerHeight - 215
         this.tableWidth = window.innerWidth - 255
         // infraApi.getProvinceID().then(res => {
         //     const data = res.data.result
@@ -287,28 +287,28 @@ export default {
         // })
         this.accepts()
     },
-    watch: {
-        accept: function () {
-            if (this.accept) {
-                // this.tableWidth = window.innerWidth - 225
-                this.tableWidth = 100
-                console.log('1')
-                console.log(this.tableWidth, 'tableWidth')
-            } else {
-                console.log('2')
-                this.tableWidth = '222'
-                console.log(this.tableWidth, 'tableWidth')
-            }
-        }
-    },
+    // watch: {
+    //     accept: function () {
+    //         if (this.accept) {
+    //             // this.tableWidth = window.innerWidth - 225
+    //             this.tableWidth = 100
+    //             console.log('1')
+    //             console.log(this.tableWidth, 'tableWidth')
+    //         } else {
+    //             console.log('2')
+    //             this.tableWidth = '222'
+    //             console.log(this.tableWidth, 'tableWidth')
+    //         }
+    //     }
+    // },
     methods: {
         ...mapMutations(['resetBreadcrumb', 'openLoading', 'closeLoading']),
-        accepts () {
-            // console.log('2')
-            eventVue.$on('myFun', (message) => {
-                this.accept = message
-            })
-        },
+        // accepts () {
+        //     // console.log('2')
+        //     eventVue.$on('myFun', (message) => {
+        //         this.accept = message
+        //     })
+        // },
         isFilterClick (isFilter) {
             this.isFilter = !isFilter
             if (this.isFilter) {
@@ -526,7 +526,7 @@ export default {
 .bgwhite{
     background: white;
     font-size: 14px!important;
-    padding: 20px 15px 0px;
+    padding: 15px 15px 0px;
     z-index: 10;
     overflow: auto;
 }

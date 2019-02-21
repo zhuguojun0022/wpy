@@ -4,6 +4,7 @@
             <Sider ref="side1" :hide-trigger='isHide' collapsible :collapsed-width="50" width="200" v-model="isCollapsed">
                 <div class="logo">
                     <!-- <h1><i class="iconfont icon-shebao"></i>电子社保卡管理平台</h1> -->
+                    <img src="../../static/logo.png" alt="">
                 </div>
                 <!-- <Menu v-if="!isCollapsed"></Menu> -->
                 <Menu :isCollapsed='isCollapsed'></Menu>
@@ -151,24 +152,16 @@ export default {
     .logo {
         width: 200px;
         height: 40px;
-        background:  #e54a49;
-
-        h1 {
-            height: 64px;
-            width: 100%;
-            position: relative;
-            // color: #fff;
-            font-size: 18px;
-            padding-left: 20px;
-            text-align: center;
-            line-height: 64px;
-
-            i {
-                font-size: 32px;
-                position: absolute;
-                left: 8px;
-            }
-        }
+        background-color: #e54a49;
+        text-align: center;
+        // vertical-align: middle;
+        // background:  #e54a49;
+        // div {
+        //     width: 100%;
+        //     height: 100%;
+        //     background-image:url(../../static/logo.png) no-repeat;
+        //     background-size:100% 100%;
+        // }
     }
     .user-box {
         float: right;

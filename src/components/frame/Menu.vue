@@ -58,7 +58,7 @@
 
 <script>
 import CollapseTransition from 'iview/src/components/base/collapse-transition'
-import eventVue from '../VueEvent.js'
+// import eventVue from '../VueEvent.js'
 import {infraApi} from '../../apis'
 import {mapGetters} from 'vuex'
 
@@ -104,9 +104,9 @@ export default {
     created () {},
     mounted () {},
     methods: {
-        selfAdaption () {
-            eventVue.$emit('myFun', this.isCollapsed)
-        },
+        // selfAdaption () {
+        //     eventVue.$emit('myFun', this.isCollapsed)
+        // },
         init (menu) {
             let menuList = []
             if (this.menuList.length !== 0) {

@@ -246,7 +246,7 @@ export default {
 p {font-weight: 700;padding: 10px;}
 .bgwhite{
     background: white;
-    padding: 20px 15px 0px;
+    padding: 15px 15px 0px;
     z-index: 10;
     font-size: 14px;
 }

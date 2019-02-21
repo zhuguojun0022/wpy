@@ -511,7 +511,7 @@ export default {
 <style  lang="less" scoped>
 .bgwhite{
     background: white;
-    padding: 20px 15px 0px;
+    padding: 15px 15px 0px;
     z-index: 10;
 }
 .authorize{

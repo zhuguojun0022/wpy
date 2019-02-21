@@ -2,7 +2,7 @@
 <div class="login-page">
     <header>
         <div class="logo-box">
-            logo
+            <img src="(../../../../static/logo.png" alt="">
         </div>
     </header>
     <main class="content">
@@ -117,8 +117,11 @@ export default {
 
     header {
         .logo-box {
-            width: 400px;
+            // width: 200px;
+            height: 40px;
             position: relative;
+            background:#061e39;;
+            // background-size:100% 100%;
             // padding: 10px 20px;
         }
     }
@@ -245,7 +248,7 @@ export default {
                         cursor: pointer;
                     }
                     img {
-                        height: 35px;
+                        height: 34px;
                         display: inline-block;
                     }
                 }
